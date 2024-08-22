@@ -4,6 +4,7 @@ build/
 Testing
 target
 
+minishell
 local*
 *.a
 valgrind*
