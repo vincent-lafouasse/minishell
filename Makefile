@@ -1,3 +1,3 @@
 .PHONY: all
 all:
-	gcc src/main.c -o minishell
+	gcc -lreadline src/main.c -o minishell
