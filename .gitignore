@@ -1,0 +1,9 @@
+build/
+.DS_Store
+.cache
+Testing
+target
+
+local*
+*.a
+valgrind*
