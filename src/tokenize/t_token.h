@@ -1,6 +1,6 @@
 #pragma once
 
-typedef enum e_token
+typedef enum e_token_type
 {
 	IDENTIFIER,
 	PIPE,
@@ -9,7 +9,12 @@ typedef enum e_token
 	RIGHT_ANGLE_BRACKET,
 	RIGHT_RIGHT_ANGLE_BRACKET,
 	SEMI_COLON,
-}	t_token;
+}	t_token_type;
+
+struct s_token {
+	t_token_type type;
+	char* literal;
+};
 
 typedef struct TokenList {} TokenList; // not sure what
 
