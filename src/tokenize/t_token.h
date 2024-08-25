@@ -1,0 +1,13 @@
+#pragma once
+
+typedef enum e_token
+{
+	COMMAND,
+	FLAG,
+	PIPE,
+	LEFT_ANGLE_BRACKET,
+	LEFT_LEFT_ANGLE_BRACKET,
+	RIGHT_ANGLE_BRACKET,
+	RIGHT_RIGHT_ANGLE_BRACKET,
+	SEMI_COLON,
+}	t_token;
