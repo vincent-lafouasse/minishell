@@ -11,6 +11,6 @@ typedef enum e_token
 	SEMI_COLON,
 }	t_token;
 
-struct TokenList; // not sure what
+typedef struct TokenList {} TokenList; // not sure what
 
-struct TokenList tokenize(const char* input);
+TokenList tokenize(const char* input);
