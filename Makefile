@@ -46,3 +46,14 @@ fclean: clean
 update: fclean
 	mkdir -p build
 	bear  --output build/compile_commands.json -- make build
+
+# aliases
+.PHONY: b c u r t vt
+b: build
+c: clean
+u: update
+r: run
+t: test
+vt: vtest
+
+-include $(DEPS)
