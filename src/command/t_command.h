@@ -31,14 +31,13 @@ struct s_simple_command
 };
 
 // ----- subshell node -----
-
-// ----- logic node -----
 enum e_logic_node_kind
 {
     AND,
     OR
 };
 
+// ----- logic node -----
 struct s_logic_node
 {
     t_logic_node_kind kind;
@@ -50,10 +49,20 @@ struct s_logic_node
 
 // ----- separator node -----
 
+// ----- polymorphic AST node -----
+
 union u_any_command
 {
     t_simple_command simple;
     t_logic_node logic;
+};
+
+struct s_command
+{
+    t_command_type type;
+    t_command *left;
+    t_command *right;
+    t_any_command command;
 };
 
 #endif // COMMAND_H
