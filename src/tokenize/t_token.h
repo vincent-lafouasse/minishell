@@ -11,7 +11,9 @@ typedef enum e_token_type
 	SEMI_COLON_TOKEN,
 }	t_token_type;
 
-struct s_token {
+typedef struct s_token {
 	t_token_type type;
 	char* literal;
-};
+} t_token;
+
+const char* token_repr(t_token token);
