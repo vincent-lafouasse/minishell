@@ -31,13 +31,14 @@ struct s_simple_command
 };
 
 // ----- subshell node -----
+
+// ----- logic node -----
 enum e_logic_node_kind
 {
     AND,
     OR
 };
 
-// ----- logic node -----
 struct s_logic_node
 {
     t_logic_node_kind kind;
