@@ -4,5 +4,6 @@
 
 const char* token_repr(t_token token)
 {
+	(void)token;
 	return DUMMY_TOKEN_REPR;
 }
