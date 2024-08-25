@@ -1,3 +1,8 @@
+SRC = $(shell find src -name '*.c')
+
+CPPFLAGS = -Isrc
+LDFLAGS = -lreadline
+
 .PHONY: all
 all:
-	gcc -lreadline src/main.c -o minishell
+	gcc $(CPPFLAGS) $(LDFLAGS) $(SRC) -o minishell
