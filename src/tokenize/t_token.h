@@ -7,8 +7,10 @@ typedef enum e_token_type
     REDIRECT_INPUT,
     REDIRECT_OUTPUT,
     APPEND_TO_FILE,
-    HERE_DOC,
+    REDIRECT_FROM_HERE_DOC,
     SEPARATOR_TOKEN,
+    AND_AND,
+    OR_OR,
 } t_token_type;
 
 typedef struct s_token
