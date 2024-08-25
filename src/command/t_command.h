@@ -37,8 +37,8 @@ struct s_simple_command {
 };
 
 union u_any_command {
-    struct s_simple_command    simple;
-    struct s_logic_node    simple__;
+    t_simple_command    simple;
+    t_logic_node    logic;
 };
 
 struct s_command {
