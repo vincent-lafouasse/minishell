@@ -15,7 +15,3 @@ struct s_token {
 	t_token_type type;
 	char* literal;
 };
-
-typedef struct TokenList {} TokenList; // not sure what
-
-TokenList tokenize(const char* input);

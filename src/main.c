@@ -1,7 +1,7 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
-#include "tokenize/t_token.h"
+#include "tokenize/tokenize.h"
 #include "parse/parse.h"
 
 #define SHELL_PROMPT "minishell$ "
