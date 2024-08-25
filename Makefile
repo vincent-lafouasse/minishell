@@ -30,3 +30,19 @@ $(NAME): $(OBJS) $(LIBS)
 build/%.c.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+
+.PHONY: re
+re: fclean build
+
+.PHONY: clean
+clean:
+	rm -rf build
+
+.PHONY: fclean
+fclean: clean
+	rm -rf $(NAME)
+
+.PHONY: update
+update: fclean
+	mkdir -p build
+	bear  --output build/compile_commands.json -- make build
