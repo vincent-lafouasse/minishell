@@ -2,8 +2,7 @@
 
 typedef enum e_token
 {
-	COMMAND,
-	FLAG,
+	IDENTIFIER,
 	PIPE,
 	LEFT_ANGLE_BRACKET,
 	LEFT_LEFT_ANGLE_BRACKET,
@@ -11,3 +10,7 @@ typedef enum e_token
 	RIGHT_RIGHT_ANGLE_BRACKET,
 	SEMI_COLON,
 }	t_token;
+
+struct TokenList; // not sure what
+
+struct TokenList tokenize(const char* input);
