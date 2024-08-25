@@ -1,8 +1,16 @@
+NAME = minishell
+
 SRC = $(shell find src -name '*.c')
 
 CPPFLAGS = -Isrc
 LDFLAGS = -lreadline
 
 .PHONY: all
-all:
-	gcc $(CPPFLAGS) $(LDFLAGS) $(SRC) -o minishell
+all: build
+
+.PHONY: build
+build: $(NAME)
+
+$(NAME):
+	gcc $(CPPFLAGS) $(LDFLAGS) $(SRC) -o $(NAME)
+
