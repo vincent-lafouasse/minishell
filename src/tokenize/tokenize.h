@@ -2,6 +2,8 @@
 
 #include "t_token.h"
 
-typedef struct TokenList {} TokenList; // not sure what
+typedef struct TokenList
+{
+} TokenList; // not sure what
 
-TokenList tokenize(const char* input);
+TokenList tokenize(const char *input);
