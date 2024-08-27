@@ -8,7 +8,6 @@ typedef enum e_token_type
     REDIRECT_OUTPUT,
     APPEND_TO_FILE,
     REDIRECT_FROM_HERE_DOC,
-    SEPARATOR_TOKEN,
     AND_AND,
     OR_OR,
 } t_token_type;
