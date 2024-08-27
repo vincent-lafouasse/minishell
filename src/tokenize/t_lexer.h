@@ -13,3 +13,4 @@ typedef struct s_lexer
 } t_lexer;
 
 t_lexer lexer_init(const char *source);
+void lexer_scan_token(t_lexer *lexer);
