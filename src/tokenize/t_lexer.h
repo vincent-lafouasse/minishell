@@ -5,10 +5,10 @@
 
 typedef struct s_lexer
 {
-    const char* source;
-    t_token_list* tokens;
+    const char *source;
+    t_token_list *tokens;
     size_t current;
     size_t start;
 } t_lexer;
 
-t_lexer lexer_init(const char* source);
+t_lexer lexer_init(const char *source);
