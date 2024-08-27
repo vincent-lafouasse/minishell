@@ -9,7 +9,7 @@
 int main(void)
 {
     char *input;
-    t_token_list tokens;
+    t_token_list *tokens;
     t_command command;
 
     while (1)
