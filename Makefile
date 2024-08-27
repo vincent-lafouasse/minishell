@@ -42,6 +42,18 @@ clean:
 fclean: clean
 	rm -rf $(NAME)
 
+.PHONY: test
+test:
+	cmake -S test -B build/test
+	cmake --build build/test
+	GTEST_COLOR=1 ctest --test-dir build/test
+
+.PHONY: vtest
+vtest:
+	cmake -S test -B build/test
+	cmake --build build/test
+	GTEST_COLOR=1 ctest --test-dir build/test -V
+
 .PHONY: update
 update: fclean
 	mkdir -p build
