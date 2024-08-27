@@ -11,5 +11,6 @@ t_token_list *tokenize(const char *input)
         lexer.start = lexer.current;
         lexer_scan_token(&lexer);
     }
+    tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
     return lexer.tokens;
 }

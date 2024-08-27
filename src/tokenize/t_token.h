@@ -13,6 +13,7 @@ typedef enum e_token_type
     R_PAREN,
     AND_AND,
     OR_OR,
+    EOF_TOKEN,
 } t_token_type;
 
 typedef struct s_token
