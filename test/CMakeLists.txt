@@ -37,11 +37,10 @@ target_include_directories(dummy PUBLIC
 )
 target_link_libraries(dummy
   libgtest
-#  libft
 )
 
-# include(CTest)
-# enable_testing()
-# 
-# add_test(NAME DummyTest
-#          COMMAND dummy)
+include(CTest)
+enable_testing()
+
+add_test(NAME DummyTest
+         COMMAND dummy)
