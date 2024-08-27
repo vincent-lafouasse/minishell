@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../t_token.h"
+#include "error/t_error.h"
 
 typedef struct s_token_list
 {
@@ -8,3 +9,7 @@ typedef struct s_token_list
     struct s_token_list *next;
     struct s_token_list *prev;
 } t_token_list;
+
+void tkl_push_back_link(t_token_list **tokens_p, t_token_list *link);
+t_error tkl_push_back(t_token_list **tokens_p, t_token token);
+void tkl_clear(t_token_list **tokens_p);
