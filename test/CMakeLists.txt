@@ -17,13 +17,13 @@ include(${CMAKE_SOURCE_DIR}/fetch_gtest.cmake)
 #   INTERFACE_INCLUDE_DIRECTORIES "${libft_dir}/include"
 # )
 
+set(tested_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
+
 set(tested_files
 )
-list(TRANSFORM tested_files PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
+list(TRANSFORM tested_files PREPEND ${tested_src_dir}/)
 
-set(tested_include_dir
-    ${CMAKE_CURRENT_SOURCE_DIR}/../src/
-)
+set(tested_include_dir ${tested_src_dir}/)
 
 add_executable(dummy
   src/dummy_test/dummy_test.cpp
