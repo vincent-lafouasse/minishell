@@ -7,6 +7,7 @@ typedef struct s_lexer
 {
     const char *source;
     t_token_list *tokens;
+    size_t src_len;
     size_t current;
     size_t start;
 } t_lexer;
