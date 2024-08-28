@@ -1,10 +1,30 @@
 #include "error/t_error.h"
 #include "t_lexer.h"
 
+static char advance(t_lexer* lexer)
+{
+	
+	return lexer->source[lexer->current++];
+}
+
+static char peek(t_lexer* lexer)
+{
+	return lexer->source[lexer->current];
+}
+
+static bool matches(t_lexer* lexer, char expected)
+{
+	if (lexer->current >= lexer->src_len)
+		return false;
+	if (peek(lexer) != expected)
+		return false;
+	lexer->current++;
+	return true;
+}
 
 t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 {
-	char c = lexer->source[lexer->current++];
+	char c = advance(lexer);
 
 	if (c == '(')
 	{
@@ -15,6 +35,19 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	{
 		*out = (t_token){.type = R_PAREN};
 		return (NO_ERROR);
+	}
+	if (c == '<')
+	{
+		if (matches(lexer, '<'))
+		{
+			*out = (t_token){.type = DL_ANGLE_BRACKET};
+			return (NO_ERROR);
+		}
+		else
+		{
+			*out = (t_token){.type = L_ANGLE_BRACKET};
+			return (NO_ERROR);
+		}
 	}
 	return (E_UNRECOGNIZED_TOKEN);
 }
