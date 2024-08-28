@@ -1,7 +1,9 @@
-#include "parse/parse.h"
-#include "tokenize/tokenize.h"
 #include <readline/readline.h>
 #include <stdlib.h>
+
+#include "parse/parse.h"
+#include "tokenize/tokenize.h"
+#include "log/log.h"
 
 #define SHELL_PROMPT "minishell$ "
 
@@ -15,6 +17,7 @@ int	main(void)
 	{
 		input = readline(SHELL_PROMPT);
 		tokens = tokenize(input);
+		log_token_list(tokens);
 		command = parse_command(tokens);
 		(void)command;
 		free(input);
