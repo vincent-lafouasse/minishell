@@ -65,6 +65,11 @@ vtest: $(LIBS)
 	cmake --build build/test
 	GTEST_COLOR=1 ctest --test-dir build/test -V
 
+.PHONY: test_libft
+test_libft: $(LIBFT)
+	cmake -S lib/libft/test -B build/test_libft
+	cmake --build build/test_libft
+
 .PHONY: update
 update: fclean
 	mkdir -p build
