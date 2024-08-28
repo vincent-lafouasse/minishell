@@ -4,7 +4,7 @@ static size_t ft_strlen(const char *s);
 
 t_lexer lexer_init(const char *source)
 {
-    return (t_lexer){.source = source, .src_len = ft_strlen(source)};
+    return (t_lexer){.source = source, .src_len = ft_strlen(source), .state = AWAITING_IDENTIFIER};
 }
 
 static size_t ft_strlen(const char *s)
