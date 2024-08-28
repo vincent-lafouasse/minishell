@@ -1,20 +1,20 @@
 #include "error/t_error.h"
 #include "t_lexer.h"
 
-static char advance(t_lexer* lexer)
+static char lexer_advance(t_lexer* lexer)
 {
 	
 	return lexer->source[lexer->current++];
 }
 
-static char peek(t_lexer* lexer)
+static char lexer_peek(t_lexer* lexer)
 {
 	return lexer->source[lexer->current];
 }
 
 t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 {
-	char c = advance(lexer);
+	char c = lexer_advance(lexer);
 
 	if (c == '(')
 	{
@@ -28,7 +28,7 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	}
 	if (c == '<')
 	{
-		if (peek(lexer) == '<')
+		if (lexer_peek(lexer) == '<')
 		{
 			*out = (t_token){.type = DL_ANGLE_BRACKET};
 			lexer->current++;
