@@ -7,6 +7,7 @@ typedef enum e_error
     NO_ERROR,
     E_UNRECOGNIZED_TOKEN,
     E_UNTERMINATED_QUOTE,
+    E_OOM,
     E_DUMMY,
 } t_error;
 
