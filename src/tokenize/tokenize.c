@@ -13,8 +13,13 @@ t_token_list	*tokenize(const char *input)
 	{
 		lexer.start = lexer.current;
 		err = lexer_scan_next_token(&lexer, &token);
+		if (err != NO_ERROR)
+		{
+			log_token_list(lexer.tokens);
+			// cleanup tokens
+			return NULL;
+		}
 		err = tkl_push_back(&lexer.tokens, token);
-		(void)err;
 	}
 	log_token_list(lexer.tokens);
 	tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
