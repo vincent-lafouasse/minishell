@@ -11,6 +11,11 @@ t_token_list	*tokenize(const char *input)
 	lexer = lexer_init(input);
 	while (lexer.current < lexer.src_len)
 	{
+		if (lexer_peek(&lexer) == ' ')
+		{
+			lexer.current++;
+			continue;
+		}
 		lexer.start = lexer.current;
 		err = lexer_scan_next_token(&lexer, &token);
 		if (err != NO_ERROR)
