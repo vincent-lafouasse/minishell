@@ -28,6 +28,17 @@ target_include_directories(libft_tests PUBLIC
 	./Unity/include
 )
 
+
+set(libft_dir
+  ${CMAKE_SOURCE_DIR}/../
+)
+add_library(libft STATIC IMPORTED)
+set_target_properties(libft PROPERTIES
+  IMPORTED_LOCATION "${libft_dir}/libft.a"
+  INTERFACE_INCLUDE_DIRECTORIES "${libft_dir}/include"
+)
+
 target_link_libraries(libft_tests
 	unity
+	libft
 )
