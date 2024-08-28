@@ -46,6 +46,7 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	if (c == '&' && lexer_peek(lexer) == '&')
 	{
 		*out = (t_token){.type = AND_AND};
+		lexer->current++;
 		return (NO_ERROR);
 	}
 	if (c == '|')
