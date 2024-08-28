@@ -1,5 +1,6 @@
 #include "t_lexer.h"
 #include "tokenize.h"
+#include "log/log.h"
 
 t_token_list	*tokenize(const char *input)
 {
@@ -15,6 +16,7 @@ t_token_list	*tokenize(const char *input)
 		err = tkl_push_back(&lexer.tokens, token);
 		(void)err;
 	}
+	log_token_list(lexer.tokens);
 	tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
 	return (lexer.tokens);
 }
