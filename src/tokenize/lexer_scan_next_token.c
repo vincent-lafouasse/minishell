@@ -12,16 +12,6 @@ static char peek(t_lexer* lexer)
 	return lexer->source[lexer->current];
 }
 
-static bool matches(t_lexer* lexer, char expected)
-{
-	if (lexer->current >= lexer->src_len)
-		return false;
-	if (peek(lexer) != expected)
-		return false;
-	lexer->current++;
-	return true;
-}
-
 t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 {
 	char c = advance(lexer);
@@ -38,9 +28,10 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	}
 	if (c == '<')
 	{
-		if (matches(lexer, '<'))
+		if (peek(lexer) == '<')
 		{
 			*out = (t_token){.type = DL_ANGLE_BRACKET};
+			lexer->current++;
 			return (NO_ERROR);
 		}
 		else
