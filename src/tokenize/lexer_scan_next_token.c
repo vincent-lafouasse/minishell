@@ -29,5 +29,38 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 			return (NO_ERROR);
 		}
 	}
+	if (c == '>')
+	{
+		if (lexer_peek(lexer) == '>')
+		{
+			*out = (t_token){.type = DR_ANGLE_BRACKET};
+			lexer->current++;
+			return (NO_ERROR);
+		}
+		else
+		{
+			*out = (t_token){.type = R_ANGLE_BRACKET};
+			return (NO_ERROR);
+		}
+	}
+	if (c == '&' && lexer_peek(lexer) == '&')
+	{
+		*out = (t_token){.type = AND_AND};
+		return (NO_ERROR);
+	}
+	if (c == '|')
+	{
+		if (lexer_peek(lexer) == '|')
+		{
+			*out = (t_token){.type = OR_OR};
+			lexer->current++;
+			return (NO_ERROR);
+		}
+		else
+		{
+			*out = (t_token){.type = PIPE_TOKEN};
+			return (NO_ERROR);
+		}
+	}
 	return (E_UNRECOGNIZED_TOKEN);
 }
