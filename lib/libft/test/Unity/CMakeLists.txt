@@ -15,8 +15,9 @@ target_sources(unity
 
 target_include_directories(unity
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
+        ${unity_root}/src
+        ${unity_root}/include
     PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${unity_root}/include>
         $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>
 )
