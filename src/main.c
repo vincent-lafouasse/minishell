@@ -16,6 +16,8 @@ int	main(void)
 	{
 		input = readline(SHELL_PROMPT);
 		tokens = tokenize(input);
+		if (!tokens)
+			continue;
 		command = parse_command(tokens);
 		(void)command;
 		free(input);
