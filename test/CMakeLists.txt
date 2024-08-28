@@ -8,14 +8,14 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS TRUE) # LSP stuff, don't worry about it
 # targets: `libgtest` `libgmock` (static libraries)
 include(${CMAKE_SOURCE_DIR}/fetch_gtest.cmake)
 
-# set(libft_dir
-#   ${CMAKE_SOURCE_DIR}/../lib/libft
-# )
-# add_library(libft STATIC IMPORTED)
-# set_target_properties(libft PROPERTIES
-#   IMPORTED_LOCATION "${libft_dir}/libft.a"
-#   INTERFACE_INCLUDE_DIRECTORIES "${libft_dir}/include"
-# )
+set(libft_dir
+  ${CMAKE_SOURCE_DIR}/../lib/libft
+)
+add_library(libft STATIC IMPORTED)
+set_target_properties(libft PROPERTIES
+  IMPORTED_LOCATION "${libft_dir}/libft.a"
+  INTERFACE_INCLUDE_DIRECTORIES "${libft_dir}/include"
+)
 
 set(tested_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
 
@@ -37,6 +37,7 @@ target_include_directories(dummy PUBLIC
 )
 target_link_libraries(dummy
   libgtest
+  libft
 )
 
 include(CTest)
