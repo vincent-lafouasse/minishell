@@ -24,7 +24,8 @@ target_sources(libft_tests PRIVATE
 )
 
 target_include_directories(libft_tests PUBLIC
-	./include/utils.h
+	./include
+	./Unity/include
 )
 
 target_link_libraries(libft_tests
