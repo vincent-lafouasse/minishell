@@ -54,13 +54,13 @@ fclean: clean
 	rm -rf $(NAME)
 
 .PHONY: test
-test:
+test: $(LIBS)
 	cmake -S test -B build/test
 	cmake --build build/test
 	GTEST_COLOR=1 ctest --test-dir build/test
 
 .PHONY: vtest
-vtest:
+vtest: $(LIBS)
 	cmake -S test -B build/test
 	cmake --build build/test
 	GTEST_COLOR=1 ctest --test-dir build/test -V
