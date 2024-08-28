@@ -13,6 +13,8 @@
 #define AND_AND_REPR "&&"
 #define OR_OR_REPR "||"
 #define EOF_TOKEN_REPR "EOF"
+#define DOUBLE_QUOTE_STRING_REPR "Double quote string"
+#define SINGLE_QUOTE_STRING_REPR "Single quote string"
 #define UNRECOGNIZED_TOKEN "Unrecognized token"
 
 const char	*token_repr(t_token token)
@@ -37,8 +39,10 @@ const char	*token_repr(t_token token)
 		return R_PAREN_REPR;
 	if (token.type == AND_AND)
 		return AND_AND_REPR;
-	if (token.type == OR_OR)
-		return OR_OR_REPR;
+	if (token.type == DOUBLE_QUOTE_STRING)
+		return DOUBLE_QUOTE_STRING_REPR;
+	if (token.type == SINGLE_QUOTE_STRING)
+		return SINGLE_QUOTE_STRING_REPR;
 	if (token.type == EOF_TOKEN)
 		return EOF_TOKEN_REPR;
 	return (UNRECOGNIZED_TOKEN);
