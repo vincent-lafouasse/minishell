@@ -42,3 +42,9 @@ target_link_libraries(libft_tests
 	unity
 	libft
 )
+
+include(CTest)
+enable_testing()
+
+add_test(NAME LibftTest
+         COMMAND libft_tests)
