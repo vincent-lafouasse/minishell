@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 15:36:41 by poss              #+#    #+#             */
-/*   Updated: 2024/03/30 10:17:10 by poss             ###   ########.fr       */
+/*   Updated: 2024/08/28 19:58:32 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 # include "libft/ft_string.h"
 # include "libft/stdlib.h"
 # include "libft/string.h"
-# include "libft/t_list.h"
 # include "libft/types.h"
 
 #endif
