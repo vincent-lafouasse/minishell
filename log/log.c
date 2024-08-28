@@ -8,3 +8,12 @@ void log_token(t_token token)
 	if (token.literal)
 		printf("\t%s", token.literal);
 }
+
+void log_token_list(const t_token_list* tkl)
+{
+	while (tkl)
+	{
+		log_token(tkl->token);
+		tkl = tkl->next;
+	}
+}
