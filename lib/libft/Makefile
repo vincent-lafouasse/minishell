@@ -9,6 +9,12 @@ BUILD_DIR = ./build
 LIB_H = $(INC_DIR)/libft.h
 
 C_FILES = $(shell find $(SRC_DIR) -name '*.c')
+
+C_FILES += src/libc/ctype/ft_isdigit.c src/libc/ctype/ft_isascii.c src/libc/ctype/ft_isprint.c src/libc/ctype/ft_toupper.c src/libc/ctype/ft_isalpha.c src/libc/ctype/ft_isalnum.c src/libc/ctype/ft_tolower.c
+C_FILES += src/libc/strings/ft_bzero.c src/libc/stdlib/ft_calloc.c src/libc/stdlib/ft_atoi.c
+C_FILES += src/libc/string/ft_strnstr.c src/libc/string/ft_strlcpy.c src/libc/string/ft_strlen.c src/libc/string/ft_memcmp.c src/libc/string/ft_strchr.c src/libc/string/ft_memcpy.c src/libc/string/ft_strrchr.c src/libc/string/ft_memchr.c src/libc/string/ft_memset.c src/libc/string/ft_strncmp.c src/libc/string/ft_memmove.c src/libc/string/ft_strlcat.c src/libc/string/ft_strdup.c
+C_FILES += src/extension/io/ft_putstr_fd.c src/extension/io/ft_putnbr_fd.c src/extension/io/ft_putendl_fd.c src/extension/io/ft_putchar_fd.c src/extension/io/ft_putstr.c
+C_FILES += src/extension/string/ft_str_starts_with.c src/extension/string/ft_striteri.c src/extension/string/ft_strjoin.c src/extension/string/ft_split.c src/extension/string/ft_substr.c src/extension/string/ft_strmapi.c src/extension/string/ft_strtrim.c src/extension/string/ft_itoa.c
 OBJS := $(C_FILES:%=$(BUILD_DIR)/%.o)
 DEPS := $(OBJS:%.o=%.d)
 
