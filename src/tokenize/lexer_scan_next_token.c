@@ -3,7 +3,8 @@
 #include "t_lexer.h"
 #include "tokenize/t_token.h"
 
-static t_error lexer_scan_redirection_operators(t_lexer* lexer, t_token* out, char current);
+static t_error	lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
+					char current);
 static t_error	lexer_scan_pipe_oror(t_lexer *lexer, t_token *out);
 static t_error	lexer_scan_single_quote_string(t_lexer *lexer, t_token *out);
 static t_error	lexer_scan_double_quote_string(t_lexer *lexer, t_token *out);
@@ -19,11 +20,11 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	if (c == ')')
 		return (fill_token((t_token){.type = R_PAREN}, out));
 	if (c == '<' || c == '>')
-		return lexer_scan_redirection_operators(lexer, out, c);
+		return (lexer_scan_redirection_operators(lexer, out, c));
 	if (c == '&' && lexer_peek(lexer) == '&')
 		return (lexer->current++, fill_token((t_token){.type = AND_AND}, out));
 	if (c == '|')
-		return lexer_scan_pipe_oror(lexer, out);
+		return (lexer_scan_pipe_oror(lexer, out));
 	if (c == '"')
 		return (lexer_scan_double_quote_string(lexer, out));
 	if (c == '\'')
@@ -31,14 +32,15 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	return (E_UNRECOGNIZED_TOKEN);
 }
 
-static t_error lexer_scan_redirection_operators(t_lexer* lexer, t_token* out, char current)
+static t_error	lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
+		char current)
 {
 	if (current == '<')
 	{
 		if (lexer_peek(lexer) == '<')
 		{
 			lexer->current++;
-			return fill_token((t_token){.type = DL_ANGLE_BRACKET}, out);
+			return (fill_token((t_token){.type = DL_ANGLE_BRACKET}, out));
 		}
 		else
 		{
@@ -50,14 +52,14 @@ static t_error lexer_scan_redirection_operators(t_lexer* lexer, t_token* out, ch
 		if (lexer_peek(lexer) == '>')
 		{
 			lexer->current++;
-			return fill_token((t_token){.type = DR_ANGLE_BRACKET}, out);
+			return (fill_token((t_token){.type = DR_ANGLE_BRACKET}, out));
 		}
 		else
 		{
 			return (fill_token((t_token){.type = R_ANGLE_BRACKET}, out));
 		}
 	}
-	return E_UNREACHABLE;
+	return (E_UNREACHABLE);
 }
 
 static t_error	lexer_scan_pipe_oror(t_lexer *lexer, t_token *out)
@@ -65,13 +67,13 @@ static t_error	lexer_scan_pipe_oror(t_lexer *lexer, t_token *out)
 	if (lexer_peek(lexer) == '|')
 	{
 		lexer->current++;
-		return fill_token((t_token){.type = OR_OR}, out);
+		return (fill_token((t_token){.type = OR_OR}, out));
 	}
 	else
 	{
 		return (fill_token((t_token){.type = PIPE_TOKEN}, out));
 	}
-	return E_UNREACHABLE;
+	return (E_UNREACHABLE);
 }
 
 static t_error	lexer_scan_single_quote_string(t_lexer *lexer, t_token *out)
@@ -115,5 +117,5 @@ static t_error	fill_token(t_token token, t_token *out)
 	if (!out)
 		return (E_NULL_PARAM);
 	*out = token;
-	return NO_ERROR;
+	return (NO_ERROR);
 }
