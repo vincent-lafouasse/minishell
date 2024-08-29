@@ -18,30 +18,19 @@ set_target_properties(libft PROPERTIES
 )
 
 set(tested_src_dir ${CMAKE_CURRENT_SOURCE_DIR}/../src/)
+set(tested_include_dir ${tested_src_dir}/)
 
 set(tested_files
 )
 list(TRANSFORM tested_files PREPEND ${tested_src_dir}/)
 
-set(tested_include_dir ${tested_src_dir}/)
-
-add_executable(dummy
-  src/dummy_test/dummy_test.cpp
-  src/dummy_test/main.cpp
-  ${tested_files}
-)
-
-target_include_directories(dummy PUBLIC
-  ${tested_include_dir}
-  src
-)
-target_link_libraries(dummy
-  libgtest
-  libft
-)
+include(./src/lexer_test/CMakeLists.txt)
+include(./src/parser_test/CMakeLists.txt)
 
 include(CTest)
 enable_testing()
 
-add_test(NAME DummyTest
-         COMMAND dummy)
+add_test(NAME LexerTest
+         COMMAND lexer_test)
+add_test(NAME ParserTest
+         COMMAND parser_test)
