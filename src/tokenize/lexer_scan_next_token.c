@@ -5,7 +5,6 @@
 t_error	lexer_scan_double_quote_string(t_lexer *lexer, t_token *out)
 {
 	char* literal;
-	size_t sz;
 
 	while (lexer_peek(lexer) != '"' && lexer->current < lexer->src_len)
 	{
@@ -14,8 +13,7 @@ t_error	lexer_scan_double_quote_string(t_lexer *lexer, t_token *out)
 	if (lexer->current >= lexer->src_len)
 		return E_UNTERMINATED_QUOTE;
 	lexer_advance(lexer);
-	sz = (size_t)(lexer->current - lexer->start) - 2;
-	literal = ft_substr(lexer->source, lexer->start + 1, sz);
+	literal = ft_substr(lexer->source, lexer->start + 1, lexer->start - ;lexer->current - 2);
 	*out = (t_token){.type = DOUBLE_QUOTE_STRING, .literal = literal};
 	return NO_ERROR;
 }
@@ -82,7 +80,5 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 			return (NO_ERROR);
 		}
 	}
-	if (c == '"')
-		return lexer_scan_double_quote_string(lexer, out);
 	return (E_UNRECOGNIZED_TOKEN);
 }

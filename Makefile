@@ -10,15 +10,7 @@ LDFLAGS = -lreadline
 OBJS := $(SRCS:%=build/%.o)
 DEPS := $(OBJS:.o=.d)
 
-LIBFT_PATH = ./lib/libft
-LIBFT = $(LIBFT_PATH)/libft.a
-LIBFT_INCLUDE_DIR = $(LIBFT_PATH)/include
-LIBFT_MAKE_DIR = $(LIBFT_PATH)
-
-CPPFLAGS += -I$(LIBFT_INCLUDE_DIR)
-LDFLAGS += $(LIBFT)
-
-LIBS = $(LIBFT)
+LIBS = 
 
 .PHONY: all
 all: build
@@ -39,9 +31,6 @@ build/%.c.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(LIBFT):
-	make -C $(LIBFT_MAKE_DIR)
-
 .PHONY: re
 re: fclean build
 
@@ -54,22 +43,16 @@ fclean: clean
 	rm -rf $(NAME)
 
 .PHONY: test
-test: $(LIBS)
+test:
 	cmake -S test -B build/test
 	cmake --build build/test
 	GTEST_COLOR=1 ctest --test-dir build/test
 
 .PHONY: vtest
-vtest: $(LIBS)
+vtest:
 	cmake -S test -B build/test
 	cmake --build build/test
 	GTEST_COLOR=1 ctest --test-dir build/test -V
-
-.PHONY: test_libft
-test_libft: $(LIBFT)
-	cmake -S lib/libft/test -B build/test_libft
-	cmake --build build/test_libft
-	GTEST_COLOR=1 ctest --test-dir build/test_libft -V
 
 .PHONY: update
 update: fclean
