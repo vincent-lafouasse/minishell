@@ -8,6 +8,8 @@ typedef enum e_error
     E_UNRECOGNIZED_TOKEN,
     E_UNTERMINATED_QUOTE,
     E_OOM,
+    E_UNREACHABLE,
+    E_NULL_PARAM,
     E_DUMMY,
 } t_error;
 
