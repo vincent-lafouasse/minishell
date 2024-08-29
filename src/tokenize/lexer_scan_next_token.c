@@ -1,6 +1,7 @@
 #include "error/t_error.h"
 #include "t_lexer.h"
 #include "libft/ft_string.h"
+#include "tokenize/t_token.h"
 
 
 static t_error	lexer_scan_single_quote_string(t_lexer *lexer, t_token *out);
@@ -18,50 +19,25 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	if (c == '<')
 	{
 		if (lexer_peek(lexer) == '<')
-		{
-			*out = (t_token){.type = DL_ANGLE_BRACKET};
-			lexer->current++;
-			return (NO_ERROR);
-		}
+			return lexer->current++, fill_token((t_token){.type = DL_ANGLE_BRACKET}, out);
 		else
-		{
-			*out = (t_token){.type = L_ANGLE_BRACKET};
-			return (NO_ERROR);
-		}
+			return fill_token((t_token){.type = L_ANGLE_BRACKET}, out);
 	}
 	if (c == '>')
 	{
 		if (lexer_peek(lexer) == '>')
-		{
-			*out = (t_token){.type = DR_ANGLE_BRACKET};
-			lexer->current++;
-			return (NO_ERROR);
-		}
+			return lexer->current++, fill_token((t_token){.type = DR_ANGLE_BRACKET}, out);
 		else
-		{
-			*out = (t_token){.type = R_ANGLE_BRACKET};
-			return (NO_ERROR);
-		}
+			return fill_token((t_token){.type = R_ANGLE_BRACKET}, out);
 	}
 	if (c == '&' && lexer_peek(lexer) == '&')
-	{
-		*out = (t_token){.type = AND_AND};
-		lexer->current++;
-		return (NO_ERROR);
-	}
+		return lexer->current++, fill_token((t_token){.type = AND_AND}, out);
 	if (c == '|')
 	{
 		if (lexer_peek(lexer) == '|')
-		{
-			*out = (t_token){.type = OR_OR};
-			lexer->current++;
-			return (NO_ERROR);
-		}
+			return lexer->current++, fill_token((t_token){.type = OR_OR}, out);
 		else
-		{
-			*out = (t_token){.type = PIPE_TOKEN};
-			return (NO_ERROR);
-		}
+			return fill_token((t_token){.type = PIPE_TOKEN}, out);
 	}
 	if (c == '"')
 		return lexer_scan_double_quote_string(lexer, out);
