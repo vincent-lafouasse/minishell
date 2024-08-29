@@ -1,6 +1,7 @@
 #include "t_lexer.h"
 #include "tokenize.h"
 #include "log/log.h"
+#include <stdio.h>
 
 t_token_list	*tokenize(const char *input)
 {
@@ -21,6 +22,7 @@ t_token_list	*tokenize(const char *input)
 		if (err != NO_ERROR)
 		{
 			log_token_list(lexer.tokens);
+			printf("Error:\t%s\n", error_repr(err));
 			// cleanup tokens
 			return NULL;
 		}
