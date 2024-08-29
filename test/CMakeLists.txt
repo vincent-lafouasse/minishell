@@ -24,10 +24,13 @@ set(tested_files
 )
 list(TRANSFORM tested_files PREPEND ${tested_src_dir}/)
 
+include(./src/lexer_test/CMakeLists.txt)
 include(./src/parser_test/CMakeLists.txt)
 
 include(CTest)
 enable_testing()
 
+add_test(NAME LexerTest
+         COMMAND lexer_test)
 add_test(NAME ParserTest
          COMMAND parser_test)
