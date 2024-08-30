@@ -7,18 +7,11 @@
 #define SHELL_BREAK_CHARS "()<>;&| \t\n"
 #define METACHARACTERS "()<>|&"
 
-typedef enum e_quote_type
-{
-    SINGLE,
-    DOUBLE,
-} t_quote_type;
-
 static t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
                                               char current);
 static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
                                                 char current);
-static t_error lexer_scan_string(t_lexer *lexer, t_token *out,
-                                 t_quote_type type);
+static t_error lexer_scan_string(t_lexer *lexer, t_token *out, char stop);
 static t_error lexer_scan_word(t_lexer *lexer, t_token *out);
 static t_error fill_token(t_token token, t_token *out);
 
@@ -29,10 +22,8 @@ t_error lexer_scan_next_token(t_lexer *lexer, t_token *out)
     c = lexer_advance(lexer);
     if (ft_strchr(METACHARACTERS, c) != NULL)
         return lexer_scan_metacharacter_token(lexer, out, c);
-    if (c == '"')
-        return (lexer_scan_string(lexer, out, DOUBLE));
-    if (c == '\'')
-        return (lexer_scan_string(lexer, out, SINGLE));
+    if (c == '"' || c == '\'')
+        return (lexer_scan_string(lexer, out, c));
     return (lexer_scan_word(lexer, out));
 }
 
@@ -86,31 +77,21 @@ static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
     return (E_UNREACHABLE);
 }
 
-static t_error lexer_scan_string(t_lexer *lexer, t_token *out,
-                                 t_quote_type type)
+static t_error lexer_scan_string(t_lexer *lexer, t_token *out, char stop)
 {
     char *literal;
-    char stop_char;
     t_token_type token_type;
     size_t sz;
 
-    if (type == SINGLE)
-        stop_char = '\'';
-    else
-        stop_char = '\"';
-    while (lexer_peek(lexer) != stop_char && lexer->current < lexer->src_len)
-    {
+    while (lexer_peek(lexer) != stop && lexer->current < lexer->src_len)
         lexer_advance(lexer);
-    }
     if (lexer->current >= lexer->src_len)
         return (E_UNTERMINATED_QUOTE);
     lexer_advance(lexer);
-    sz = (size_t)(lexer->current - lexer->start) - 2;
+    sz = lexer->current - lexer->start - 2;
     literal = ft_substr(lexer->source, lexer->start + 1, sz);
-    if (type == SINGLE)
-        token_type = SINGLE_QUOTE_STRING;
-    else
-        token_type = DOUBLE_QUOTE_STRING;
+    token_type = SINGLE_QUOTE_STRING * (stop == '\'') +
+                 DOUBLE_QUOTE_STRING * (stop == '"');
     *out = (t_token){.type = token_type, .literal = literal};
     return (NO_ERROR);
 }
