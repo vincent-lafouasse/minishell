@@ -4,7 +4,7 @@
 #include "t_lexer.h"
 #include "tokenize/t_token.h"
 
-#define SHELL_BREAK_CHARS  "()<>;&| \t\n"
+#define SHELL_BREAK_CHARS "()<>;&| \t\n"
 #define METACHARACTERS "()<>|&"
 
 typedef enum e_quote_type
@@ -13,10 +13,13 @@ typedef enum e_quote_type
     DOUBLE,
 } t_quote_type;
 
-static t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out, char current);
+static t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
+                                              char current);
 static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
                                                 char current);
-static t_error lexer_scan_string(t_lexer *lexer, t_token *out, t_quote_type type);
+static t_error lexer_scan_string(t_lexer *lexer, t_token *out,
+                                 t_quote_type type);
+static t_error lexer_scan_word(t_lexer *lexer, t_token *out);
 static t_error fill_token(t_token token, t_token *out);
 
 t_error lexer_scan_next_token(t_lexer *lexer, t_token *out)
@@ -30,17 +33,19 @@ t_error lexer_scan_next_token(t_lexer *lexer, t_token *out)
         return (lexer_scan_string(lexer, out, DOUBLE));
     if (c == '\'')
         return (lexer_scan_string(lexer, out, SINGLE));
-    return (E_UNRECOGNIZED_TOKEN);
+    return (lexer_scan_word(lexer, out));
 }
 
-static t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out, char current)
+static t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
+                                              char current)
 {
     if (current == '(')
         return (fill_token((t_token){.type = L_PAREN}, out));
     if (current == ')')
         return (fill_token((t_token){.type = R_PAREN}, out));
     if (lexer_peek(lexer) == '|')
-        return (lexer_advance(lexer), fill_token((t_token){.type = OR_OR}, out));
+        return (lexer_advance(lexer),
+                fill_token((t_token){.type = OR_OR}, out));
     else
         return (fill_token((t_token){.type = PIPE_TOKEN}, out));
     if (current == '&' && lexer_peek(lexer) == '&')
@@ -81,7 +86,8 @@ static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
     return (E_UNREACHABLE);
 }
 
-static t_error lexer_scan_string(t_lexer *lexer, t_token *out, t_quote_type type)
+static t_error lexer_scan_string(t_lexer *lexer, t_token *out,
+                                 t_quote_type type)
 {
     char *literal;
     char stop_char;
@@ -107,6 +113,20 @@ static t_error lexer_scan_string(t_lexer *lexer, t_token *out, t_quote_type type
         token_type = DOUBLE_QUOTE_STRING;
     *out = (t_token){.type = token_type, .literal = literal};
     return (NO_ERROR);
+}
+
+static t_error lexer_scan_word(t_lexer *lexer, t_token *out)
+{
+    char *literal;
+    size_t sz;
+
+    while (ft_strchr(SHELL_BREAK_CHARS, lexer_peek(lexer)) &&
+           lexer->current < lexer->src_len)
+        lexer_advance(lexer);
+    sz = lexer->current - lexer->start;
+    literal = ft_substr(lexer->source, lexer->start, sz);
+    *out = (t_token){.type = WORD, .literal = literal};
+    return NO_ERROR;
 }
 
 static t_error fill_token(t_token token, t_token *out)
