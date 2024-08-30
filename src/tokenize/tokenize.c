@@ -14,7 +14,7 @@ t_token_list	*tokenize(const char *input)
 	{
 		if (lexer_peek(&lexer) == ' ')
 		{
-			lexer.current++;
+			lexer_advance(&lexer);
 			continue;
 		}
 		lexer.start = lexer.current;
