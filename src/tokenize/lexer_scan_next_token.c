@@ -120,7 +120,7 @@ static t_error lexer_scan_word(t_lexer *lexer, t_token *out)
     char *literal;
     size_t sz;
 
-    while (ft_strchr(SHELL_BREAK_CHARS, lexer_peek(lexer)) &&
+    while (ft_strchr(SHELL_BREAK_CHARS, lexer_peek(lexer)) == NULL &&
            lexer->current < lexer->src_len)
         lexer_advance(lexer);
     sz = lexer->current - lexer->start;
