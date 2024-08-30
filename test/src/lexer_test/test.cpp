@@ -29,6 +29,8 @@ TEST(TokenList, PushBack)
     {
         ASSERT_EQ(it->type, current->token.type);
         ASSERT_STREQ(it->literal, current->token.literal);
+        it++;
+        current = current->next;
     }
     ASSERT_EQ(it, expected.cend());
     ASSERT_EQ(current, nullptr);
