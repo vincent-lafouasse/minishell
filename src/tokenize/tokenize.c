@@ -9,6 +9,11 @@
 static void skip_whitespace(t_lexer *lexer);
 static void cleanup_log(t_lexer *lexer, t_error err);
 
+/*
+* TAKE OOM SERIOUSLY IN PRODUCTION MODE
+* ie do not ignore failability of tkl_push_back
+*/
+
 t_token_list *tokenize(const char *input)
 {
     t_lexer lexer;
@@ -24,12 +29,8 @@ t_token_list *tokenize(const char *input)
         if (err != NO_ERROR)
             return cleanup_log(&lexer, err), NULL;
         err = tkl_push_back(&lexer.tokens, token);
-        if (err != NO_ERROR)
-            return cleanup_log(&lexer, err), NULL;
     }
     tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
-    if (err != NO_ERROR)
-        return cleanup_log(&lexer, err), NULL;
     log_token_list(lexer.tokens);
     return (lexer.tokens);
 }
