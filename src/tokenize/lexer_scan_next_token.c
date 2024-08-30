@@ -92,8 +92,7 @@ static t_error lexer_scan_string(t_lexer *lexer, t_token *out, char stop)
     literal = ft_substr(lexer->source, lexer->start + 1, sz);
     token_type = SINGLE_QUOTE_STRING * (stop == '\'') +
                  DOUBLE_QUOTE_STRING * (stop == '"');
-    *out = (t_token){.type = token_type, .literal = literal};
-    return (NO_ERROR);
+    return fill_token((t_token){.type = token_type, .literal = literal}, out);
 }
 
 static t_error lexer_scan_word(t_lexer *lexer, t_token *out)
@@ -106,8 +105,7 @@ static t_error lexer_scan_word(t_lexer *lexer, t_token *out)
         lexer_advance(lexer);
     sz = lexer->current - lexer->start;
     literal = ft_substr(lexer->source, lexer->start, sz);
-    *out = (t_token){.type = WORD, .literal = literal};
-    return NO_ERROR;
+    return fill_token((t_token){.type = WORD, .literal = literal}, out);
 }
 
 static t_error fill_token(t_token token, t_token *out)
