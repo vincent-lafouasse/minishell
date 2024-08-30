@@ -22,7 +22,7 @@ t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out)
 	if (c == '<' || c == '>')
 		return (lexer_scan_redirection_operators(lexer, out, c));
 	if (c == '&' && lexer_peek(lexer) == '&')
-		return (lexer->current++, fill_token((t_token){.type = AND_AND}, out));
+		return (lexer_advance(lexer), fill_token((t_token){.type = AND_AND}, out));
 	if (c == '|')
 		return (lexer_scan_pipe_oror(lexer, out));
 	if (c == '"')
@@ -39,7 +39,7 @@ static t_error	lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
 	{
 		if (lexer_peek(lexer) == '<')
 		{
-			lexer->current++;
+			lexer_advance(lexer);
 			return (fill_token((t_token){.type = DL_ANGLE_BRACKET}, out));
 		}
 		else
@@ -51,7 +51,7 @@ static t_error	lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
 	{
 		if (lexer_peek(lexer) == '>')
 		{
-			lexer->current++;
+			lexer_advance(lexer);
 			return (fill_token((t_token){.type = DR_ANGLE_BRACKET}, out));
 		}
 		else
@@ -66,14 +66,13 @@ static t_error	lexer_scan_pipe_oror(t_lexer *lexer, t_token *out)
 {
 	if (lexer_peek(lexer) == '|')
 	{
-		lexer->current++;
+		lexer_advance(lexer);
 		return (fill_token((t_token){.type = OR_OR}, out));
 	}
 	else
 	{
 		return (fill_token((t_token){.type = PIPE_TOKEN}, out));
 	}
-	return (E_UNREACHABLE);
 }
 
 static t_error	lexer_scan_single_quote_string(t_lexer *lexer, t_token *out)
