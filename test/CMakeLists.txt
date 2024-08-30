@@ -24,6 +24,20 @@ set(tested_files
 )
 list(TRANSFORM tested_files PREPEND ${tested_src_dir}/)
 
+set(tokenize_module
+  src/tokenize/tokenize.c
+  src/tokenize/token_repr.c
+  src/tokenize/t_lexer_init.c
+  src/tokenize/lexer_scan_next_token.c
+  src/tokenize/t_token_list/tkl_push_back.c
+  src/tokenize/t_token_list/tkl_new.c
+  src/tokenize/lexer_advance_peek.c
+  src/tokenize/t_token_list/t_token_list.h
+  src/tokenize/t_token.h
+  src/tokenize/t_lexer.h
+  src/tokenize/tokenize.h
+)
+
 include(./src/lexer_test/CMakeLists.txt)
 include(./src/parser_test/CMakeLists.txt)
 
