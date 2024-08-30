@@ -13,12 +13,27 @@ set(tokenize_module
   tokenize/t_lexer.h
   tokenize/tokenize.h
 )
-list(TRANSFORM tokenize_module PREPEND ${tested_src_dir}/)
+set(error_module
+	error/t_error.h
+	error/error_repr.c
+)
+set(log_module
+	log/log.c
+	log/log.h
+)
+
+set(tested_source
+	${tokenize_module}
+	${error_module}
+	${log_module}
+)
+list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
+
 
 target_sources(parser_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
 
-	${tokenize_module}
+	${tested_source}
 )
 
 target_include_directories(parser_test PUBLIC
