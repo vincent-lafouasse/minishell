@@ -1,11 +1,15 @@
 #include "error/t_error.h"
 #include "libft/ft_string.h"
+#include "libft/string.h"
 #include "t_lexer.h"
 #include "tokenize/t_token.h"
 
+#define SHELL_BREAK_CHARS  "()<>;&| \t\n"
+#define METACHARACTERS "()<>|&"
+
+static t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out, char current);
 static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
                                                 char current);
-static t_error lexer_scan_pipe_oror(t_lexer *lexer, t_token *out);
 static t_error lexer_scan_single_quote_string(t_lexer *lexer, t_token *out);
 static t_error lexer_scan_double_quote_string(t_lexer *lexer, t_token *out);
 static t_error fill_token(t_token token, t_token *out);
@@ -15,22 +19,31 @@ t_error lexer_scan_next_token(t_lexer *lexer, t_token *out)
     char c;
 
     c = lexer_advance(lexer);
-    if (c == '(')
-        return (fill_token((t_token){.type = L_PAREN}, out));
-    if (c == ')')
-        return (fill_token((t_token){.type = R_PAREN}, out));
-    if (c == '<' || c == '>')
-        return (lexer_scan_redirection_operators(lexer, out, c));
-    if (c == '&' && lexer_peek(lexer) == '&')
-        return (lexer_advance(lexer),
-                fill_token((t_token){.type = AND_AND}, out));
-    if (c == '|')
-        return (lexer_scan_pipe_oror(lexer, out));
+    if (ft_strchr(METACHARACTERS, c) != NULL)
+        return lexer_scan_metacharacter_token(lexer, out, c);
     if (c == '"')
         return (lexer_scan_double_quote_string(lexer, out));
     if (c == '\'')
         return (lexer_scan_single_quote_string(lexer, out));
     return (E_UNRECOGNIZED_TOKEN);
+}
+
+static t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out, char current)
+{
+    if (current == '(')
+        return (fill_token((t_token){.type = L_PAREN}, out));
+    if (current == ')')
+        return (fill_token((t_token){.type = R_PAREN}, out));
+    if (lexer_peek(lexer) == '|')
+        return (lexer_advance(lexer), fill_token((t_token){.type = OR_OR}, out));
+    else
+        return (fill_token((t_token){.type = PIPE_TOKEN}, out));
+    if (current == '&' && lexer_peek(lexer) == '&')
+        return (lexer_advance(lexer),
+                fill_token((t_token){.type = AND_AND}, out));
+    if (current == '<' || current == '>')
+        return (lexer_scan_redirection_operators(lexer, out, current));
+    return E_UNREACHABLE;
 }
 
 static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
@@ -61,19 +74,6 @@ static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
         }
     }
     return (E_UNREACHABLE);
-}
-
-static t_error lexer_scan_pipe_oror(t_lexer *lexer, t_token *out)
-{
-    if (lexer_peek(lexer) == '|')
-    {
-        lexer_advance(lexer);
-        return (fill_token((t_token){.type = OR_OR}, out));
-    }
-    else
-    {
-        return (fill_token((t_token){.type = PIPE_TOKEN}, out));
-    }
 }
 
 static t_error lexer_scan_single_quote_string(t_lexer *lexer, t_token *out)
