@@ -1,15 +1,13 @@
-%token PIPE
-%token LOGICAL
-%token SIMPLE
+%token osef
 
 %start command
 %%
-command		: PIPE
-		 	| LOGICAL
-			| SIMPLE
-			;
+complete_cmd	: pipe_cmd
+		 		| logical_cmd
+				| simple_cmd
+				;
 
-PIPE		: command "|" command
-LOGICAL		: command "&&" command
-		 	| command "||" command
-			;
+pipe_comd		: command "|" command
+logical_cmd		: command "&&" command
+		 		| command "||" command
+				;
