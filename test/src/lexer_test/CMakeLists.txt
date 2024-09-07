@@ -39,6 +39,7 @@ list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 target_sources(lexer_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
 	${CMAKE_CURRENT_LIST_DIR}/token_list.cpp
+	${CMAKE_CURRENT_LIST_DIR}/lexer.cpp
 
 	${tested_source}
 )
