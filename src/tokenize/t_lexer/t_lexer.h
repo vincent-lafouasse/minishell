@@ -4,12 +4,6 @@
 #include "error/t_error.h"
 #include <stddef.h>
 
-typedef enum e_lexer_state
-{
-    AWAITING_IDENTIFIER,
-    AWAITING_WORD,
-} t_lexer_state;
-
 typedef struct s_lexer
 {
     const char *source;
@@ -17,7 +11,6 @@ typedef struct s_lexer
     size_t src_len;
     size_t current;
     size_t start;
-    t_lexer_state state;
 } t_lexer;
 
 t_lexer lexer_init(const char *source);
