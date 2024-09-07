@@ -4,12 +4,10 @@
 
 extern "C"
 {
-#include "tokenize/t_lexer/lexer_internals.h"
-#include "tokenize/t_lexer/t_lexer.h"
 #include "tokenize/tokenize.h"
 };
 
-TEST(Lexer, TokenizeSimple)
+TEST(Tokenize, Simple)
 {
     t_error err;
 
