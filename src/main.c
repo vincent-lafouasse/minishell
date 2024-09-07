@@ -21,5 +21,6 @@ int	main(void)
 		command = parse_command(tokens);
 		(void)command;
 		free(input);
+		tkl_clear(&tokens);
 	}
 }
