@@ -1,7 +1,7 @@
 #include "tokenize.h"
 #include "libft/string.h"
 #include "log/log.h"
-#include "t_lexer.h"
+#include "t_lexer/t_lexer.h"
 #include <stdio.h>
 
 #define WHITESPACE " "
