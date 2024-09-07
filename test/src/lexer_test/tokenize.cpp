@@ -4,6 +4,7 @@
 
 extern "C"
 {
+#include "tokenize/t_token.h"
 #include "tokenize/tokenize.h"
 };
 
@@ -14,7 +15,9 @@ static void assert_tkl_equality(const t_token_list *tokens,
 
     while (expected_it != expected.cend() && tokens)
     {
-        ASSERT_EQ(expected_it->type, tokens->token.type);
+        ASSERT_EQ(expected_it->type, tokens->token.type)
+            << "Mismatched token types, expected " << token_repr(*expected_it)
+            << " was " << token_repr(tokens->token);
         ASSERT_STREQ(expected_it->literal, tokens->token.literal);
         expected_it++;
         tokens = tokens->next;
