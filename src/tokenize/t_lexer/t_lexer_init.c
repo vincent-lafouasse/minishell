@@ -1,5 +1,5 @@
-#include "t_lexer.h"
 #include "libft/string.h"
+#include "t_lexer.h"
 
 t_lexer lexer_init(const char *source)
 {
