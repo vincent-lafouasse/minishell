@@ -3,6 +3,7 @@
 #include "libft/string.h"
 #include "t_lexer.h"
 #include "tokenize/t_token.h"
+#include "lexer_internals.h"
 
 #define SHELL_BREAK_CHARS "()<>;&| \t\n"
 #define METACHARACTERS "()<>|&"
@@ -13,7 +14,6 @@ static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
                                                 char current);
 static t_error lexer_scan_string(t_lexer *lexer, t_token *out, char stop);
 static t_error lexer_scan_word(t_lexer *lexer, t_token *out);
-static t_error fill_token(t_token token, t_token *out);
 
 t_error lexer_scan_next_token(t_lexer *lexer, t_token *out)
 {
@@ -106,12 +106,4 @@ static t_error lexer_scan_word(t_lexer *lexer, t_token *out)
     sz = lexer->current - lexer->start;
     literal = ft_substr(lexer->source, lexer->start, sz);
     return fill_token((t_token){.type = WORD, .literal = literal}, out);
-}
-
-static t_error fill_token(t_token token, t_token *out)
-{
-    if (!out)
-        return (E_NULL_PARAM);
-    *out = token;
-    return (NO_ERROR);
 }
