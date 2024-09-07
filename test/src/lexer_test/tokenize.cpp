@@ -9,21 +9,24 @@ extern "C"
 };
 
 static void assert_tkl_equality(const t_token_list *tokens,
-                                const std::vector<t_token> &expected)
+                                const std::vector<t_token> &expected_tokens)
 {
-    auto expected_it = expected.cbegin();
+    auto expected_it = expected_tokens.cbegin();
 
-    while (expected_it != expected.cend() && tokens)
+    while (expected_it != expected_tokens.cend() && tokens)
     {
-        ASSERT_EQ(expected_it->type, tokens->token.type)
-            << "Mismatched token types, expected " << token_repr(*expected_it)
-            << " was " << token_repr(tokens->token);
-        ASSERT_STREQ(expected_it->literal, tokens->token.literal);
+        const t_token expected = *expected_it;
+        const t_token actual = tokens->token;
+
+        ASSERT_EQ(expected.type, actual.type)
+            << "Mismatched token types, expected " << token_repr(expected)
+            << " was " << token_repr(actual);
+        ASSERT_STREQ(expected.literal, actual.literal);
         expected_it++;
         tokens = tokens->next;
     }
     ASSERT_EQ(tokens, nullptr);
-    ASSERT_EQ(expected_it, expected.cend());
+    ASSERT_EQ(expected_it, expected_tokens.cend());
 }
 
 static t_token Token(t_token_type type, const char *literal)
