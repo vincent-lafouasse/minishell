@@ -23,14 +23,19 @@ static void assert_tkl_equality(const t_token_list *tokens,
     ASSERT_EQ(expected_it, expected.cend());
 }
 
+static t_token Token(t_token_type type, const char *literal)
+{
+    return (t_token){.type = type, .literal = (char *)literal};
+}
+
 TEST(Tokenize, Simple)
 {
     const char *source = "hello > world";
     std::vector<t_token> expected = {
-        (t_token){.type = WORD, .literal = (char *)"hello"},
-        (t_token){.type = R_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"world"},
-        (t_token){.type = EOF_TOKEN, .literal = nullptr},
+        Token(WORD, "hello"),
+        Token(R_ANGLE_BRACKET, NULL),
+        Token(WORD, "world"),
+        Token(EOF_TOKEN, NULL),
     };
 
     t_token_list *tokens = tokenize(source);
@@ -41,14 +46,10 @@ TEST(Tokenize, Pipex)
 {
     const char *source = "< infile cmd1 | cmd2 > outfile";
     std::vector<t_token> expected = {
-        (t_token){.type = L_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"infile"},
-        (t_token){.type = WORD, .literal = (char *)"cmd1"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"cmd2"},
-        (t_token){.type = R_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"outfile"},
-        (t_token){.type = EOF_TOKEN, .literal = nullptr},
+        Token(L_ANGLE_BRACKET, NULL), Token(WORD, "infile"),
+        Token(WORD, "cmd1"),          Token(PIPE_TOKEN, NULL),
+        Token(WORD, "cmd2"),          Token(R_ANGLE_BRACKET, NULL),
+        Token(WORD, "outfile"),       Token(EOF_TOKEN, NULL),
     };
 
     t_token_list *tokens = tokenize(source);
@@ -60,20 +61,13 @@ TEST(Tokenize, BigPipex)
     const char *source =
         "cppcheck < file.cpp | cat | sort | wc | a_cmd >> outfile";
     std::vector<t_token> expected = {
-        (t_token){.type = WORD, .literal = (char *)"cppcheck"},
-        (t_token){.type = L_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"file.cpp"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"cat"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"sort"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"wc"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"a_cmd"},
-        (t_token){.type = DR_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"outfile"},
-        (t_token){.type = EOF_TOKEN, .literal = nullptr},
+        Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, NULL),
+        Token(WORD, "file.cpp"), Token(PIPE_TOKEN, NULL),
+        Token(WORD, "cat"),      Token(PIPE_TOKEN, NULL),
+        Token(WORD, "sort"),     Token(PIPE_TOKEN, NULL),
+        Token(WORD, "wc"),       Token(PIPE_TOKEN, NULL),
+        Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, NULL),
+        Token(WORD, "outfile"),  Token(EOF_TOKEN, NULL),
     };
 
     t_token_list *tokens = tokenize(source);
@@ -84,20 +78,13 @@ TEST(Tokenize, BigPipexNoWhitespace)
 {
     const char *source = "cppcheck<file.cpp|cat|sort|wc|a_cmd>>outfile";
     std::vector<t_token> expected = {
-        (t_token){.type = WORD, .literal = (char *)"cppcheck"},
-        (t_token){.type = L_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"file.cpp"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"cat"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"sort"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"wc"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"a_cmd"},
-        (t_token){.type = DR_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"outfile"},
-        (t_token){.type = EOF_TOKEN, .literal = nullptr},
+        Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, NULL),
+        Token(WORD, "file.cpp"), Token(PIPE_TOKEN, NULL),
+        Token(WORD, "cat"),      Token(PIPE_TOKEN, NULL),
+        Token(WORD, "sort"),     Token(PIPE_TOKEN, NULL),
+        Token(WORD, "wc"),       Token(PIPE_TOKEN, NULL),
+        Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, NULL),
+        Token(WORD, "outfile"),  Token(EOF_TOKEN, NULL),
     };
 
     t_token_list *tokens = tokenize(source);
@@ -109,20 +96,13 @@ TEST(Tokenize, BigPipexLotsOfWhitespace)
     const char *source = "   cppcheck   <   file.cpp   |   cat | sort | wc | "
                          "a_cmd >> outfile   ";
     std::vector<t_token> expected = {
-        (t_token){.type = WORD, .literal = (char *)"cppcheck"},
-        (t_token){.type = L_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"file.cpp"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"cat"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"sort"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"wc"},
-        (t_token){.type = PIPE_TOKEN, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"a_cmd"},
-        (t_token){.type = DR_ANGLE_BRACKET, .literal = NULL},
-        (t_token){.type = WORD, .literal = (char *)"outfile"},
-        (t_token){.type = EOF_TOKEN, .literal = nullptr},
+        Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, NULL),
+        Token(WORD, "file.cpp"), Token(PIPE_TOKEN, NULL),
+        Token(WORD, "cat"),      Token(PIPE_TOKEN, NULL),
+        Token(WORD, "sort"),     Token(PIPE_TOKEN, NULL),
+        Token(WORD, "wc"),       Token(PIPE_TOKEN, NULL),
+        Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, NULL),
+        Token(WORD, "outfile"),  Token(EOF_TOKEN, NULL),
     };
 
     t_token_list *tokens = tokenize(source);
