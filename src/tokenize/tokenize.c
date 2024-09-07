@@ -21,14 +21,15 @@ t_token_list *tokenize(const char *input)
     t_error err;
 
     lexer = lexer_init(input);
+    skip_whitespace(&lexer);
     while (lexer.current < lexer.src_len)
     {
-        skip_whitespace(&lexer);
         lexer.start = lexer.current;
         err = lexer_scan_next_token(&lexer, &token);
         if (err != NO_ERROR)
             return cleanup_log(&lexer, err), NULL;
         err = tkl_push_back(&lexer.tokens, token);
+        skip_whitespace(&lexer);
     }
     tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
     log_token_list(lexer.tokens);
