@@ -9,8 +9,6 @@ extern "C"
 
 TEST(Tokenize, Simple)
 {
-    t_error err;
-
     const char *source = "hello > world";
     std::vector<t_token> expected = {
         (t_token){.type = WORD, .literal = (char *)"hello"},
@@ -37,8 +35,6 @@ TEST(Tokenize, Simple)
 
 TEST(Tokenize, Pipex)
 {
-    t_error err;
-
     const char *source = "< infile cmd1 | cmd2 > outfile";
     std::vector<t_token> expected = {
         (t_token){.type = L_ANGLE_BRACKET, .literal = NULL},
@@ -69,8 +65,6 @@ TEST(Tokenize, Pipex)
 
 TEST(Tokenize, BigPipex)
 {
-    t_error err;
-
     const char *source =
         "cppcheck < file.cpp | cat | sort | wc | a_cmd >> outfile";
     std::vector<t_token> expected = {
@@ -108,8 +102,6 @@ TEST(Tokenize, BigPipex)
 
 TEST(Tokenize, BigPipexNoWhitespace)
 {
-    t_error err;
-
     const char *source = "cppcheck<file.cpp|cat|sort|wc|a_cmd>>outfile";
     std::vector<t_token> expected = {
         (t_token){.type = WORD, .literal = (char *)"cppcheck"},
@@ -146,8 +138,6 @@ TEST(Tokenize, BigPipexNoWhitespace)
 
 TEST(Tokenize, BigPipexLotsOfWhitespace)
 {
-    t_error err;
-
     const char *source = "   cppcheck   <   file.cpp   |   cat | sort | wc | "
                          "a_cmd >> outfile   ";
     std::vector<t_token> expected = {
