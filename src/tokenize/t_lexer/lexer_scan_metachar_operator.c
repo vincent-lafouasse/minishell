@@ -10,17 +10,17 @@ t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
         return (fill_token((t_token){.type = L_PAREN}, out));
     if (current == ')')
         return (fill_token((t_token){.type = R_PAREN}, out));
-    if (lexer_peek(lexer) == '|')
+    if (current == '|' && lexer_peek(lexer) == '|')
         return (lexer_advance(lexer),
                 fill_token((t_token){.type = OR_OR}, out));
-    else
+    if (current == '|')
         return (fill_token((t_token){.type = PIPE_TOKEN}, out));
     if (current == '&' && lexer_peek(lexer) == '&')
         return (lexer_advance(lexer),
                 fill_token((t_token){.type = AND_AND}, out));
     if (current == '<' || current == '>')
         return (lexer_scan_redirection_operators(lexer, out, current));
-    return E_UNREACHABLE;
+    return E_UNRECOGNIZED_TOKEN;
 }
 
 t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
