@@ -15,3 +15,6 @@ typedef struct s_lexer
 
 t_lexer lexer_init(const char *source);
 t_error lexer_scan_next_token(t_lexer *lexer, t_token *out);
+
+char lexer_advance(t_lexer *lexer);
+char lexer_peek(t_lexer *lexer);
