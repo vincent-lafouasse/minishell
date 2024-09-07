@@ -1,7 +1,7 @@
 #pragma once
 
-#include "error/t_error.h"
 #include "../t_token_list/t_token_list.h"
+#include "error/t_error.h"
 #include <stddef.h>
 
 typedef enum e_lexer_state
