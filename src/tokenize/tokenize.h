@@ -5,6 +5,6 @@
 
 //!  Split a string into tokens, mostly words, strings and operators
 /*!
-  Each token owns a copy of its lexeme (if applicable)
+  word and string tokens own a copy of their lexeme
 */
 t_token_list *tokenize(const char *input);
