@@ -2,8 +2,9 @@
 
 #include "t_lexer.h"
 
-#define SHELL_BREAK_CHARS "()<>;&| \t\n"
 #define METACHARACTERS "()<>|&"
+#define WHITESPACE " \t\n"
+#define SHELL_BREAK_CHARS METACHARACTERS WHITESPACE
 
 t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
                                        char current);
