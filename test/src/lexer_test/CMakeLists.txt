@@ -4,6 +4,7 @@ set(tokenize_module
 	tokenize/tokenize.h
 	tokenize/token_repr.c
 	tokenize/t_lexer/lexer_scan_metachar_operator.c
+	tokenize/t_lexer/lexer_skip_whitespace.c
 	tokenize/t_lexer/lexer_internals.h
 	tokenize/t_lexer/fill_token.c
 	tokenize/t_lexer/t_lexer_init.c
