@@ -3,6 +3,7 @@ build/
 .cache
 Testing
 target
+.vscode
 
 minishell
 local*
