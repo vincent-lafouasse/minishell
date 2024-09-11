@@ -1,13 +1,23 @@
-%token osef
+%token WORD
+%token PIPE
+%token OR
+%token AND
 
 %start command
 %%
-complete_cmd	: pipe_cmd
+command			: compound_cmd
+				;
+
+compound_cmd	: pipe_cmd
 		 		| logical_cmd
 				| simple_cmd
 				;
 
-pipe_comd		: command "|" command
-logical_cmd		: command "&&" command
-		 		| command "||" command
+pipe_cmd		: compound_cmd PIPE compound_cmd
+logical_cmd		: compound_cmd AND compound_cmd
+		 		| compound_cmd OR compound_cmd
+				;
+
+word_list		: word_list WORD
+				| WORD
 				;
