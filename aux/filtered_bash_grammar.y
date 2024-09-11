@@ -33,11 +33,8 @@ and_or           :                         pipeline
                  | and_or AND_IF linebreak pipeline
                  | and_or OR_IF  linebreak pipeline
                  ;
-pipeline         :      pipe_sequence
-                 | Bang pipe_sequence
-                 ;
-pipe_sequence    :                             command
-                 | pipe_sequence '|' linebreak command
+pipeline    :                             command
+                 | pipeline '|' linebreak command
                  ;
 command          : simple_command
                  | compound_command
