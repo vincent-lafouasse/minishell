@@ -1,12 +1,34 @@
 #include "gtest/gtest.h"
 
 #include <vector>
+#include <string>
 
 extern "C"
 {
 #include "tokenize/t_token.h"
 #include "tokenize/tokenize.h"
 };
+
+struct TokenList
+{
+    TokenList();
+    TokenList(const std::string& src);
+    TokenList(const std::vector<t_token>& src);
+    ~TokenList();
+
+    t_token_list* head;
+};
+
+TokenList::TokenList() : head(nullptr) {}
+
+TokenList::TokenList(const std::string& src) : head(tokenize(src.c_str())) {}
+
+TokenList::TokenList(const std::vector<t_token>& src) : head(nullptr) {
+    for (const t_token& token: src)
+    {
+        tkl_push_back(&head, token);
+    }
+}
 
 static void assert_tkl_equality(const t_token_list *tokens,
                                 const std::vector<t_token> &expected_tokens)
