@@ -6,21 +6,21 @@
 /* terminal symbols */
 %start command
 %%
-command			: compound_cmd
-				;
+command         : compound_cmd
+                ;
 
 
-compound_cmd	: pipe_cmd
-				| logical_cmd
-				| simple_cmd
-				;
+compound_cmd    : pipe_cmd
+                | logical_cmd
+                | simple_cmd
+                ;
 
-pipe_cmd		: compound_cmd PIPE compound_cmd
+pipe_cmd        : compound_cmd PIPE compound_cmd
 
-logical_cmd		: compound_cmd AND compound_cmd
-				| compound_cmd OR compound_cmd
-				;
+logical_cmd     : compound_cmd AND compound_cmd
+                | compound_cmd OR compound_cmd
+                ;
 
-word_list		: word_list WORD
-				| WORD
-				;
+word_list       : word_list WORD
+                | WORD
+                ;
