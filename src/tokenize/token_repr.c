@@ -39,6 +39,8 @@ const char *token_repr(t_token token)
         return R_PAREN_REPR;
     if (token.type == AND_AND)
         return AND_AND_REPR;
+    if (token.type == OR_OR)
+        return OR_OR_REPR;
     if (token.type == DOUBLE_QUOTE_STRING)
         return DOUBLE_QUOTE_STRING_REPR;
     if (token.type == SINGLE_QUOTE_STRING)
