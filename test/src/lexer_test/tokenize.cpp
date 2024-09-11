@@ -34,7 +34,7 @@ static t_token Token(t_token_type type, const char *literal)
     return (t_token){.type = type, .literal = const_cast<char *>(literal)};
 }
 
-TEST(Tokenize, Simple)
+TEST(Tokenize, SimpleCommandWithOutputRedirection)
 {
     const char *source = "hello > world";
     std::vector<t_token> expected = {
