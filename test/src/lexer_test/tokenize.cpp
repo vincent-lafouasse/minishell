@@ -30,6 +30,11 @@ TokenList::TokenList(const std::vector<t_token>& src) : head(nullptr) {
     }
 }
 
+TokenList::~TokenList()
+{
+    tkl_clear(&head);
+}
+
 static void assert_tkl_equality(const t_token_list *tokens,
                                 const std::vector<t_token> &expected_tokens)
 {
