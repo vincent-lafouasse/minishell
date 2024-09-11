@@ -1,12 +1,14 @@
-%token WORD
+%token WORD /* terminal symbols */
 %token PIPE
 %token OR
 %token AND
 
+/* terminal symbols */
 %start command
 %%
 command			: compound_cmd
 				;
+
 
 compound_cmd	: pipe_cmd
 		 		| logical_cmd
