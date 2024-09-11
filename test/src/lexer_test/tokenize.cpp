@@ -16,6 +16,9 @@ struct TokenList
     TokenList(const std::vector<t_token> &src);
     ~TokenList();
 
+    void assert_eq(const t_token_list* other);
+    void assert_eq(const TokenList& other);
+
     t_token_list *head;
 };
 
