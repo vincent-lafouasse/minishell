@@ -17,11 +17,8 @@
    ------------------------------------------------------- */
 %start program
 %%
-program          : linebreak complete_commands linebreak
-                 | linebreak
-                 ;
-complete_commands: complete_commands newline_list complete_command
-                 |                                complete_command
+program          : complete_command
+                 | /* empty */
                  ;
 complete_command : list separator_op
                  | list
@@ -29,29 +26,21 @@ complete_command : list separator_op
 list             : list separator_op and_or
                  |                   and_or
                  ;
-and_or           :                         pipeline
-                 | and_or AND_IF linebreak pipeline
-                 | and_or OR_IF  linebreak pipeline
+and_or           :               pipeline
+                 | and_or AND_IF pipeline
+                 | and_or OR_IF  pipeline
                  ;
-pipeline    :                             command
-                 | pipeline '|' linebreak command
+pipeline         :              command
+                 | pipeline '|' command
                  ;
 command          : simple_command
-                 | compound_command
-                 | compound_command redirect_list
-                 ;
-compound_command : brace_group
                  | subshell
-                 | for_clause
-                 | case_clause
-                 | if_clause
-                 | while_clause
-                 | until_clause
+                 | subshell redirect_list
                  ;
 subshell         : '(' compound_list ')'
                  ;
-compound_list    : linebreak term
-                 | linebreak term separator
+compound_list    : term
+                 | term separator
                  ;
 term             : term separator and_or
                  |                and_or
@@ -96,18 +85,10 @@ io_here          : DLESS     here_end
                  ;
 here_end         : WORD                      /* Apply rule 3 */
                  ;
-newline_list     :              NEWLINE
-                 | newline_list NEWLINE
-                 ;
-linebreak        : newline_list
-                 | /* empty */
-                 ;
 separator_op     : '&'
                  | ';'
                  ;
-separator        : separator_op linebreak
-                 | newline_list
+separator        : separator_op
                  ;
-sequential_sep   : ';' linebreak
-                 | newline_list
+sequential_sep   : ';'
                  ;
