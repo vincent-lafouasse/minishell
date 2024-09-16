@@ -28,6 +28,7 @@ t_token_list *tokenize(const char *input)
         lexer_skip_whitespace(&lexer);
     }
     tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
+    log_token_list(lexer.tokens);
     return (lexer.tokens);
 }
 

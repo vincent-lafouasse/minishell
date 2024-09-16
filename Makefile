@@ -2,6 +2,7 @@ NAME = minishell
 
 SRCS = $(shell find src -name '*.c')
 
+CC = cc
 CFLAGS = -Wall -Wextra -g3
 # CFLAGS += -Werror
 CPPFLAGS = -Isrc -MMD -MP
@@ -32,7 +33,7 @@ run: build
 
 # linking stage
 $(NAME): $(OBJS) $(LIBS)
-	cc $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
+	$(CC) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
 
 # compiling stage
 build/%.c.o: %.c
