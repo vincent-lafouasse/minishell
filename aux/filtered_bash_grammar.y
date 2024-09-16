@@ -1,15 +1,33 @@
 %token  WORD
-%token  ASSIGNMENT_WORD
 %token  NAME
 %token  NEWLINE
 
 
-%token  AND_IF    OR_IF
-/*      '&&'      '||'  */
+%token  AND_IF    OR_IF    DSEMI    SEMI_AND
+/*      '&&'      '||'     ';;'     ';&'   */
 
 
-%token  DLESS  DGREAT
-/*      '<<'   '>>' */
+%token  DLESS  DGREAT  
+/*      '<<'   '>>'    */
+
+
+/* The following are the reserved words. */
+
+
+%token  If    Then    Else    Elif    Fi    Do    Done
+/*      'if'  'then'  'else'  'elif'  'fi'  'do'  'done'   */
+
+
+%token  Case    Esac    While    Until    For
+/*      'case'  'esac'  'while'  'until'  'for'   */
+
+
+/* These are reserved words, not operator tokens, and are
+   recognized when reserved words are recognized. */
+
+
+%token  Lbrace    Rbrace
+/*      '{'       '}'     */
 
 
 /* -------------------------------------------------------
@@ -18,17 +36,10 @@
 %start program
 %%
 program          : complete_command
-                 | /* empty */
                  ;
-complete_command : list separator_op
-                 | list
-                 ;
-list             : list separator_op and_or
-                 |                   and_or
-                 ;
-and_or           :               pipeline
-                 | and_or AND_IF pipeline
-                 | and_or OR_IF  pipeline
+complete_command : pipeline
+                 | complete_command AND_IF pipeline
+                 | complete_command OR_IF  pipeline
                  ;
 pipeline         :              command
                  | pipeline '|' command
@@ -37,22 +48,13 @@ command          : simple_command
                  | subshell
                  | subshell redirect_list
                  ;
-subshell         : '(' compound_list ')'
+subshell         : '(' complete_command ')'
                  ;
-compound_list    : term
-                 | term separator
-                 ;
-term             : term separator and_or
-                 |                and_or
                  ;
 name             : NAME                     /* Apply rule 5 */
                  ;
 wordlist         : wordlist WORD
                  |          WORD
-                 ;
-pattern_list     :                  WORD    /* Apply rule 4 */
-                 |              '(' WORD    /* Do not apply rule 4 */
-                 | pattern_list '|' WORD    /* Do not apply rule 4 */
                  ;
 simple_command   : cmd_prefix cmd_word cmd_suffix
                  | cmd_prefix cmd_word
@@ -63,6 +65,9 @@ simple_command   : cmd_prefix cmd_word cmd_suffix
 cmd_name         : WORD                   /* Apply rule 7a */
                  ;
 cmd_word         : WORD                   /* Apply rule 7b */
+                 ;
+cmd_prefix       :            io_redirect
+                 | cmd_prefix io_redirect
                  ;
 cmd_suffix       :            io_redirect
                  | cmd_suffix io_redirect
@@ -84,11 +89,4 @@ filename         : WORD                      /* Apply rule 2 */
 io_here          : DLESS     here_end
                  ;
 here_end         : WORD                      /* Apply rule 3 */
-                 ;
-separator_op     : '&'
-                 | ';'
-                 ;
-separator        : separator_op
-                 ;
-sequential_sep   : ';'
                  ;
