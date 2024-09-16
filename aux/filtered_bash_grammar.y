@@ -1,33 +1,12 @@
 %token  WORD
-%token  NAME
-%token  NEWLINE
 
 
-%token  AND_IF    OR_IF    DSEMI    SEMI_AND
-/*      '&&'      '||'     ';;'     ';&'   */
+%token  AND_IF    OR_IF
+/*      '&&'      '||' */
 
 
 %token  DLESS  DGREAT  
-/*      '<<'   '>>'    */
-
-
-/* The following are the reserved words. */
-
-
-%token  If    Then    Else    Elif    Fi    Do    Done
-/*      'if'  'then'  'else'  'elif'  'fi'  'do'  'done'   */
-
-
-%token  Case    Esac    While    Until    For
-/*      'case'  'esac'  'while'  'until'  'for'   */
-
-
-/* These are reserved words, not operator tokens, and are
-   recognized when reserved words are recognized. */
-
-
-%token  Lbrace    Rbrace
-/*      '{'       '}'     */
+/*      '<<'   '>>'  */
 
 
 /* -------------------------------------------------------
@@ -50,21 +29,14 @@ command          : simple_command
                  ;
 subshell         : '(' complete_command ')'
                  ;
-                 ;
-name             : NAME                     /* Apply rule 5 */
-                 ;
 wordlist         : wordlist WORD
                  |          WORD
                  ;
-simple_command   : cmd_prefix cmd_word cmd_suffix
-                 | cmd_prefix cmd_word
+simple_command   : cmd_prefix WORD cmd_suffix
+                 | cmd_prefix WORD
                  | cmd_prefix
-                 | cmd_name cmd_suffix
-                 | cmd_name
-                 ;
-cmd_name         : WORD                   /* Apply rule 7a */
-                 ;
-cmd_word         : WORD                   /* Apply rule 7b */
+                 | WORD cmd_suffix
+                 | WORD
                  ;
 cmd_prefix       :            io_redirect
                  | cmd_prefix io_redirect
