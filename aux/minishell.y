@@ -3,7 +3,7 @@
 %token OR
 %token AND
 
-/* terminal symbols */
+/* non-terminal symbols */
 %start command
 %%
 command         : compound_cmd
