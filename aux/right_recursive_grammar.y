@@ -29,8 +29,10 @@ command          : simple_command
                  ;
 subshell         : '(' complete_command ')'
                  ;
-wordlist         : wordlist WORD  /* left recursion */
-                 |          WORD
+wordlist         : WORD rest_of_wordlist
+                 ;
+rest_of_wordlist : WORD rest_of_wordlist
+                 | /* empty */
                  ;
 simple_command   : cmd_prefix WORD cmd_suffix
                  | cmd_prefix WORD
