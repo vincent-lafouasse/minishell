@@ -17,11 +17,11 @@
 program          : complete_command
                  ;
 complete_command : pipeline
-                 | complete_command AND_IF pipeline
-                 | complete_command OR_IF  pipeline
+                 | complete_command AND_IF pipeline  /* left recursion */
+                 | complete_command OR_IF  pipeline  /* left recursion */
                  ;
 pipeline         :              command
-                 | pipeline '|' command
+                 | pipeline '|' command  /* left recursion */
                  ;
 command          : simple_command
                  | subshell
@@ -29,7 +29,7 @@ command          : simple_command
                  ;
 subshell         : '(' complete_command ')'
                  ;
-wordlist         : wordlist WORD
+wordlist         : wordlist WORD  /* left recursion */
                  |          WORD
                  ;
 simple_command   : cmd_prefix WORD cmd_suffix
@@ -39,15 +39,15 @@ simple_command   : cmd_prefix WORD cmd_suffix
                  | WORD
                  ;
 cmd_prefix       :            io_redirect
-                 | cmd_prefix io_redirect
+                 | cmd_prefix io_redirect  /* left recursion */
                  ;
 cmd_suffix       :            io_redirect
-                 | cmd_suffix io_redirect
+                 | cmd_suffix io_redirect  /* left recursion */
                  |            WORD
-                 | cmd_suffix WORD
+                 | cmd_suffix WORD  /* left recursion */
                  ;
 redirect_list    :               io_redirect
-                 | redirect_list io_redirect
+                 | redirect_list io_redirect  /* left recursion */
                  ;
 io_redirect      :             io_file
                  |             io_here
