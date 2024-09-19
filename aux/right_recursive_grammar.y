@@ -20,8 +20,10 @@ complete_command : pipeline
                  | complete_command AND_IF pipeline  /* left recursion */
                  | complete_command OR_IF  pipeline  /* left recursion */
                  ;
-pipeline         :              command
-                 | pipeline '|' command  /* left recursion */
+pipeline         : command rest_of_pipeline
+                 ;
+rest_of_pipeline : '|' rest_of_pipeline
+                 | /* empty */
                  ;
 command          : simple_command
                  | subshell
