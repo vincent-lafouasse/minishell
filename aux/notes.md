@@ -18,8 +18,8 @@ while (true) do;
         word ← NextWord();
         focus ← pop()
     end;
-    else if (word = eof and focus = null)
-        then accepttheinputandreturnroot;
+    else if (word = eof and focus = null) then
+        accepttheinputandreturnroot;
     else backtrack;
 end;
 ```
