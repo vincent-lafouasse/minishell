@@ -16,12 +16,16 @@
 %%
 program          : complete_command
                  ;
-complete_command : pipeline
-                 | complete_command AND_IF pipeline
-                 | complete_command OR_IF  pipeline
+complete_command : pipeline r_complete_cmd
                  ;
-pipeline         :              command
-                 | pipeline '|' command
+r_complete_cmd   : AND_IF pipeline r_complete_cmd
+                 | OR_IF  pipeline r_complete_cmd
+                 | /* empty */
+                 ;
+pipeline         : command r_pipeline
+                 ;
+r_pipeline       : '|' command r_pipeline
+                 | /* empty */
                  ;
 command          : simple_command
                  | subshell
