@@ -16,9 +16,11 @@
 %%
 program          : complete_command
                  ;
-complete_command : pipeline
-                 | complete_command AND_IF pipeline  /* left recursion */
-                 | complete_command OR_IF  pipeline  /* left recursion */
+complete_command : pipeline rest_cmd
+                 ;
+rest_cmd         : AND_IF rest_cmd
+                 | OR_IF  rest_cmd
+                 | /* empty */
                  ;
 pipeline         : command rest_of_pipeline
                  ;
@@ -37,16 +39,24 @@ simple_command   : cmd_prefix WORD cmd_suffix
                  | WORD cmd_suffix
                  | WORD
                  ;
-cmd_prefix       :            io_redirect
-                 | cmd_prefix io_redirect  /* left recursion */
+cmd_prefix       : io_redirect rest_prefix
                  ;
-cmd_suffix       :            io_redirect
-                 | cmd_suffix io_redirect  /* left recursion */
-                 |            WORD
-                 | cmd_suffix WORD  /* left recursion */
+rest_prefix      : io_redirect  rest_prefix
+                 | /* empty */
                  ;
-redirect_list    :               io_redirect
-                 | redirect_list io_redirect  /* left recursion */
+cmd_suffix       : io_redirect
+                 | WORD
+                 | io_redirect rest_of_suffix
+                 | WORD rest_of_suffix
+                 ;
+rest_of_suffix   : io_redirect rest_of_suffix
+                 | WORD rest_of_suffix
+                 | /* empty */
+                 ;
+redirect_list    : io_redirect rest_of_redir
+                 ;
+rest_of_redir    : io_redirect  rest_of_redir
+                 | /* empty */
                  ;
 io_redirect      :             io_file
                  |             io_here
@@ -55,9 +65,9 @@ io_file          : '<'       filename
                  | '>'       filename
                  | DGREAT    filename
                  ;
-filename         : WORD                      /* Apply rule 2 */
+filename         : WORD
                  ;
 io_here          : DLESS     here_end
                  ;
-here_end         : WORD                      /* Apply rule 3 */
+here_end         : WORD
                  ;
