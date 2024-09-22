@@ -39,16 +39,20 @@ simple_command   : cmd_prefix WORD cmd_suffix
                  | WORD cmd_suffix
                  | WORD
                  ;
-cmd_prefix       :            io_redirect
-                 | cmd_prefix io_redirect
+cmd_prefix       : io_redirect r_cmd_prefix
+                 ;
+r_cmd_prefix     : io_redirect r_cmd_prefix
+                 | /* empty */
                  ;
 cmd_suffix       :            io_redirect
                  | cmd_suffix io_redirect
                  |            WORD
                  | cmd_suffix WORD
                  ;
-redirect_list    :               io_redirect
-                 | redirect_list io_redirect
+redirect_list    : io_redirect r_redir_list
+                 ;
+r_redir_list     : io_redirect r_redir_list
+                 | /* empty */
                  ;
 io_redirect      :             io_file
                  |             io_here
