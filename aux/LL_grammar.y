@@ -9,6 +9,8 @@
 /*      '<<'   '>>'  */
 
 %token PIPE
+%token GREAT
+%token LESS
 %token LPAREN
 %token RPAREN
 
@@ -28,14 +30,14 @@ r_complete_cmd   : AND_IF pipeline r_complete_cmd
                  ;
 pipeline         : command r_pipeline
                  ;
-r_pipeline       : '|' command r_pipeline
+r_pipeline       : PIPE command r_pipeline
                  | /* empty */
                  ;
 command          : simple_command
                  | subshell
                  | subshell redirect_list
                  ;
-subshell         : '(' complete_command ')'
+subshell         : LPAREN complete_command RPAREN
                  ;
 simple_command   : cmd_prefix WORD cmd_suffix
                  | cmd_prefix WORD
@@ -60,11 +62,11 @@ redirect_list    : io_redirect r_redir_list
 r_redir_list     : io_redirect r_redir_list
                  | /* empty */
                  ;
-io_redirect      :             io_file
-                 |             io_here
+io_redirect      : io_file
+                 | io_here
                  ;
-io_file          : '<'       filename
-                 | '>'       filename
+io_file          : GREAT     filename
+                 | LESS      filename
                  | DGREAT    filename
                  ;
 filename         : WORD                      /* Apply rule 2 */
