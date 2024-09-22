@@ -8,6 +8,10 @@
 %token  DLESS  DGREAT  
 /*      '<<'   '>>'  */
 
+%token PIPE
+%token LPAREN
+%token RPAREN
+
 
 /* -------------------------------------------------------
    The Grammar
@@ -44,10 +48,12 @@ cmd_prefix       : io_redirect r_cmd_prefix
 r_cmd_prefix     : io_redirect r_cmd_prefix
                  | /* empty */
                  ;
-cmd_suffix       :            io_redirect
-                 | cmd_suffix io_redirect
-                 |            WORD
-                 | cmd_suffix WORD
+cmd_suffix       : io_redirect r_cmd_suffix
+                 | WORD r_cmd_suffix
+                 ;
+r_cmd_suffix     : io_redirect r_cmd_suffix 
+                 | WORD r_cmd_suffix 
+                 | /* empty */
                  ;
 redirect_list    : io_redirect r_redir_list
                  ;
