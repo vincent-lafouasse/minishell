@@ -4,6 +4,8 @@ pub type Symbol = /* Either<NonTerminal, Terminal> */ String;
 
 #[derive(Debug)]
 pub struct Grammar {
+	non_terminals: HashSet<Symbol>,
+	terminals: HashSet<Symbol>,
 	/// key is always NT in CFG
 	rules: HashMap<Symbol, HashSet<Vec<Symbol>>>,
 	start_symbol: Symbol,
@@ -32,7 +34,7 @@ impl Grammar {
 			.and_then(|v| v.first())
 			.expect("no rules")
 			.trim();
-		for rule in rules {
+		for rule in &rules {
 			match &rule[..] {
 				&[variable, productions] => {
 					let branch_set: &mut HashSet<Vec<Symbol>> = rules_map.entry(variable.trim().to_owned()).or_default();
@@ -54,7 +56,23 @@ impl Grammar {
 			};
 		}
 
+		let all_symbols: HashSet<Symbol> =
+			rules_map
+				.clone()
+				.into_iter()
+				.fold(HashSet::new(), |mut set, (production, rules)| {
+					set.insert(production);
+					set.extend(rules.into_iter().flatten());
+					set
+				});
+
+		let (non_terminals, terminals): (HashSet<Symbol>, HashSet<Symbol>) =
+			all_symbols
+				.into_iter()
+				.partition(|sym| rules_map.contains_key(sym));
+
 		Grammar {
+			terminals, non_terminals,
 			start_symbol: start_symbol.to_string(),
 			rules: rules_map,
 		}
