@@ -8,6 +8,7 @@ type Symbol = /* Either<NonTerminal, Terminal> */ String;
 struct Grammar {
     /// key is always NT in CFG
     rules: HashMap<Symbol, HashSet<Vec<Symbol>>>,
+    start_symbol: Symbol,
 }
 
 impl Grammar {
@@ -22,22 +23,28 @@ impl Grammar {
     }
 
     pub fn from_yacc_text(contents: &str) -> Grammar {
-        let mut this = Self {
-            rules: HashMap::new(),
-        };
+        let mut rules_map = HashMap::new();
 
-        let rules: Vec<&str> = contents.split(";").collect();
+        let rules: Vec<Vec<&str>> = contents
+            .split(';')
+            .map(|rule| rule.split(':').collect())
+            .collect();
+        let start_symbol: &str = rules
+            .first()
+            .and_then(|v| v.first())
+            .expect("no rules")
+            .trim();
         for rule in rules {
-            match &rule.split(":").collect::<Vec<_>>()[..] {
+            match &rule[..] {
                 &[variable, productions] => {
-                    let handle = this.rules.entry(variable.trim().to_owned()).or_default();
-                    for branch in productions.split("|").map(|r| r.trim()) {
-                        let did_not_exist = handle.insert(
-                            branch.split_whitespace().map(|s| s.to_owned()).collect::<Vec<String>>()
+                    let branch_set: &mut HashSet<Vec<Symbol>> = rules_map.entry(variable.trim().to_owned()).or_default();
+                    for branch in productions.split('|').map(|r| r.trim()) {
+                        branch_set.insert(
+                            branch
+                                .split_whitespace()
+                                .map(|s| s.to_owned())
+                                .collect::<Vec<String>>(),
                         );
-                        if !did_not_exist {
-                            eprintln!("warning: encountered duplicate branch");
-                        }
                     }
                 }
                 unknown => {
@@ -49,7 +56,10 @@ impl Grammar {
             };
         }
 
-        this
+        Grammar {
+            start_symbol: start_symbol.to_string(),
+            rules: rules_map,
+        }
     }
 }
 
