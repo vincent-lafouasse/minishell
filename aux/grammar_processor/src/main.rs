@@ -1,7 +1,6 @@
 #![allow(dead_code)]
 #![allow(unused_imports)]
 use std::collections::{HashMap, HashSet};
-use std::fs;
 
 type Symbol = /* Either<NonTerminal, Terminal> */ String;
 
@@ -22,16 +21,11 @@ impl Grammar {
         Self::from_yacc_text(&contents_owned)
     }
 
-    pub fn from_yacc_text(mut contents: &str) -> Grammar {
+    pub fn from_yacc_text(contents: &str) -> Grammar {
         let mut this = Self {
             rules: HashMap::new(),
         };
 
-        contents = contents
-            .split("%%")
-            .skip(1)
-            .next()
-            .expect("nothing after (possibly) '%%'");
         let rules: Vec<&str> = contents.split(";").collect();
         for rule in rules {
             match &rule.split(":").collect::<Vec<_>>()[..] {
@@ -60,6 +54,6 @@ impl Grammar {
 }
 
 fn main() {
-    let yacc_grammar = include_str!("../../filtered_bash_grammar.y");
+    let yacc_grammar = include_str!("../corrected_bash_grammar.y");
     let grammar = Grammar::from_yacc_text(yacc_grammar);
 }
