@@ -1,18 +1,55 @@
 use std::collections::{HashMap, HashSet};
+use std::hash::Hash;
+use std::rc::Rc;
 
 use super::{Grammar, Symbol};
 
 #[derive(Debug)]
 pub struct LLProperties {
+    grammar: Rc<Grammar>,
     first: HashMap<Symbol, HashSet<Symbol>>,
     follow: HashMap<Symbol, HashSet<Symbol>>,
     //first_augmented: HashMap<(Symbol, Symbol), HashMap<>>
 }
 
-fn owned_cloned_union<T: Clone + Eq + std::hash::Hash>(
-    lhs: &HashSet<T>,
-    rhs: &HashSet<T>,
-) -> HashSet<T> {
+fn ll_first_of_symbol_string(
+    string: &[Symbol],
+    first: &HashMap<Symbol, HashSet<Symbol>>,
+) -> HashSet<Symbol> {
+    // HACK: should handle this in parsing
+    assert_ne!(string.len(), 0);
+
+    let mut res = HashSet::new();
+    let mut i = 0;
+    res = first[string.first().unwrap()].clone();
+    while first[&string[i]].contains("") && i < string.len().saturating_sub(1) {
+        res = res
+            .union(&first[&string[i + 1]].clone())
+            .map(String::to_owned)
+            .collect::<HashSet<String>>();
+        i += 1;
+    }
+    res
+}
+
+fn find_mutually_non_disjoint_sets<T: Eq + Hash>(
+    sets: &[HashSet<T>],
+) -> Option<(&HashSet<T>, &HashSet<T>)> {
+    for (i, a) in sets.iter().enumerate() {
+        for (j, b) in sets.iter().enumerate() {
+            if i == j {
+                continue;
+            }
+
+            if let Some(_) = a.intersection(b).next() {
+                return Some((a, b));
+            }
+        }
+    }
+    None
+}
+
+fn owned_cloned_union<T: Clone + Eq + Hash>(lhs: &HashSet<T>, rhs: &HashSet<T>) -> HashSet<T> {
     lhs.union(rhs).map(Clone::clone).collect()
 }
 
@@ -55,10 +92,12 @@ impl LLProperties {
                 .flatten()
             {
                 let mut rhs = HashSet::new();
+                // HACK: should handle this during parsing
                 let mut production = production.clone();
                 if production.is_empty() {
                     production.push("".to_string());
                 }
+                // end HACK
                 for sym in &first[production.first().unwrap()] {
                     rhs.insert(sym.to_owned());
                 }
@@ -66,6 +105,7 @@ impl LLProperties {
                 let mut i = 0;
                 while first[&production[i]].contains("") && i < production.len().saturating_sub(1) {
                     let mut empty_str_excluded = first[&production[i + 1]].clone();
+                    empty_str_excluded.remove("");
                     rhs = rhs
                         .union(&empty_str_excluded)
                         .map(String::to_owned)
@@ -163,10 +203,48 @@ impl LLProperties {
         follow
     }
 
-    pub fn compute(grammar: &Grammar) -> Self {
-        let first = Self::compute_first(grammar);
-        let follow = Self::compute_follow(grammar, &first);
+    pub fn compute(grammar: Rc<Grammar>) -> Self {
+        let first = Self::compute_first(&grammar);
+        let follow = Self::compute_follow(&grammar, &first);
 
-        dbg!(LLProperties { first, follow })
+        dbg!(LLProperties {
+            first,
+            follow,
+            grammar
+        })
+    }
+
+    pub fn is_ll_compatible(&self) -> bool {
+        for (variable, branches) in self
+            .grammar
+            .rules()
+            .iter()
+            .filter(|(variable, branches)| branches.len() > 1)
+        {
+            let mut production_first_augmenteds: Vec<HashSet<Symbol>> = Vec::new();
+            for branch in branches {
+                let mut branch = branch.clone();
+                // HACK: should filter this during parsing
+                if branch.is_empty() {
+                    branch.push("".to_string())
+                }
+                // end HACK
+                let mut local_first_augmented = ll_first_of_symbol_string(&branch, &self.first);
+                if local_first_augmented.contains("") {
+                    let variable_follow = self.follow.get(variable).unwrap();
+                    local_first_augmented =
+                        owned_cloned_union(&local_first_augmented, &variable_follow);
+                }
+                production_first_augmenteds.push(local_first_augmented);
+            }
+
+            if let Some((a, b)) = find_mutually_non_disjoint_sets(&production_first_augmenteds) {
+                eprintln!("conflict on expansion of {variable} between: ");
+                eprintln!("  > a: {a:?}");
+                eprintln!("  > b: {b:?}");
+                return false;
+            };
+        }
+        true
     }
 }
