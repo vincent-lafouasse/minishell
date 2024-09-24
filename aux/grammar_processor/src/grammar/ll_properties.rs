@@ -50,38 +50,33 @@ impl LLProperties {
                 // end;
                 let mut rhs = HashSet::new();
                 //first() -> Option<&String>.as_ref() -> Option<&str>
-                let first_or_emptystr = if let Some(f) = production.first() {
-                    &f
-                } else {
-                    ""
-                };
-                for sym in &first[first_or_emptystr] {
+                let mut production = production.clone();
+                if production.is_empty() {
+                    production.push("".to_string());
+                }
+                for sym in &first[production.first().unwrap()] {
                     rhs.insert(sym.to_owned());
                 }
                 rhs.remove("");
-                for i in 0..production.len().saturating_sub(1) {
-                    println!("here");
-                    if !first[&production[i]].contains("") {
-                        dbg!(&first[&production[i]]);
-                        break;
-                    }
+                let mut i = 0;
+                while first[&production[i]].contains("") && i < production.len().saturating_sub(1) {
                     let mut empty_str_excluded = first[&production[i + 1]].clone();
-                    dbg!(empty_str_excluded.remove(""));
                     rhs = rhs
                         .union(&empty_str_excluded)
                         .map(String::to_owned)
                         .collect::<HashSet<String>>();
-                    if i == production.len().saturating_sub(1) {
-                        rhs.insert("".to_owned());
-                    }
-                    let union = first[&variable]
-                        .union(&rhs)
-                        .map(String::to_owned)
-                        .collect::<HashSet<_>>();
-                    if union != first[&variable] {
-                        first.insert(variable.clone(), union);
-                        changing = true;
-                    }
+                    i += 1;
+                }
+                if first[&production[i]].contains("") && i == production.len().saturating_sub(1) {
+                    rhs.insert("".to_owned());
+                }
+                let union = first[&variable]
+                    .union(&rhs)
+                    .map(String::to_owned)
+                    .collect::<HashSet<_>>();
+                if union != first[&variable] {
+                    first.insert(variable.clone(), union);
+                    changing = true;
                 }
             }
         }
