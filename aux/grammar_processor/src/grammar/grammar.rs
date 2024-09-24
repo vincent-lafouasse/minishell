@@ -113,11 +113,7 @@ impl Grammar {
             .max()
             .expect("grammar is empty");
 
-        fn log_rule(
-            name: &str,
-            branches: &HashSet<Vec<Symbol>>,
-            align: usize,
-        ) {
+        fn log_rule(name: &str, branches: &HashSet<Vec<Symbol>>, align: usize) {
             let empty_padding = " ".repeat(align + 1);
             let padded_name = name.to_string() + &" ".repeat(align - name.len() + 1);
             let branch_separator = "\n".to_string() + &empty_padding + "| ";
@@ -143,12 +139,13 @@ impl Grammar {
     pub fn log_grammar_in_canonical(&self) {
         let start_symbol = &self.start_symbol;
 
-        fn log_rule(
-            name: &str,
-            branches: &HashSet<Vec<Symbol>>,
-        ) {
+        fn log_rule(name: &str, branches: &HashSet<Vec<Symbol>>) {
             for branch in branches {
-                println!("{name} -> {}", branch.join(" "));
+                if !branch.is_empty() {
+                    println!("{name} -> {}", branch.join(" "));
+                } else {
+                    println!("{name} -> ''");
+                }
             }
         }
 
@@ -164,8 +161,8 @@ impl Grammar {
 
     pub fn log_grammar(&self, repr: GrammarRepresentation) {
         match repr {
-           GrammarRepresentation::Yacc => self.log_grammar_in_yacc(),
-           GrammarRepresentation::Canonical => self.log_grammar_in_canonical(),
+            GrammarRepresentation::Yacc => self.log_grammar_in_yacc(),
+            GrammarRepresentation::Canonical => self.log_grammar_in_canonical(),
         }
     }
 }
