@@ -14,6 +14,7 @@ pub struct Grammar {
 #[derive(Clone, Copy)]
 pub enum GrammarRepresentation {
     Yacc,
+    Canonical,
 }
 
 impl Grammar {
@@ -102,10 +103,7 @@ impl Grammar {
         }
     }
 
-    pub fn log_grammar(&self, repr: GrammarRepresentation) {
-        let repr = GrammarRepresentation::Yacc else {
-            unreachable!();
-        };
+    pub fn log_grammar_in_yacc(&self) {
         let start_symbol = &self.start_symbol;
 
         let alignment = self
@@ -118,7 +116,6 @@ impl Grammar {
         fn log_rule(
             name: &str,
             branches: &HashSet<Vec<Symbol>>,
-            repr: GrammarRepresentation,
             align: usize,
         ) {
             let empty_padding = " ".repeat(align + 1);
@@ -133,13 +130,42 @@ impl Grammar {
             print!("{padded_name}: {formatted_branches} \n{end_of_rules} \n");
         }
 
-        log_rule(start_symbol, &self.rules[start_symbol], repr, alignment);
+        log_rule(start_symbol, &self.rules[start_symbol], alignment);
 
         for (variable, productions) in &self.rules {
             if variable == start_symbol {
                 continue;
             }
-            log_rule(variable, productions, repr, alignment);
+            log_rule(variable, productions, alignment);
+        }
+    }
+
+    pub fn log_grammar_in_canonical(&self) {
+        let start_symbol = &self.start_symbol;
+
+        fn log_rule(
+            name: &str,
+            branches: &HashSet<Vec<Symbol>>,
+        ) {
+            for branch in branches {
+                println!("{name} -> {}", branch.join(" "));
+            }
+        }
+
+        log_rule(start_symbol, &self.rules[start_symbol]);
+
+        for (variable, productions) in &self.rules {
+            if variable == start_symbol {
+                continue;
+            }
+            log_rule(variable, productions);
+        }
+    }
+
+    pub fn log_grammar(&self, repr: GrammarRepresentation) {
+        match repr {
+           GrammarRepresentation::Yacc => self.log_grammar_in_yacc(),
+           GrammarRepresentation::Canonical => self.log_grammar_in_canonical(),
         }
     }
 }

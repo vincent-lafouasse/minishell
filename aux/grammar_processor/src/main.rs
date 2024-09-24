@@ -22,6 +22,6 @@ f  : ( e )
    ;";
 
     let grammar = Grammar::from_yacc_text(yacc_grammar);
-    grammar.log_grammar(GrammarRepresentation::Yacc);
+    grammar.log_grammar(GrammarRepresentation::Canonical);
     let ll_properties = LLProperties::compute(&grammar);
 }
