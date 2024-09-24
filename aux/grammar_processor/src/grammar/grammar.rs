@@ -11,6 +11,11 @@ pub struct Grammar {
     start_symbol: Symbol,
 }
 
+#[derive(Clone, Copy)]
+pub enum GrammarRepresentation {
+    Yacc,
+}
+
 impl Grammar {
     pub fn from_yacc_file<R: std::io::Read>(mut reader: R) -> Grammar {
         let contents_owned = {
@@ -75,6 +80,47 @@ impl Grammar {
             terminals, non_terminals,
             start_symbol: start_symbol.to_string(),
             rules: rules_map,
+        }
+    }
+
+    pub fn log_grammar(&self, repr: GrammarRepresentation) {
+        let repr = GrammarRepresentation::Yacc else {
+            unreachable!();
+        };
+        let start_symbol = &self.start_symbol;
+
+        let alignment = self
+            .non_terminals
+            .iter()
+            .map(String::len)
+            .max()
+            .expect("grammar is empty");
+
+        fn log_rule(
+            name: &str,
+            branches: &HashSet<Vec<Symbol>>,
+            repr: GrammarRepresentation,
+            align: usize,
+        ) {
+            let empty_padding = " ".repeat(align + 1);
+            let padded_name = name.to_string() + &" ".repeat(align - name.len() + 1);
+            let branch_separator = "\n".to_string() + &empty_padding + "| ";
+            let formatted_branches = branches
+                .iter()
+                .map(|symbols| symbols.join(" "))
+                .collect::<Vec<String>>()
+                .join(&branch_separator);
+            let end_of_rules = empty_padding + "; ";
+            print!("{padded_name}: {formatted_branches} \n{end_of_rules} \n");
+        }
+
+        log_rule(start_symbol, &self.rules[start_symbol], repr, alignment);
+
+        for (variable, productions) in &self.rules {
+            if (variable == start_symbol) {
+                continue;
+            }
+            log_rule(variable, productions, repr, alignment);
         }
     }
 }

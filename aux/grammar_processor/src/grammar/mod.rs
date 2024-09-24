@@ -1,3 +1,3 @@
 mod grammar;
 
-pub use grammar::{Grammar, Symbol};
+pub use grammar::{Grammar, GrammarRepresentation, Symbol};
