@@ -9,7 +9,10 @@ pub struct LLProperties {
     //first_augmented: HashMap<(Symbol, Symbol), HashMap<>>
 }
 
-fn owned_cloned_union<T: Clone +Eq + std::hash::Hash>(lhs: &HashSet<T>, rhs: &HashSet<T>) -> HashSet<T> {
+fn owned_cloned_union<T: Clone + Eq + std::hash::Hash>(
+    lhs: &HashSet<T>,
+    rhs: &HashSet<T>,
+) -> HashSet<T> {
     lhs.union(rhs).map(Clone::clone).collect()
 }
 
@@ -95,7 +98,10 @@ impl LLProperties {
         for non_terminal in grammar.non_terminals().clone() {
             follow.insert(non_terminal, HashSet::new());
         }
-        follow.insert(grammar.start_symbol().clone(), HashSet::from(["$".to_owned()]));
+        follow.insert(
+            grammar.start_symbol().clone(),
+            HashSet::from(["$".to_owned()]),
+        );
 
         // for each A∈NT do;
         //     FOLLOW(A) ← ∅;
@@ -126,10 +132,15 @@ impl LLProperties {
                 .map(|(symbol, productions)| productions.iter().map(|p| (symbol.clone(), p)))
                 .flatten()
             {
-                let mut trailer = follow.get_mut(&variable).expect("trailer uninitialized").clone();
+                let mut trailer = follow
+                    .get_mut(&variable)
+                    .expect("trailer uninitialized")
+                    .clone();
                 for sym in production.into_iter().rev() {
                     if grammar.non_terminals().contains(sym) {
-                        let entry = follow.get_mut(sym).expect(&format!("entry does not exist for symbol: {sym}"));
+                        let entry = follow
+                            .get_mut(sym)
+                            .expect(&format!("entry does not exist for symbol: {sym}"));
                         let union = owned_cloned_union(entry, &trailer);
                         if entry != &union {
                             changing = true;
@@ -156,9 +167,6 @@ impl LLProperties {
         let first = Self::compute_first(grammar);
         let follow = Self::compute_follow(grammar, &first);
 
-        dbg!(LLProperties {
-            first,
-            follow,
-        })
+        dbg!(LLProperties { first, follow })
     }
 }
