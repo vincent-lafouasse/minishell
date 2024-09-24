@@ -38,6 +38,16 @@ Exp3  : num
       | ( Exp )
       ;";
 
+const _RIGHT_RECURSIVE_NOT_LL: &str = "
+goal : expr ;
+
+expr : term + expr | term - expr | term ;
+
+term : factor * term | factor / term | factor ;
+
+factor : NUM | ID ;
+";
+
 fn main() {
     let yacc_grammar = include_str!("../corrected_bash_grammar.y");
     let grammar = Rc::new(Grammar::from_yacc_text(yacc_grammar));
