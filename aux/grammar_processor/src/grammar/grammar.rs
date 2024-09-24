@@ -17,6 +17,22 @@ pub enum GrammarRepresentation {
 }
 
 impl Grammar {
+    pub fn non_terminals(&self) -> &HashSet<Symbol> {
+        &self.non_terminals
+    }
+
+    pub fn terminals(&self) -> &HashSet<Symbol> {
+        &self.terminals
+    }
+
+    pub fn rules(&self) -> &HashMap<Symbol, HashSet<Vec<Symbol>>> {
+        &self.rules
+    }
+
+    pub fn start_symbol(&self) -> &Symbol {
+        &self.start_symbol
+    }
+
     pub fn from_yacc_file<R: std::io::Read>(mut reader: R) -> Grammar {
         let contents_owned = {
             let mut buf = String::new();
@@ -117,7 +133,7 @@ impl Grammar {
         log_rule(start_symbol, &self.rules[start_symbol], repr, alignment);
 
         for (variable, productions) in &self.rules {
-            if (variable == start_symbol) {
+            if variable == start_symbol {
                 continue;
             }
             log_rule(variable, productions, repr, alignment);
