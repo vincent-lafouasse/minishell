@@ -35,7 +35,8 @@ while (true)
     if (focus is a nonterminal)
     {
         pick next rule to expand focus (A → β1,β2,...,βn);
-        build nodes for β1 , β2 . . . βn as children of to_process.push(βn, βn−1, ..., β1);
+        build nodes for β1 , β2 . . . βn as children of A
+        to_process.push(βn, βn−1, ..., β1);
         focus = to_process.pop(); // β1
     }
     else if (current_token matches focus)
@@ -48,4 +49,20 @@ while (true)
     else
         backtrack;
 }
+```
+
+```cpp
+typedef Token Terminal;
+
+struct NonTerminal
+{
+    NonTerminalKind kind;
+    List<Node> children;
+};
+
+union Node
+{
+    Terminal t;
+    NonTerminal nt;
+};
 ```

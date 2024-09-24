@@ -29,9 +29,6 @@ command          : simple_command
                  ;
 subshell         : '(' complete_command ')'
                  ;
-wordlist         : wordlist WORD
-                 |          WORD
-                 ;
 simple_command   : cmd_prefix WORD cmd_suffix
                  | cmd_prefix WORD
                  | cmd_prefix
