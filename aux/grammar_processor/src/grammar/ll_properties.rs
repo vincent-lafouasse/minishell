@@ -19,9 +19,8 @@ fn ll_first_of_symbol_string(
     // HACK: should handle this in parsing
     assert_ne!(string.len(), 0);
 
-    let mut res = HashSet::new();
+    let mut res = first[string.first().unwrap()].clone();
     let mut i = 0;
-    res = first[string.first().unwrap()].clone();
     while first[&string[i]].contains("") && i < string.len().saturating_sub(1) {
         res = res
             .union(&first[&string[i + 1]].clone())
@@ -41,7 +40,7 @@ fn find_mutually_non_disjoint_sets<T: Eq + Hash>(
                 continue;
             }
 
-            if let Some(_) = a.intersection(b).next() {
+            if a.intersection(b).next().is_some() {
                 return Some((a, b));
             }
         }
@@ -88,8 +87,7 @@ impl LLProperties {
             for (variable, production) in grammar
                 .rules()
                 .iter()
-                .map(|(symbol, productions)| productions.iter().map(|p| (symbol.clone(), p)))
-                .flatten()
+                .flat_map(|(symbol, productions)| productions.iter().map(|p| (symbol.clone(), p)))
             {
                 let mut rhs = HashSet::new();
                 // HACK: should handle this during parsing
@@ -169,18 +167,17 @@ impl LLProperties {
             for (variable, production) in grammar
                 .rules()
                 .iter()
-                .map(|(symbol, productions)| productions.iter().map(|p| (symbol.clone(), p)))
-                .flatten()
+                .flat_map(|(symbol, productions)| productions.iter().map(|p| (symbol.clone(), p)))
             {
                 let mut trailer = follow
                     .get_mut(&variable)
                     .expect("trailer uninitialized")
                     .clone();
-                for sym in production.into_iter().rev() {
+                for sym in production.iter().rev() {
                     if grammar.non_terminals().contains(sym) {
                         let entry = follow
                             .get_mut(sym)
-                            .expect(&format!("entry does not exist for symbol: {sym}"));
+                            .unwrap_or_else(|| panic!("entry does not exist for symbol: {sym}"));
                         let union = owned_cloned_union(entry, &trailer);
                         if entry != &union {
                             changing = true;
@@ -219,7 +216,7 @@ impl LLProperties {
             .grammar
             .rules()
             .iter()
-            .filter(|(variable, branches)| branches.len() > 1)
+            .filter(|(_, branches)| branches.len() > 1)
         {
             let mut production_first_augmenteds: Vec<HashSet<Symbol>> = Vec::new();
             for branch in branches {
@@ -233,7 +230,7 @@ impl LLProperties {
                 if local_first_augmented.contains("") {
                     let variable_follow = self.follow.get(variable).unwrap();
                     local_first_augmented =
-                        owned_cloned_union(&local_first_augmented, &variable_follow);
+                        owned_cloned_union(&local_first_augmented, variable_follow);
                 }
                 production_first_augmenteds.push(local_first_augmented);
             }

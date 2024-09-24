@@ -12,6 +12,7 @@ pub struct Grammar {
 }
 
 #[derive(Clone, Copy)]
+#[allow(unused)]
 pub enum GrammarRepresentation {
     Yacc,
     Canonical,
@@ -34,18 +35,6 @@ impl Grammar {
         &self.start_symbol
     }
 
-    pub fn from_yacc_file<R: std::io::Read>(mut reader: R) -> Grammar {
-        let contents_owned = {
-            let mut buf = String::new();
-            reader
-                .read_to_string(&mut buf)
-                .expect("can no read to string");
-            buf
-        };
-
-        Self::from_yacc_text(&contents_owned)
-    }
-
     pub fn from_yacc_text(contents: &str) -> Grammar {
         let mut rules_map = HashMap::new();
 
@@ -63,7 +52,7 @@ impl Grammar {
                 &[variable, productions] => {
                     let branch_set: &mut HashSet<Vec<Symbol>> =
                         rules_map.entry(variable.trim().to_owned()).or_default();
-                    for branch in productions.split("|").map(|r| r.trim()) {
+                    for branch in productions.split('|').map(|r| r.trim()) {
                         branch_set.insert(
                             branch
                                 .split_whitespace()

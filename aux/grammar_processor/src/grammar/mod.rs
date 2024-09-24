@@ -1,3 +1,4 @@
+#[allow(clippy::module_inception)]
 mod grammar;
 mod ll_properties;
 

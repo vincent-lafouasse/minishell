@@ -1,12 +1,10 @@
-#![allow(dead_code)]
-#![allow(unused_imports)]
 use std::rc::Rc;
 
 mod grammar;
 
-use grammar::{Grammar, GrammarRepresentation, LLProperties, Symbol};
+use grammar::{Grammar, GrammarRepresentation, LLProperties};
 
-const JS_MACHINES_GRAMMAR: &str = "e : t e_prime
+const _JS_MACHINES_GRAMMAR: &str = "e : t e_prime
     ;
 e_prime : + t e_prime
     |
@@ -20,13 +18,13 @@ f  : ( e )
     | ID
 ;";
 
-const GEEKS_FOR_GEEKS_GRAMMAR: &str = "E : TE' ;
+const _GEEKS_FOR_GEEKS_GRAMMAR: &str = "E : TE' ;
 E' : + TE' | ;
 T : FT' ;
 T' : * FT' | ;
 F : id | (E) ;";
 
-const SLIDE_ARITHMETIC_GRAMMAR: &str = "Exp : Exp2 Exp' ;
+const _SLIDE_ARITHMETIC_GRAMMAR: &str = "Exp : Exp2 Exp' ;
 Exp'  : + Exp2 Exp'
       | Exp2 Exp'
       |
