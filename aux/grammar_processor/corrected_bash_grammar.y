@@ -5,7 +5,7 @@ complete_command : pipeline
                  | complete_command OR_IF  pipeline
                  ;
 pipeline         :              command
-                 | pipeline '|' command
+                 | pipeline PIPE command
                  ;
 command          : simple_command
                  | subshell

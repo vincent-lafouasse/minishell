@@ -43,7 +43,7 @@ impl Grammar {
             match &rule[..] {
                 &[variable, productions] => {
                     let branch_set: &mut HashSet<Vec<Symbol>> = rules_map.entry(variable.trim().to_owned()).or_default();
-                    for branch in productions.split(" | ").map(|r| r.trim()) {
+                    for branch in productions.split("|").map(|r| r.trim()) {
                         branch_set.insert(
                             branch
                                 .split_whitespace()
