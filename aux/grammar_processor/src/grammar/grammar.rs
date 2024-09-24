@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-pub type Symbol = /* Either<NonTerminal, Terminal> */ String;
+pub type Symbol = String;
 
 #[derive(Debug)]
 pub struct Grammar {
@@ -36,7 +36,9 @@ impl Grammar {
     pub fn from_yacc_file<R: std::io::Read>(mut reader: R) -> Grammar {
         let contents_owned = {
             let mut buf = String::new();
-            reader.read_to_string(&mut buf).expect("can no read to string");
+            reader
+                .read_to_string(&mut buf)
+                .expect("can no read to string");
             buf
         };
 
@@ -58,7 +60,8 @@ impl Grammar {
         for rule in &rules {
             match &rule[..] {
                 &[variable, productions] => {
-                    let branch_set: &mut HashSet<Vec<Symbol>> = rules_map.entry(variable.trim().to_owned()).or_default();
+                    let branch_set: &mut HashSet<Vec<Symbol>> =
+                        rules_map.entry(variable.trim().to_owned()).or_default();
                     for branch in productions.split("|").map(|r| r.trim()) {
                         branch_set.insert(
                             branch
@@ -87,13 +90,13 @@ impl Grammar {
                     set
                 });
 
-        let (non_terminals, terminals): (HashSet<Symbol>, HashSet<Symbol>) =
-            all_symbols
-                .into_iter()
-                .partition(|sym| rules_map.contains_key(sym));
+        let (non_terminals, terminals): (HashSet<Symbol>, HashSet<Symbol>) = all_symbols
+            .into_iter()
+            .partition(|sym| rules_map.contains_key(sym));
 
         Grammar {
-            terminals, non_terminals,
+            terminals,
+            non_terminals,
             start_symbol: start_symbol.to_string(),
             rules: rules_map,
         }
