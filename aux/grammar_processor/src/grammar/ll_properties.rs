@@ -23,6 +23,21 @@ impl LLProperties {
             first.insert(non_terminal, HashSet::new());
         }
 
+        // while (FIRST sets are still changing) do;
+        //     for each p∈P, where p has the form A→β do;
+        //         if β is β1β2...βk, where βi ∈ T ∪NT, then begin;
+        //             rhs ← FIRST(β1) − {ε};
+        //             i ← 1;
+        //             while (ε ∈ FIRST(βi) and i ≤ k-1) do;
+        //                 rhs ← rhs ∪ (FIRST(βi+1)−{ε});
+        //                 i ← i + 1;
+        //             end;
+        //         end;
+        //         if i = k and ε∈FIRST(βk)
+        //             then rhs ← rhs ∪ {ε};
+        //         FIRST(A) ← FIRST(A) ∪ rhs;
+        //     end;
+        // end;
         let mut changing = true;
         while changing {
             changing = false;
@@ -32,24 +47,7 @@ impl LLProperties {
                 .map(|(symbol, productions)| productions.iter().map(|p| (symbol.clone(), p)))
                 .flatten()
             {
-                dbg!((&variable, &production));
-                // while (FIRST sets are still changing) do;
-                //     for each p∈P, where p has the form A→β do;
-                //         if β is β1β2...βk, where βi ∈ T ∪NT, then begin;
-                //             rhs ← FIRST(β1) − {ε};
-                //             i ← 1;
-                //             while (ε ∈ FIRST(βi) and i ≤ k-1) do;
-                //                 rhs ← rhs ∪ (FIRST(βi+1)−{ε});
-                //                 i ← i + 1;
-                //             end;
-                //         end;
-                //         if i = k and ε∈FIRST(βk)
-                //             then rhs ← rhs ∪ {ε};
-                //         FIRST(A) ← FIRST(A) ∪ rhs;
-                //     end;
-                // end;
                 let mut rhs = HashSet::new();
-                //first() -> Option<&String>.as_ref() -> Option<&str>
                 let mut production = production.clone();
                 if production.is_empty() {
                     production.push("".to_string());
