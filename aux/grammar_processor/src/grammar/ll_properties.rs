@@ -232,6 +232,7 @@ impl LLProperties {
                     local_first_augmented =
                         owned_cloned_union(&local_first_augmented, variable_follow);
                 }
+                log_first_augmented(&variable, &branch, &local_first_augmented);
                 production_first_augmenteds.push(local_first_augmented);
             }
 
@@ -244,4 +245,26 @@ impl LLProperties {
         }
         true
     }
+}
+
+fn log_production_branch(a: &Symbol, beta: &[Symbol]) {
+    print!("{a} -> ");
+    
+    if beta.len() == 1 {
+        print!("ε");
+    } else {
+        for symbol in beta {
+            print!("{symbol} ");
+        }
+    }
+    print!("\n");
+}
+
+fn log_first_augmented(a: &Symbol, beta: &[Symbol], first_aug: &HashSet<Symbol>) {
+    log_production_branch(a, beta);
+
+    for symbol in first_aug {
+        print!("{symbol} ");
+    }
+    print!("\n\n");
 }
