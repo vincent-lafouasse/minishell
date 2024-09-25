@@ -59,6 +59,6 @@ fn main() {
     } else {
         println!("rip bozo");
     }
-        
+
     //dbg!(grammar);
 }

@@ -207,7 +207,7 @@ impl LLProperties {
         LLProperties {
             first,
             follow,
-            grammar
+            grammar,
         }
     }
 
