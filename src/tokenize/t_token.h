@@ -2,7 +2,6 @@
 
 typedef enum e_token_type
 {
-    IDENTIFIER,
     WORD,
     PIPE_TOKEN,
     L_ANGLE_BRACKET,

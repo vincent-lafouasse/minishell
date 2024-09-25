@@ -1,7 +1,6 @@
 #include "t_token.h"
 
 #define DUMMY_TOKEN_REPR "that's a token for sure"
-#define IDENTIFIER_REPR "Identifier"
 #define WORD_REPR "Word"
 #define PIPE_TOKEN_REPR "Pipe"
 #define L_ANGLE_BRACKET_REPR "<"
@@ -19,8 +18,6 @@
 
 const char *token_repr(t_token token)
 {
-    if (token.type == IDENTIFIER)
-        return IDENTIFIER_REPR;
     if (token.type == WORD)
         return WORD_REPR;
     if (token.type == PIPE_TOKEN)
