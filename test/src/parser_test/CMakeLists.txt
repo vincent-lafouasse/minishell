@@ -35,11 +35,13 @@ set(tested_source
 )
 list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 
+add_library(tested)
+target_sources(tested PRIVATE ${tested_source})
+target_include_directories(tested PUBLIC ${tested_include_dir})
+
 target_sources(parser_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
 	${CMAKE_CURRENT_LIST_DIR}/parser_test.cpp
-
-	${tested_source}
 )
 
 target_include_directories(parser_test PUBLIC
@@ -50,4 +52,5 @@ target_include_directories(parser_test PUBLIC
 target_link_libraries(parser_test
 	libgtest
 	libft
+	tested
 )
