@@ -14,12 +14,12 @@ pipeline_rest -> PIPE command pipeline_rest
 First+: PIPE 
 
 pipeline_rest -> ε
-First+: AND $  OR ')' 
+First+: AND OR ')' $
 
 ## Command
 
 command -> simple_command 
-First+: '<' '>' WORD '<<' '>>' 
+First+: WORD '<' '>' '<<' '>>' 
 
 command -> subshell subshell_precedes 
 First+: '(' 
@@ -30,7 +30,7 @@ subshell_precedes -> redirect_list
 First+: '<' '>>' '>' '<<' 
 
 subshell_precedes -> ε
-First+:  PIPE AND ')' $ OR 
+First+: AND OR PIPE ')' $
 
 ## Simple command
 
@@ -43,18 +43,18 @@ First+: '>>' '>' '<<' '<'
 ## Maybe command suffix
 
 maybe_cmd_suffix -> cmd_suffix 
-First+: '<' '>>' '>' WORD '<<' 
+First+: WORD '<' '>>' '>' '<<' 
 
 maybe_cmd_suffix -> ε
-First+:  $ AND PIPE ')' OR 
+First+: AND OR PIPE ')' $
 
 ## Command prefix precedes
 
 cmd_prefix_precedes -> WORD maybe_cmd_suffix 
-First+: WORD 
+First+: WORD
 
 cmd_prefix_precedes -> ε
-First+: OR ')' AND PIPE  $ 
+First+: AND OR PIPE ')' $
 
 ## Command prefix rest
 
@@ -62,7 +62,7 @@ cmd_prefix_rest -> io_redirect cmd_prefix_rest
 First+: '>' '<' '>>' '<<' 
 
 cmd_prefix_rest -> ε
-First+: PIPE ')' AND $ OR  WORD 
+First+: WORD AND OR PIPE ')' $
 
 ## Command suffix
 
@@ -81,7 +81,7 @@ cmd_suffix_rest -> io_redirect cmd_suffix_rest
 First+: '>' '<' '>>' '<<' 
 
 cmd_suffix_rest -> ε
-First+:  ')' OR $ AND PIPE 
+First+: AND OR PIPE ')' $
 
 ## redirect list rest
 
@@ -89,7 +89,7 @@ redirect_list_rest -> io_redirect redirect_list_rest
 First+: '>' '<' '>>' '<<' 
 
 redirect_list_rest -> ε
-First+: PIPE AND  $ ')' OR 
+First+: AND OR PIPE ')' $
 
 ## IO Redirect
 
