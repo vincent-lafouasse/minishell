@@ -21,7 +21,7 @@ t_parser_error	produce_start(t_parser *state)
 {
 	if (produce_complete_command(state).type == NO_PARSE_ERROR)
 	{
-		if (parser_matches(state, EOF_TOKEN))
+		if (parser_match_terminal(state, EOF_TOKEN))
 			return parser_ok();
 	}
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
@@ -38,14 +38,14 @@ t_parser_error	produce_complete_command(t_parser *state)
 
 t_parser_error	produce_complete_command_rest(t_parser *state)
 {
-	if (parser_matches(state, AND_AND))
+	if (parser_match_terminal(state, AND_AND))
 	{
 		if (produce_pipeline(state).type == NO_PARSE_ERROR)
 		{
 			return (produce_complete_command_rest(state));
 		}
 	}
-	else if (parser_matches(state, OR_OR))
+	else if (parser_match_terminal(state, OR_OR))
 	{
 		if (produce_pipeline(state).type == NO_PARSE_ERROR)
 		{
@@ -69,7 +69,7 @@ t_parser_error	produce_pipeline(t_parser *state)
 t_parser_error	produce_pipeline_rest(t_parser *state)
 {
 
-	if (parser_matches(state, PIPE_TOKEN))
+	if (parser_match_terminal(state, PIPE_TOKEN))
 	{
 		if (produce_command(state).type == NO_PARSE_ERROR)
 		{
@@ -116,10 +116,10 @@ t_parser_error	produce_subshell_precedes(t_parser *state)
 
 t_parser_error	produce_subshell(t_parser *state)
 {
-	if (parser_matches(state, L_PAREN))
+	if (parser_match_terminal(state, L_PAREN))
 	{
 		if (produce_complete_command(state).type == NO_PARSE_ERROR)
-			if (parser_matches(state, R_PAREN))
+			if (parser_match_terminal(state, R_PAREN))
 				return (parser_ok());
 	}
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
@@ -127,7 +127,7 @@ t_parser_error	produce_subshell(t_parser *state)
 
 t_parser_error	produce_simple_command(t_parser *state)
 {
-	if (parser_matches(state, WORD))
+	if (parser_match_terminal(state, WORD))
 	{
 		return (produce_maybe_cmd_suffix(state));
 	}
@@ -152,7 +152,7 @@ t_parser_error	produce_maybe_cmd_suffix(t_parser *state)
 	}
 	else if (parser_matches(state, AND_AND) || parser_matches(state, OR_OR) || \
 		parser_matches(state, PIPE_TOKEN) || parser_matches(state, R_PAREN) || \
-		parser_matches(state, EOF))
+		parser_matches(state, EOF_TOKEN))
 	{
 		return (parser_ok());
 	}
@@ -161,13 +161,13 @@ t_parser_error	produce_maybe_cmd_suffix(t_parser *state)
 
 t_parser_error	produce_cmd_prefix_precedes(t_parser *state)
 {
-	if (parser_matches(state, WORD))
+	if (parser_match_terminal(state, WORD))
 	{
 		return (produce_maybe_cmd_suffix(state));
 	}
 	else if (parser_matches(state, AND_AND) || parser_matches(state, OR_OR) || \
 		parser_matches(state, PIPE_TOKEN) || parser_matches(state, R_PAREN) || \
-		parser_matches(state, EOF))
+		parser_matches(state, EOF_TOKEN))
 	{
 		return (parser_ok());
 	}
@@ -210,7 +210,7 @@ t_parser_error	produce_cmd_suffix(t_parser *state)
 			return (produce_cmd_suffix_rest(state));
 		}
 	}
-	else if (parser_matches(state, WORD))
+	else if (parser_match_terminal(state, WORD))
 		return (produce_cmd_suffix_rest(state));
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 
@@ -226,11 +226,11 @@ t_parser_error	produce_cmd_suffix_rest(t_parser *state)
 			return (produce_cmd_suffix_rest(state));
 		}
 	}
-	else if (parser_matches(state, WORD))
+	else if (parser_match_terminal(state, WORD))
 		return (produce_cmd_suffix_rest(state));
 	else if (parser_matches(state, AND_AND) || parser_matches(state, OR_OR) || \
 		parser_matches(state, PIPE_TOKEN) || parser_matches(state, R_PAREN) || \
-		parser_matches(state, EOF))
+		parser_matches(state, EOF_TOKEN))
 		return (parser_ok());
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
@@ -256,7 +256,7 @@ t_parser_error	produce_redirect_list_rest(t_parser *state)
 	}
 	else if (parser_matches(state, AND_AND) || parser_matches(state, OR_OR) || \
 		parser_matches(state, PIPE_TOKEN) || parser_matches(state, R_PAREN) || \
-		parser_matches(state, EOF))
+		parser_matches(state, EOF_TOKEN))
 		return (parser_ok());
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
@@ -273,32 +273,32 @@ t_parser_error	produce_io_redirect(t_parser *state)
 
 t_parser_error	produce_io_file(t_parser *state)
 {
-	if (parser_matches(state, R_ANGLE_BRACKET))
+	if (parser_match_terminal(state, R_ANGLE_BRACKET))
 		return (produce_filename(state));
-	if (parser_matches(state, L_ANGLE_BRACKET))
+	if (parser_match_terminal(state, L_ANGLE_BRACKET))
 		return (produce_filename(state));
-	if (parser_matches(state, DR_ANGLE_BRACKET))
+	if (parser_match_terminal(state, DR_ANGLE_BRACKET))
 		return (produce_filename(state));
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
 
 t_parser_error	produce_filename(t_parser *state)
 {
-	if (parser_matches(state, WORD))
+	if (parser_match_terminal(state, WORD))
 		return (parser_ok());
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
 
 t_parser_error	produce_io_here(t_parser *state)
 {
-	if (parser_matches(state, DL_ANGLE_BRACKET))
+	if (parser_match_terminal(state, DL_ANGLE_BRACKET))
 		return (produce_here_end(state));
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
 
 t_parser_error	produce_here_end(t_parser *state)
 {
-	if (parser_matches(state, WORD))
+	if (parser_match_terminal(state, WORD))
 		return (parser_ok());
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
