@@ -204,11 +204,11 @@ impl LLProperties {
         let first = Self::compute_first(&grammar);
         let follow = Self::compute_follow(&grammar, &first);
 
-        dbg!(LLProperties {
+        LLProperties {
             first,
             follow,
             grammar
-        })
+        }
     }
 
     pub fn is_ll_compatible(&self) -> bool {

@@ -52,8 +52,13 @@ fn main() {
     let yacc_grammar = include_str!("../corrected_bash_grammar.y");
     let grammar = Rc::new(Grammar::from_yacc_text(yacc_grammar));
     //let ll_table = LLTable::new(&grammar).expect("LL table could not be generated from grammar");
-    grammar.log_grammar(GrammarRepresentation::Canonical);
+    //grammar.log_grammar(GrammarRepresentation::Canonical);
     let ll_properties = LLProperties::compute(grammar.clone());
-    assert!(ll_properties.is_ll_compatible());
+    if ll_properties.is_ll_compatible() {
+        println!("LL(1) compatible");
+    } else {
+        println!("rip bozo");
+    }
+        
     //dbg!(grammar);
 }
