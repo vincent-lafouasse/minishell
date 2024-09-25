@@ -4,6 +4,8 @@
 #include <stddef.h>
 
 enum e_command_type : int;
+enum e_logic_node_kind : int;
+enum e_operator_kind : int;
 
 typedef enum e_command_type t_command_type;
 typedef enum e_logic_node_kind t_logic_node_kind;
@@ -33,7 +35,7 @@ struct s_simple_command
 // ----- subshell node -----
 
 // ----- logic node -----
-enum e_logic_node_kind
+enum e_logic_node_kind : int
 {
     AND,
     OR
