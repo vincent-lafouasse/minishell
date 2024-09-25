@@ -49,7 +49,7 @@ factor : NUM | ID ;
 ";
 
 fn main() {
-    let yacc_grammar = include_str!("../corrected_bash_grammar.y");
+    let yacc_grammar = include_str!("../../grammars/calculator.y");
     let grammar = Rc::new(Grammar::from_yacc_text(yacc_grammar));
     //let ll_table = LLTable::new(&grammar).expect("LL table could not be generated from grammar");
     //grammar.log_grammar(GrammarRepresentation::Canonical);
