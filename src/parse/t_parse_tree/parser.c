@@ -1,16 +1,16 @@
 #include "t_parse_tree.h"
 #include "tokenize/t_token.h"
 
-bool	parser_matches(const t_parser *parser, t_token_type ty)
+bool	parser_matches(const t_parser *parser, t_token_type type)
 {
-	return (parser_peek_token(parser)->type == ty);
+	return (parser_peek_token(parser)->type == type);
 }
 
-bool	parser_match_terminal(t_parser *parser, t_token_type ty)
+bool	parser_match_terminal(t_parser *parser, t_token_type type)
 {
 	bool matches;
 
-	matches = parser_matches(parser, ty);
+	matches = parser_matches(parser, type);
 	if (matches)
 		parser_advance_token(parser);
 	return (matches);
