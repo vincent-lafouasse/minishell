@@ -1,6 +1,7 @@
 #ifndef T_PARSE_TREE_H
 # define T_PARSE_TREE_H
 
+# include <stdbool.h>
 # include <stddef.h>
 # include "tokenize/t_token.h"
 # include "tokenize/t_token_list/t_token_list.h"
@@ -39,7 +40,8 @@ static t_parser	parser_new(t_token_list *tokens)
 	return ((t_parser){tokens, tokens});
 }
 
-bool			parser_matches(t_parser *parser, t_token_type ty);
+bool			parser_matches(const t_parser *parser, t_token_type ty);
+bool			parser_match_terminal(t_parser *parser, t_token_type ty);
 const t_token	*parser_peek_token(const t_parser *parser);
 t_token			*parser_advance_token(t_parser *parser);
 
