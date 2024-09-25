@@ -6,18 +6,21 @@
 
 #define SHELL_PROMPT "minishell$ "
 
-int main(void)
+int	main(void)
 {
-    char *input;
-    TokenList tokens;
-    t_command command;
+	char			*input;
+	t_token_list	*tokens;
+	t_command		command;
 
-    while (1)
-    {
-        input = readline(SHELL_PROMPT);
-        tokens = tokenize(input);
-        command = parse_command(tokens);
-        (void)command;
-        free(input);
-    }
+	while (1)
+	{
+		input = readline(SHELL_PROMPT);
+		tokens = tokenize(input);
+		if (!tokens)
+			continue;
+		command = parse_command(tokens);
+		(void)command;
+		free(input);
+		tkl_clear(&tokens);
+	}
 }

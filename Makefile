@@ -2,6 +2,7 @@ NAME = minishell
 
 SRCS = $(shell find src -name '*.c')
 
+CC = cc
 CFLAGS = -Wall -Wextra -g3
 # CFLAGS += -Werror
 CPPFLAGS = -Isrc -MMD -MP
@@ -32,7 +33,7 @@ run: build
 
 # linking stage
 $(NAME): $(OBJS) $(LIBS)
-	cc $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
+	$(CC) $(OBJS) $(LDFLAGS) $(LDLIBS) -o $@
 
 # compiling stage
 build/%.c.o: %.c
@@ -57,13 +58,14 @@ fclean: clean
 test: $(LIBS)
 	cmake -S test -B build/test
 	cmake --build build/test
-	GTEST_COLOR=1 ctest --test-dir build/test
+	GTEST_COLOR=1 ctest --test-dir build/test $(CTEST_OPT)
 
 .PHONY: vtest
-vtest: $(LIBS)
-	cmake -S test -B build/test
-	cmake --build build/test
-	GTEST_COLOR=1 ctest --test-dir build/test -V
+ifneq ($(TEST_WITH_MEMCHECK),)
+vtest: CTEST_OPT += -T memcheck
+endif
+vtest: CTEST_OPT += -V
+vtest: test
 
 .PHONY: test_libft
 test_libft: $(LIBFT)

@@ -2,15 +2,19 @@
 
 typedef enum e_token_type
 {
-    IDENTIFIER,
+    WORD,
     PIPE_TOKEN,
-    REDIRECT_INPUT,
-    REDIRECT_OUTPUT,
-    APPEND_TO_FILE,
-    REDIRECT_FROM_HERE_DOC,
-    SEPARATOR_TOKEN,
+    L_ANGLE_BRACKET,
+    DL_ANGLE_BRACKET,
+    R_ANGLE_BRACKET,
+    DR_ANGLE_BRACKET,
+    L_PAREN,
+    R_PAREN,
     AND_AND,
     OR_OR,
+    DOUBLE_QUOTE_STRING,
+    SINGLE_QUOTE_STRING,
+    EOF_TOKEN,
 } t_token_type;
 
 typedef struct s_token
