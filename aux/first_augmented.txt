@@ -1,0 +1,116 @@
+for production
+maybe_cmd_suffix -> ε
+First+:  $ AND PIPE ')' OR 
+
+for production
+maybe_cmd_suffix -> cmd_suffix 
+First+: '<' '>>' '>' WORD '<<' 
+
+for production
+complete_command_rest -> OR pipeline complete_command_rest 
+First+: OR 
+
+for production
+complete_command_rest -> ε
+First+: ')' $  
+
+for production
+complete_command_rest -> AND pipeline complete_command_rest 
+First+: AND 
+
+for production
+cmd_prefix_precedes -> ε
+First+: OR ')' AND PIPE  $ 
+
+for production
+cmd_prefix_precedes -> WORD maybe_cmd_suffix 
+First+: WORD 
+
+for production
+command -> simple_command 
+First+: '<' '>' WORD '<<' '>>' 
+
+for production
+command -> subshell subshell_precedes 
+First+: '(' 
+
+for production
+subshell_precedes -> redirect_list 
+First+: '<' '>>' '>' '<<' 
+
+for production
+subshell_precedes -> ε
+First+:  PIPE AND ')' $ OR 
+
+for production
+io_file -> '>' filename 
+First+: '>' 
+
+for production
+io_file -> '>>' filename 
+First+: '>>' 
+
+for production
+io_file -> '<' filename 
+First+: '<' 
+
+for production
+cmd_suffix_rest -> WORD cmd_suffix_rest 
+First+: WORD 
+
+for production
+cmd_suffix_rest -> ε
+First+:  ')' OR $ AND PIPE 
+
+for production
+cmd_suffix_rest -> io_redirect cmd_suffix_rest 
+First+: '>' '<' '>>' '<<' 
+
+for production
+pipeline_rest -> ε
+First+: AND $  OR ')' 
+
+for production
+pipeline_rest -> PIPE command pipeline_rest 
+First+: PIPE 
+
+for production
+redirect_list_rest -> io_redirect redirect_list_rest 
+First+: '>' '<' '>>' '<<' 
+
+for production
+redirect_list_rest -> ε
+First+: PIPE AND  $ ')' OR 
+
+for production
+simple_command -> WORD maybe_cmd_suffix 
+First+: WORD 
+
+for production
+simple_command -> cmd_prefix cmd_prefix_precedes 
+First+: '>>' '>' '<<' '<' 
+
+for production
+cmd_suffix -> WORD cmd_suffix_rest 
+First+: WORD 
+
+for production
+cmd_suffix -> io_redirect cmd_suffix_rest 
+First+: '>' '<' '>>' '<<' 
+
+for production
+io_redirect -> io_here 
+First+: '<<' 
+
+for production
+io_redirect -> io_file 
+First+: '>' '<' '>>' 
+
+for production
+cmd_prefix_rest -> io_redirect cmd_prefix_rest 
+First+: '>' '<' '>>' '<<' 
+
+for production
+cmd_prefix_rest -> ε
+First+: PIPE ')' AND $ OR  WORD 
+
