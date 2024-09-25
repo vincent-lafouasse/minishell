@@ -8,7 +8,7 @@ extern "C"
 };
 
 
-void assert_successful_parsing(const t_token_list* tokens)
+void assert_successful_parsing(t_token_list* tokens)
 {
     t_command parsed = parse_command(tokens);
 
