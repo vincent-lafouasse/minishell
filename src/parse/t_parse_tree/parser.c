@@ -3,7 +3,10 @@
 
 bool	parser_matches(t_parser *parser, t_token_type ty)
 {
-	return (parser_peek_token(parser)->type == ty);
+	bool matched = parser_peek_token(parser)->type == ty;
+	if (matched)
+		parser_advance_token(parser);
+	return (matched);
 }
 
 const t_token	*parser_peek_token(const t_parser *parser)
