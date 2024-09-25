@@ -171,6 +171,7 @@ t_parser_error	produce_cmd_prefix_precedes(t_parser *state)
 	{
 		return (parser_ok());
 	}
+	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
 
 t_parser_error	produce_cmd_prefix(t_parser *state)
