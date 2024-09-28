@@ -249,12 +249,15 @@ impl LLProperties {
 
 fn log_production_branch(a: &Symbol, beta: &[Symbol]) {
     print!("{a} -> ");
-    
-    if beta.len() == 1 {
-        print!("ε");
+
+    if beta.len() == 1 && beta[0] == "" {
     } else {
         for symbol in beta {
-            print!("{symbol} ");
+            if symbol == "" {
+                print!("ε ");
+            } else {
+                print!("{symbol} ");
+            }
         }
     }
     print!("\n");
