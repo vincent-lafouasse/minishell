@@ -57,7 +57,6 @@ fn main() {
     let grammar = Rc::new(dbg!(Grammar::from_yacc_text(yacc_grammar)));
     grammar.log_grammar(GrammarRepresentation::Canonical);
 
-
     let ll_properties = LLProperties::compute(grammar.clone());
     if ll_properties.is_ll_compatible() {
         println!("LL(1) compatible");
