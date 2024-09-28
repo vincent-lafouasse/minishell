@@ -9,14 +9,14 @@ program               : complete_command
                       ;
 complete_command      : pipeline complete_command_rest
                       ;
-complete_command_rest : '&&' pipeline complete_command_rest
-                      | '||' pipeline complete_command_rest
-                      | /* empty */
+complete_command_rest : AND pipeline complete_command_rest
+                      | OR pipeline complete_command_rest
+                      |
                       ;
 pipeline              : command pipeline_rest
                       ;
-pipeline_rest         : '|' command pipeline_rest
-                      | /* empty */
+pipeline_rest         : PIPE command pipeline_rest
+                      |
                       ;
 command               : word_list
                       ;
