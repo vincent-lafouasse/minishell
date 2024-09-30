@@ -83,7 +83,7 @@ impl RdGenerator {
         let matching_token_count = first_aug.len();
         let matching_token_string = first_aug.into_iter().collect::<Vec<String>>().join(", ");
         let condition = format!(
-            "parser_matches_one_of(state, (t_token_type[]){{{}}}), {})",
+            "parser_matches_one_of(state, (t_token_type[]){{{}}}, {})",
             matching_token_string, matching_token_count
         );
 
