@@ -41,6 +41,7 @@ static t_parser	parser_new(t_token_list *tokens)
 }
 
 bool			parser_matches(const t_parser *parser, t_token_type ty);
+bool			parser_matches_one_of(const t_parser *parser, const t_token_type types[], size_t type_count);
 bool			parser_match_terminal(t_parser *parser, t_token_type ty);
 const t_token	*parser_peek_token(const t_parser *parser);
 t_token			*parser_advance_token(t_parser *parser);
