@@ -1,8 +1,9 @@
+use std::path::Path;
 use std::rc::Rc;
 
 mod grammar;
 
-use grammar::{Grammar, GrammarRepresentation, LLProperties};
+use grammar::{Grammar, GrammarRepresentation, LLProperties, RdGenerator};
 
 const _JS_MACHINES_GRAMMAR: &str = "
 e       : t e_prime
@@ -56,11 +57,8 @@ fn main() {
     let yacc_grammar = include_str!("../../grammars/tinyshell.y");
     let grammar = Rc::new(dbg!(Grammar::from_yacc_text(yacc_grammar)));
     grammar.log_grammar(GrammarRepresentation::Canonical);
-
     let ll_properties = LLProperties::compute(grammar.clone());
-    if ll_properties.is_ll_compatible() {
-        println!("LL(1) compatible");
-    } else {
-        println!("rip bozo");
-    }
+    assert!(ll_properties.is_ll_compatible(), "grammar is not LL(1) compatible");
+    let gen = RdGenerator::new(ll_properties).unwrap();
+    gen.generate(Path::new("./rd_output/")).unwrap();
 }

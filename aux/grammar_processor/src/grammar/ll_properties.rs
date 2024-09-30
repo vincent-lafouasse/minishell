@@ -211,6 +211,21 @@ impl LLProperties {
         }
     }
 
+    pub fn get_first_augmented(&self, head: &Symbol, body: &[Symbol]) -> HashSet<Symbol> {
+        let mut body = Vec::from(body);
+        // HACK: should filter this during parsing
+        if body.is_empty() {
+            body.push("".to_string())
+        }
+        // end HACK
+        let mut first_aug = ll_first_of_symbol_string(&body, &self.first);
+        if first_aug.contains("") {
+            let head_follow = self.follow.get(head).unwrap();
+            first_aug = owned_cloned_union(&first_aug, head_follow);
+        }
+        first_aug
+    }
+
     pub fn is_ll_compatible(&self) -> bool {
         for (variable, branches) in self
             .grammar
@@ -244,6 +259,10 @@ impl LLProperties {
             };
         }
         true
+    }
+
+    pub fn underlying_grammar(&self) -> &Grammar {
+        &self.grammar
     }
 }
 
