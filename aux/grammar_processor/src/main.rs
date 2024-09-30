@@ -53,6 +53,22 @@ term : factor * term | factor / term | factor ;
 factor : NUM | ID ;
 ";
 
+const _CALCULATOR_GRAMMAR: &str = "expr      : term expr_rest
+          ;
+expr_rest : PLUS term expr_rest
+          | MINUS term expr_rest
+          |
+          ;
+term      : factor term_rest
+          ;
+term_rest : ASTERISK factor term_rest
+          | SLASH factor term_rest
+          |
+          ;
+factor    : NUM
+          | L_PAREN expr R_PAREN
+          ;";
+
 fn main() {
     let yacc_grammar = include_str!("../../grammars/tinyshell.y");
     let grammar = Rc::new(dbg!(Grammar::from_yacc_text(yacc_grammar)));
