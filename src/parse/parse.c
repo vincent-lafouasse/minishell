@@ -2,8 +2,7 @@
 #include "parse.h"
 #include "t_parser.h"
 #include "t_symbol.h"
-
-t_symbol produce_complete_command(t_parser *);
+#include "productions/productions.h"
 
 /* t_error parse(const t_token_list *tokens) */
 t_error parse_command(t_token_list *tokens, t_symbol *out)
