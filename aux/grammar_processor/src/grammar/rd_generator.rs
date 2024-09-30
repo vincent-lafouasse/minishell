@@ -12,6 +12,8 @@ pub struct RdGenerator {
     ll_properties: LLProperties,
 }
 
+const EOF_TOKEN_NAME: &str = "EOF_TOKEN";
+
 impl RdGenerator {
 	/// `ll_properties` must be generated from a backtrack-free LL(1) compatible
 	/// grammar
@@ -63,7 +65,17 @@ impl RdGenerator {
     ) -> io::Result<()> {
         let if_or_else_if = if is_first_production { "if" } else { "else if" };
 
-        let first_aug = self.ll_properties.get_first_augmented(variable, rule);
+        let mut first_aug = self.ll_properties.get_first_augmented(variable, rule);
+		// the empty string does not denominate a token; simply ensure the next
+		// token in the stream is indeed the one we expect it to be (i.e. if it
+		// exists in the FOLLOW set of `variable`)
+		first_aug.remove("");
+		// HACK
+		if first_aug.contains("$") {
+			first_aug.remove("$");
+			first_aug.insert(EOF_TOKEN_NAME.to_string());
+		}
+		// end HACK
         let matching_token_count = first_aug.len();
         let matching_token_string = first_aug.into_iter().collect::<Vec<String>>().join(", ");
         let condition = format!(
