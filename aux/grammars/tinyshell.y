@@ -9,13 +9,13 @@ program               : complete_command
                       ;
 complete_command      : pipeline complete_command_rest
                       ;
-complete_command_rest : AND pipeline complete_command_rest
-                      | OR pipeline complete_command_rest
+complete_command_rest : AND_AND pipeline complete_command_rest
+                      | OR_OR pipeline complete_command_rest
                       |
                       ;
 pipeline              : command pipeline_rest
                       ;
-pipeline_rest         : PIPE command pipeline_rest
+pipeline_rest         : PIPE_TOKEN command pipeline_rest
                       |
                       ;
 command               : word_list
