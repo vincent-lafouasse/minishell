@@ -98,7 +98,7 @@ impl RdGenerator {
         let indents = "\t".repeat(indent_count);
 
         if is_final {
-            writeln!(out, "{indents}{call}")
+            writeln!(out, "{indents}{call};")
         } else {
             writeln!(out, "{indents}if ({call})")
         }
