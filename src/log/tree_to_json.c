@@ -38,14 +38,14 @@ void print_terminal(const t_symbol* node)
 {
     printf("{");
 
-    printf("text: { name: \"");
+    printf("\"text\": { \"name\": \"");
     if (node->token.type == WORD)
         printf("%s", node->token.literal);
     else
         printf("%s", token_repr(node->token));
     printf("\"},");
 
-    printf("children: [],");
+    printf("\"children\": []");
 
     printf("}");
 }
@@ -54,33 +54,33 @@ void print_non_terminal(const t_symbol* node)
 {
     printf("{");
 
-    printf("text: { name: \"%s\" },", node_repr(node->kind));
+    printf("\"text\": { \"name\": \"%s\" },", node_repr(node->kind));
 
 
 
-    printf("children: [");
+    printf("\"children\": [");
 
     for (size_t i = 0; i < node->production->len; i++)
     {
         print_node(&node->production->data[i]);
-        printf(",");
+        if (i != node->production->len - 1)
+            printf(",");
     }
 
-    printf("],");
+    printf("]");
 
     printf("}");
 }
 
 void tree_to_json(const t_symbol *root)
 {
-    (void)root;
-    printf("var parse_tree = {");
+    printf("{");
 
-    printf("chart: { container: \"#tree-simple\" },");
+    printf("\"chart\": { \"container\": \"#tree-simple\" },");
 
-    printf("nodeStructure: ");
+    printf("\"nodeStructure\": ");
 
     print_node(root);
 
-    printf("};\n");
+    printf("}\n");
 }
