@@ -1,6 +1,7 @@
 #include <readline/readline.h>
 #include <stdlib.h>
 
+#include "error/t_error.h"
 #include "parse/parse.h"
 #include "tokenize/tokenize.h"
 
@@ -10,7 +11,8 @@ int	main(void)
 {
 	char			*input;
 	t_token_list	*tokens;
-	t_command		command;
+	t_symbol		symbol;
+	t_error			err;
 
 	while (1)
 	{
@@ -18,8 +20,8 @@ int	main(void)
 		tokens = tokenize(input);
 		if (!tokens)
 			continue;
-		command = parse_command(tokens);
-		(void)command;
+		err = parse_command(tokens, &symbol);
+		printf("symbol status: %s\n", error_repr(err));
 		free(input);
 		tkl_clear(&tokens);
 	}

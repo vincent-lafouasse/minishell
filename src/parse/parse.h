@@ -1,6 +1,8 @@
 #pragma once
 
-#include "command/t_command.h"
-#include "tokenize/tokenize.h"
+#include "error/t_error.h"
+#include "tokenize/t_token_list/t_token_list.h"
+#include "t_command/t_command.h"
+#include "t_symbol.h"
 
-t_command parse_command(t_token_list *tokens);
+t_error parse_command(t_token_list *tokens, t_symbol *out);
