@@ -15,7 +15,7 @@ typedef struct s_symbol
     enum e_symbol_kind kind;
     union
     {
-        t_symbol_array *right_hand_side;
+        t_symbol_array *production;
         t_token token;
     };
 } t_symbol;
