@@ -52,7 +52,7 @@ t_parser_error	produce_complete_command_rest(t_parser *state)
 			return (produce_complete_command_rest(state));
 		}
 	}
-	else if (parser_matches(state, L_PAREN) || parser_matches(state, EOF_TOKEN))
+	else if (parser_matches(state, R_PAREN) || parser_matches(state, EOF_TOKEN))
 		return parser_ok();
 	return (parser_error(E_UNEXPECTED_TOKEN, parser_peek_token(state)));
 }
