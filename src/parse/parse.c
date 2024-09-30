@@ -1,3 +1,4 @@
+#include "log/log.h"
 #include "parse.h"
 #include "t_parser.h"
 #include "t_symbol.h"
@@ -21,6 +22,6 @@ t_error parse_command(t_token_list *tokens, t_symbol *out)
         symbol_clear(*out);
         return E_UNEXPECTED_TOKEN;
     }
-    //tree_to_json(&root);
+    tree_to_json(out);
     return NO_ERROR;
 }
