@@ -116,6 +116,15 @@ impl RdGenerator {
         }
     }
 
+    fn write_no_match_handler(&self, out: &mut dyn Write) -> io::Result<()> {
+		writeln!(out, "	else")?;
+		writeln!(out, "	{{")?;
+		writeln!(out, "		state->err = E_UNEXPECTED_TOKEN;")?;
+		writeln!(out, "	}}")?;
+
+		Ok(())
+    }
+
     fn write_production(
         &self,
         out: &mut dyn Write,
@@ -157,6 +166,9 @@ impl RdGenerator {
                 writeln!(out, "	}}")?;
             }
         }
+		if !is_single_rule_production {
+			self.write_no_match_handler(out)?;
+		}
         writeln!(out, "	return (symbol);")?;
         writeln!(out, "}}")?;
 
