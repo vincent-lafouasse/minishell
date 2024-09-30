@@ -23,11 +23,14 @@ typedef struct s_symbol
 typedef enum e_symbol_kind : int
 {
     TERMINAL,
-    EXPR,
-    EXPR_REST,
-    TERM,
-    TERM_REST,
-    FACTOR
+    PROGRAM,
+    COMPLETE_COMMAND,
+    COMPLETE_COMMAND_REST,
+    PIPELINE,
+    PIPELINE_REST,
+    COMMAND,
+    WORD_LIST,
+    WORD_LIST_REST,
 } t_symbol_kind;
 
 typedef struct s_symbol_array
