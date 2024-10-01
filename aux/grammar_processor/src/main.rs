@@ -74,7 +74,10 @@ fn main() {
     let grammar = Rc::new(dbg!(Grammar::from_yacc_text(yacc_grammar)));
     grammar.log_grammar(GrammarRepresentation::Canonical);
     let ll_properties = LLProperties::compute(grammar.clone());
-    assert!(ll_properties.is_ll_compatible(), "grammar is not LL(1) compatible");
+    assert!(
+        ll_properties.is_ll_compatible(),
+        "grammar is not LL(1) compatible"
+    );
     let gen = RdGenerator::new(ll_properties).unwrap();
     gen.generate(Path::new("./rd_output/")).unwrap();
 }
