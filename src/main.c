@@ -1,4 +1,6 @@
+#include <stdio.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 #include <stdlib.h>
 
 #include "error/t_error.h"
@@ -6,6 +8,12 @@
 #include "tokenize/tokenize.h"
 
 #define SHELL_PROMPT "minishell$ "
+
+// TODO: copy bash implementation
+int	line_should_be_saved_in_history(const char *input)
+{
+	return (*input != '\0');
+}
 
 int	main(void)
 {
@@ -17,6 +25,8 @@ int	main(void)
 	while (1)
 	{
 		input = readline(SHELL_PROMPT);
+		if (line_should_be_saved_in_history(input))
+			add_history(input);
 		tokens = tokenize(input);
 		if (!tokens)
 			continue;
