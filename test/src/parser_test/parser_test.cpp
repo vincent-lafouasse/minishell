@@ -15,7 +15,7 @@ void assert_successful_parsing(t_token_list* tokens)
     t_command parsed;
     t_error err = parse_command(tokens, &sym);
 
-    SUCCEED();
+    ASSERT_EQ(err, NO_ERROR);
 }
 
 TEST(Parser, Dummy)
