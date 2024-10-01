@@ -41,7 +41,7 @@ typedef struct s_symbol_array
 } t_symbol_array;
 
 t_symbol_array *symbol_array_with_cap(size_t cap);
-bool symbol_array_push(t_symbol_array *this, t_symbol symbol);
+bool symbol_array_push(t_symbol_array *self, t_symbol symbol);
 
 t_symbol symbol_new_non_terminal(t_symbol_kind kind, size_t capacity);
 t_symbol symbol_new_terminal(t_token token);

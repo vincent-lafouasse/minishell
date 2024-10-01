@@ -37,10 +37,10 @@ t_symbol_array *symbol_array_with_cap(size_t cap)
     return new;
 }
 
-bool symbol_array_push(t_symbol_array *this, t_symbol symbol)
+bool symbol_array_push(t_symbol_array *self, t_symbol symbol)
 {
-    if (this->len == this->cap)
+    if (self->len == self->cap)
         return (false);
-    this->data[this->len++] = symbol;
+    self->data[self->len++] = symbol;
     return true;
 }
