@@ -15,18 +15,33 @@ set(parser_source
 	parse/t_symbol.c
 	parse/t_parser.h
 	parse/t_parser.c
+	parse/productions/produce_simple_command.c
+	parse/productions/produce_io_redirect.c
+	parse/productions/produce_redirect_list_rest.c
 	parse/productions/produce_complete_command_rest.c
+	parse/productions/produce_io_file.c
 	parse/productions/produce_program.c
-	parse/productions/produce_word_list_rest.c
 	parse/productions/produce_command.c
+	parse/productions/produce_cmd_suffix_rest.c
+	parse/productions/produce_subshell.c
+	parse/productions/produce_subshell_precedes.c
+	parse/productions/produce_redirect_list.c
 	parse/productions/produce_complete_command.c
 	parse/productions/produce_pipeline_rest.c
+	parse/productions/produce_cmd_prefix_precedes.c
+	parse/productions/produce_cmd_prefix_rest.c
+	parse/productions/produce_cmd_suffix.c
 	parse/productions/productions.h
+	parse/productions/produce_cmd_prefix.c
+	parse/productions/produce_here_end.c
 	parse/productions/produce_pipeline.c
-	parse/productions/produce_word_list.c
+	parse/productions/produce_filename.c
+	parse/productions/produce_io_here.c
+	parse/productions/produce_maybe_cmd_suffix.c
 	parse/t_command/t_command.h
 	parse/parse.c
 	parse/t_symbol.h
+
 )
 
 set(error_module
