@@ -73,17 +73,27 @@ test_libft: $(LIBFT)
 	cmake --build build/test_libft
 	GTEST_COLOR=1 ctest --test-dir build/test_libft -V
 
+.PHONY: run_memcheck
+run_memcheck: SUPPRESSIONS_FILE = aux/rl_leaks.supp
+run_memcheck: VALGRIND_FLAGS += --leak-check=full
+run_memcheck: VALGRIND_FLAGS += --show-leak-kinds=all
+run_memcheck: VALGRIND_FLAGS += --track-origins=yes
+run_memcheck: VALGRIND_FLAGS += --suppressions=$(SUPPRESSIONS_FILE)
+run_memcheck: build
+	valgrind $(VALGRIND_FLAGS) ./$(NAME)
+
 .PHONY: update
 update: fclean
 	mkdir -p build
 	bear  --output build/compile_commands.json -- make build
 
 # aliases
-.PHONY: b c u r t vt
+.PHONY: b c u r rm t vt
 b: build
 c: clean
 u: update
 r: run
+rm: run_memcheck
 t: test
 vt: vtest
 

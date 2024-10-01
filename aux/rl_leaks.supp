@@ -1,0 +1,13 @@
+{
+   lib/readline
+   Memcheck:Leak
+   ...
+   fun:readline
+   fun:main
+}
+{
+   lib/readline
+   Memcheck:Leak
+   ...
+   fun:readline
+}
