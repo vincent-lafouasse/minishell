@@ -1,7 +1,7 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <stdlib.h>
 
 #include "error/t_error.h"
 #include "parse/parse.h"
@@ -35,4 +35,5 @@ int	main(void)
 		free(input);
 		tkl_clear(&tokens);
 	}
+	rl_clear_history();
 }
