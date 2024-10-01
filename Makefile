@@ -2,11 +2,11 @@ NAME = minishell
 
 SRCS = $(shell find src -name '*.c')
 
-CC = cc
-CFLAGS = -Wall -Wextra -g3
+CC ?= cc
+CFLAGS += -Wall -Wextra -g3
 # CFLAGS += -Werror
-CPPFLAGS = -Isrc -MMD -MP
-LDFLAGS = -lreadline
+CPPFLAGS += -Isrc -MMD -MP
+LDFLAGS += -lreadline
 
 OBJS := $(SRCS:%=build/%.o)
 DEPS := $(OBJS:.o=.d)
