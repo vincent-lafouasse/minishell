@@ -14,6 +14,7 @@ set(parser_source
 	parse/parse.h
 	parse/t_symbol.c
 	parse/t_parser.h
+	parse/t_parser.c
 	parse/productions/produce_complete_command_rest.c
 	parse/productions/produce_program.c
 	parse/productions/produce_word_list_rest.c
@@ -26,7 +27,6 @@ set(parser_source
 	parse/t_command/t_command.h
 	parse/parse.c
 	parse/t_symbol.h
-
 )
 
 set(error_module
@@ -36,6 +36,8 @@ set(error_module
 set(log_module
 	log/log.c
 	log/log.h
+	log/tree_to_json.c
+
 )
 
 set(tested_source
