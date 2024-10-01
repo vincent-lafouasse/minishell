@@ -22,7 +22,7 @@ t_symbol	produce_cmd_suffix_rest(t_parser *state)
 		if (parser_accept_push(state, WORD, symbol.production))
 			parser_produce_push(state, produce_cmd_suffix_rest, symbol.production);
 	}
-	else if (parser_matches_one_of(state, (t_token_type[]){OR_OR, PIPE_TOKEN, EOF_TOKEN, R_PAREN, AND_AND}, 5))
+	else if (parser_matches_one_of(state, (t_token_type[]){OR_OR, PIPE, EOF_TOKEN, R_PAREN, AND_AND}, 5))
 	{
 	}
 	else

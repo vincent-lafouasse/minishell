@@ -2,7 +2,7 @@
 
 #define DUMMY_TOKEN_REPR "that's a token for sure"
 #define WORD_REPR "Word"
-#define PIPE_TOKEN_REPR "Pipe"
+#define PIPE_REPR "Pipe"
 #define L_ANGLE_BRACKET_REPR "<"
 #define DL_ANGLE_BRACKET_REPR "<<"
 #define R_ANGLE_BRACKET_REPR ">"
@@ -20,8 +20,8 @@ const char *token_repr(t_token token)
 {
     if (token.type == WORD)
         return WORD_REPR;
-    if (token.type == PIPE_TOKEN)
-        return PIPE_TOKEN_REPR;
+    if (token.type == PIPE)
+        return PIPE_REPR;
     if (token.type == L_ANGLE_BRACKET)
         return L_ANGLE_BRACKET_REPR;
     if (token.type == DL_ANGLE_BRACKET)

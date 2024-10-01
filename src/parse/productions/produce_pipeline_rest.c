@@ -12,9 +12,9 @@ t_symbol	produce_pipeline_rest(t_parser *state)
 		state->err = E_OOM;
 		return symbol;
 	}
-	if (parser_matches_one_of(state, (t_token_type[]){PIPE_TOKEN}, 1))
+	if (parser_matches_one_of(state, (t_token_type[]){PIPE}, 1))
 	{
-		if (parser_accept_push(state, PIPE_TOKEN, symbol.production))
+		if (parser_accept_push(state, PIPE, symbol.production))
 			if (parser_produce_push(state, produce_command, symbol.production))
 				parser_produce_push(state, produce_pipeline_rest, symbol.production);
 	}

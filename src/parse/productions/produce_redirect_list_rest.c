@@ -17,7 +17,7 @@ t_symbol	produce_redirect_list_rest(t_parser *state)
 		if (parser_produce_push(state, produce_io_redirect, symbol.production))
 			parser_produce_push(state, produce_redirect_list_rest, symbol.production);
 	}
-	else if (parser_matches_one_of(state, (t_token_type[]){EOF_TOKEN, R_PAREN, PIPE_TOKEN, AND_AND, OR_OR}, 5))
+	else if (parser_matches_one_of(state, (t_token_type[]){EOF_TOKEN, R_PAREN, PIPE, AND_AND, OR_OR}, 5))
 	{
 	}
 	else

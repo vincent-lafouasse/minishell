@@ -16,7 +16,7 @@ t_symbol	produce_subshell_precedes(t_parser *state)
 	{
 		parser_produce_push(state, produce_redirect_list, symbol.production);
 	}
-	else if (parser_matches_one_of(state, (t_token_type[]){PIPE_TOKEN, EOF_TOKEN, R_PAREN, OR_OR, AND_AND}, 5))
+	else if (parser_matches_one_of(state, (t_token_type[]){PIPE, EOF_TOKEN, R_PAREN, OR_OR, AND_AND}, 5))
 	{
 	}
 	else

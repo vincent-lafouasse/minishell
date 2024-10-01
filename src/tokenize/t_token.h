@@ -3,7 +3,7 @@
 typedef enum e_token_type
 {
     WORD,
-    PIPE_TOKEN,
+    PIPE,
     L_ANGLE_BRACKET,
     DL_ANGLE_BRACKET,
     R_ANGLE_BRACKET,

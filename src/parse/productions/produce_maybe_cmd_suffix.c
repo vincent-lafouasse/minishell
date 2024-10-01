@@ -16,7 +16,7 @@ t_symbol	produce_maybe_cmd_suffix(t_parser *state)
 	{
 		parser_produce_push(state, produce_cmd_suffix, symbol.production);
 	}
-	else if (parser_matches_one_of(state, (t_token_type[]){R_PAREN, PIPE_TOKEN, EOF_TOKEN, OR_OR, AND_AND}, 5))
+	else if (parser_matches_one_of(state, (t_token_type[]){R_PAREN, PIPE, EOF_TOKEN, OR_OR, AND_AND}, 5))
 	{
 	}
 	else

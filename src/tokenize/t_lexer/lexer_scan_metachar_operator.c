@@ -14,7 +14,7 @@ t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
         return (lexer_advance(lexer),
                 fill_token((t_token){.type = OR_OR}, out));
     if (current == '|')
-        return (fill_token((t_token){.type = PIPE_TOKEN}, out));
+        return (fill_token((t_token){.type = PIPE}, out));
     if (current == '&' && lexer_peek(lexer) == '&')
         return (lexer_advance(lexer),
                 fill_token((t_token){.type = AND_AND}, out));

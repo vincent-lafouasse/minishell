@@ -12,7 +12,7 @@ t_symbol	produce_cmd_prefix_precedes(t_parser *state)
 		state->err = E_OOM;
 		return symbol;
 	}
-	if (parser_matches_one_of(state, (t_token_type[]){OR_OR, PIPE_TOKEN, AND_AND, R_PAREN, EOF_TOKEN}, 5))
+	if (parser_matches_one_of(state, (t_token_type[]){OR_OR, PIPE, AND_AND, R_PAREN, EOF_TOKEN}, 5))
 	{
 	}
 	else if (parser_matches_one_of(state, (t_token_type[]){WORD}, 1))
