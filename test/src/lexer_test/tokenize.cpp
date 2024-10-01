@@ -239,7 +239,7 @@ TEST(Tokenize, Pipex)
         Token(L_ANGLE_BRACKET, nullptr),
         Token(WORD, "infile"),
         Token(WORD, "cmd1"),
-        Token(PIPE_TOKEN, nullptr),
+        Token(PIPE, nullptr),
         Token(WORD, "cmd2"),
         Token(R_ANGLE_BRACKET, nullptr),
         Token(WORD, "outfile"),
@@ -256,10 +256,10 @@ TEST(Tokenize, BigPipex)
         "cppcheck < file.cpp | cat | sort | wc | a_cmd >> outfile";
     std::vector<t_token> expected = {
         Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, nullptr),
-        Token(WORD, "file.cpp"), Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "cat"),      Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "sort"),     Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "wc"),       Token(PIPE_TOKEN, nullptr),
+        Token(WORD, "file.cpp"), Token(PIPE, nullptr),
+        Token(WORD, "cat"),      Token(PIPE, nullptr),
+        Token(WORD, "sort"),     Token(PIPE, nullptr),
+        Token(WORD, "wc"),       Token(PIPE, nullptr),
         Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, nullptr),
         Token(WORD, "outfile"),  Token(EOF_TOKEN, nullptr),
     };
@@ -273,10 +273,10 @@ TEST(Tokenize, BigPipexNoWhitespace)
     const char *source = "cppcheck<file.cpp|cat|sort|wc|a_cmd>>outfile";
     std::vector<t_token> expected = {
         Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, nullptr),
-        Token(WORD, "file.cpp"), Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "cat"),      Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "sort"),     Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "wc"),       Token(PIPE_TOKEN, nullptr),
+        Token(WORD, "file.cpp"), Token(PIPE, nullptr),
+        Token(WORD, "cat"),      Token(PIPE, nullptr),
+        Token(WORD, "sort"),     Token(PIPE, nullptr),
+        Token(WORD, "wc"),       Token(PIPE, nullptr),
         Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, nullptr),
         Token(WORD, "outfile"),  Token(EOF_TOKEN, nullptr),
     };
@@ -291,10 +291,10 @@ TEST(Tokenize, BigPipexLotsOfWhitespace)
                          "a_cmd >> outfile   ";
     std::vector<t_token> expected = {
         Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, nullptr),
-        Token(WORD, "file.cpp"), Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "cat"),      Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "sort"),     Token(PIPE_TOKEN, nullptr),
-        Token(WORD, "wc"),       Token(PIPE_TOKEN, nullptr),
+        Token(WORD, "file.cpp"), Token(PIPE, nullptr),
+        Token(WORD, "cat"),      Token(PIPE, nullptr),
+        Token(WORD, "sort"),     Token(PIPE, nullptr),
+        Token(WORD, "wc"),       Token(PIPE, nullptr),
         Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, nullptr),
         Token(WORD, "outfile"),  Token(EOF_TOKEN, nullptr),
     };
