@@ -73,6 +73,7 @@ void print_terminal(const t_symbol* node)
         printf("%s", token_repr(node->token));
     printf("\"},");
 
+    printf("\"HTMLclass\": \"terminal-symbol\",");
     printf("\"children\": []");
 
     printf("}");
@@ -84,7 +85,7 @@ void print_non_terminal(const t_symbol* node)
 
     printf("\"text\": { \"name\": \"%s\" },", node_repr(node->kind));
 
-
+    printf("\"collapsable\": true,");
 
     printf("\"children\": [");
 
