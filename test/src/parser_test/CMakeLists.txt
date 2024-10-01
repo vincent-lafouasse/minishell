@@ -12,10 +12,21 @@ set(token_list_source
 
 set(parser_source
 	parse/parse.h
-	parse/t_parse_tree/productions.h
-	parse/t_parse_tree/t_parse_tree.h
-	parse/t_parse_tree/parser.c
-	parse/parse_command.c
+	parse/t_symbol.c
+	parse/t_parser.h
+	parse/productions/produce_complete_command_rest.c
+	parse/productions/produce_program.c
+	parse/productions/produce_word_list_rest.c
+	parse/productions/produce_command.c
+	parse/productions/produce_complete_command.c
+	parse/productions/produce_pipeline_rest.c
+	parse/productions/productions.h
+	parse/productions/produce_pipeline.c
+	parse/productions/produce_word_list.c
+	parse/t_command/t_command.h
+	parse/parse.c
+	parse/t_symbol.h
+
 )
 
 set(error_module
