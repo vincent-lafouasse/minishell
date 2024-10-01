@@ -1,6 +1,7 @@
 #pragma once
 
-#include "parse/t_symbol.h"
+#include "../t_symbol/t_symbol.h"
+#include "error/t_error.h"
 #include "tokenize/t_token_list/t_token_list.h"
 #include <stdbool.h>
 #include <stddef.h>

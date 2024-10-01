@@ -1,6 +1,4 @@
-#include "error/t_error.h"
 #include "t_parser.h"
-#include "tokenize/t_token.h"
 #include <stdbool.h>
 #include <stddef.h>
 
