@@ -8,6 +8,14 @@ extern "C"
 #include "parse/parse.h"
 };
 
+/*
+"hello"
+"hello world"
+"bat cat dash idk im just saying stuff"
+"vim > emacs"
+"hello | world | my guy"
+"hello && world << blegh || my > haha | guy || < lol (idek)"
+*/
 
 void assert_successful_parsing(t_token_list* tokens)
 {
