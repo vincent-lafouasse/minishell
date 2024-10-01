@@ -179,7 +179,50 @@ impl RdGenerator {
         Ok(())
     }
 
+    pub fn output_symbol_kind_enum_definition(&self, out: &mut dyn Write) -> io::Result<()> {
+        writeln!(out, "typedef enum e_symbol_kind : int")?;
+        writeln!(out, "{{")?;
+        writeln!(out, "	TERMINAL,")?;
+        for non_terminal in self.ll_properties.underlying_grammar().non_terminals() {
+            writeln!(out, "	{},", non_terminal.to_uppercase())?;
+        }
+        writeln!(out, "}}	t_symbol_kind;")?;
+
+        Ok(())
+    }
+
+    pub fn output_node_reprs(&self, out: &mut dyn Write) -> io::Result<()> {
+        let display = |nt: &str| -> String {
+            let nt = nt.replace("_rest", "'");
+            let nt = nt.replace("_precedes", "''");
+            let mut iter = nt.split('_').map(str::to_lowercase).map(|w| {
+                let first = w.chars().next();
+                let Some(first) = first else {
+                    return String::new();
+                };
+                String::from(first.to_ascii_uppercase()) + &w[1..]
+            });
+            let Some(first_word) = iter.next() else {
+                return String::new();
+            };
+            iter.fold(first_word, |a, b| a + " " + &b)
+        };
+
+        writeln!(out, "static const char* node_repr(enum e_symbol_kind kind)")?;
+        writeln!(out, "{{")?;
+        for non_terminal in self.ll_properties.underlying_grammar().non_terminals() {
+            writeln!(out, "	if (kind == {})", non_terminal.to_uppercase())?;
+            writeln!(out, "		return \"{}\";", display(non_terminal))?;
+        }
+        writeln!(out, "	return \"???\";")?;
+        writeln!(out, "}}")?;
+
+        Ok(())
+    }
+
     pub fn generate(&self, output_path: &Path) -> io::Result<()> {
+        self.output_symbol_kind_enum_definition(&mut std::io::stdout())?;
+        self.output_node_reprs(&mut std::io::stdout())?;
         std::fs::create_dir(output_path).ok();
         self.write_header_files(output_path)?;
         for (variable, rule) in self.ll_properties.underlying_grammar().rules() {
