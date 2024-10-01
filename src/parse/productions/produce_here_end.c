@@ -2,16 +2,16 @@
 #include "../t_symbol.h"
 #include "../t_parser.h"
 
-t_symbol	produce_program(t_parser *state)
+t_symbol	produce_here_end(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(PROGRAM, 1);
+	symbol = symbol_new_non_terminal(HERE_END, 1);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;
 		return symbol;
 	}
-	parser_produce_push(state, produce_complete_command, symbol.production);
+	parser_accept_push(state, WORD, symbol.production);
 	return (symbol);
 }

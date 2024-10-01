@@ -4,22 +4,50 @@
 
 static const char* node_repr(enum e_symbol_kind kind)
 {
-    if (kind == PROGRAM)
-        return "Program";
     if (kind == COMPLETE_COMMAND)
         return "Complete Command";
+    if (kind == SUBSHELL)
+        return "Subshell";
+    if (kind == CMD_PREFIX_REST)
+        return "Cmd Prefix'";
+    if (kind == IO_REDIRECT)
+        return "Io Redirect";
+    if (kind == IO_FILE)
+        return "Io File";
+    if (kind == PROGRAM)
+        return "Program";
+    if (kind == CMD_PREFIX_PRECEDES)
+        return "Cmd Prefix''";
+    if (kind == IO_HERE)
+        return "Io Here";
     if (kind == COMPLETE_COMMAND_REST)
         return "Complete Command'";
-    if (kind == PIPELINE)
-        return "Pipeline";
+    if (kind == MAYBE_CMD_SUFFIX)
+        return "Maybe Cmd Suffix";
+    if (kind == CMD_SUFFIX)
+        return "Cmd Suffix";
     if (kind == PIPELINE_REST)
         return "Pipeline'";
+    if (kind == PIPELINE)
+        return "Pipeline";
+    if (kind == REDIRECT_LIST)
+        return "Redirect List";
+    if (kind == SIMPLE_COMMAND)
+        return "Simple Command";
+    if (kind == HERE_END)
+        return "Here End";
+    if (kind == FILENAME)
+        return "Filename";
+    if (kind == CMD_PREFIX)
+        return "Cmd Prefix";
     if (kind == COMMAND)
         return "Command";
-    if (kind == WORD_LIST)
-        return "Wordlist";
-    if (kind == WORD_LIST_REST)
-        return "Wordlist'";
+    if (kind == CMD_SUFFIX_REST)
+        return "Cmd Suffix'";
+    if (kind == REDIRECT_LIST_REST)
+        return "Redirect List'";
+    if (kind == SUBSHELL_PRECEDES)
+        return "Subshell''";
     return "???";
 }
 

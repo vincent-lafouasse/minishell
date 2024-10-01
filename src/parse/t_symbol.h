@@ -23,14 +23,28 @@ typedef struct s_symbol
 typedef enum e_symbol_kind : int
 {
     TERMINAL,
-    PROGRAM,
     COMPLETE_COMMAND,
+    SUBSHELL,
+    CMD_PREFIX_REST,
+    IO_REDIRECT,
+    IO_FILE,
+    PROGRAM,
+    CMD_PREFIX_PRECEDES,
+    IO_HERE,
     COMPLETE_COMMAND_REST,
-    PIPELINE,
+    MAYBE_CMD_SUFFIX,
+    CMD_SUFFIX,
     PIPELINE_REST,
+    PIPELINE,
+    REDIRECT_LIST,
+    SIMPLE_COMMAND,
+    HERE_END,
+    FILENAME,
+    CMD_PREFIX,
     COMMAND,
-    WORD_LIST,
-    WORD_LIST_REST,
+    CMD_SUFFIX_REST,
+    REDIRECT_LIST_REST,
+    SUBSHELL_PRECEDES,
 } t_symbol_kind;
 
 typedef struct s_symbol_array

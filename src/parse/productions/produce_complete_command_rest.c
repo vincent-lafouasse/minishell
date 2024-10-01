@@ -1,6 +1,6 @@
-#include "../t_parser.h"
-#include "../t_symbol.h"
 #include "productions.h"
+#include "../t_symbol.h"
+#include "../t_parser.h"
 
 t_symbol	produce_complete_command_rest(t_parser *state)
 {
@@ -10,24 +10,22 @@ t_symbol	produce_complete_command_rest(t_parser *state)
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;
-		return (symbol);
+		return symbol;
 	}
-	if (parser_matches_one_of(state, (t_token_type[]){AND_AND}, 1))
+	if (parser_matches_one_of(state, (t_token_type[]){R_PAREN, EOF_TOKEN}, 2))
+	{
+	}
+	else if (parser_matches_one_of(state, (t_token_type[]){AND_AND}, 1))
 	{
 		if (parser_accept_push(state, AND_AND, symbol.production))
 			if (parser_produce_push(state, produce_pipeline, symbol.production))
-				parser_produce_push(state, produce_complete_command_rest,
-					symbol.production);
+				parser_produce_push(state, produce_complete_command_rest, symbol.production);
 	}
 	else if (parser_matches_one_of(state, (t_token_type[]){OR_OR}, 1))
 	{
 		if (parser_accept_push(state, OR_OR, symbol.production))
 			if (parser_produce_push(state, produce_pipeline, symbol.production))
-				parser_produce_push(state, produce_complete_command_rest,
-					symbol.production);
-	}
-	else if (parser_matches_one_of(state, (t_token_type[]){EOF_TOKEN}, 1))
-	{
+				parser_produce_push(state, produce_complete_command_rest, symbol.production);
 	}
 	else
 	{

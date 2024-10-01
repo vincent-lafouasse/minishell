@@ -1,6 +1,6 @@
-#include "../t_parser.h"
-#include "../t_symbol.h"
 #include "productions.h"
+#include "../t_symbol.h"
+#include "../t_parser.h"
 
 t_symbol	produce_pipeline(t_parser *state)
 {
@@ -10,7 +10,7 @@ t_symbol	produce_pipeline(t_parser *state)
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;
-		return (symbol);
+		return symbol;
 	}
 	if (parser_produce_push(state, produce_command, symbol.production))
 		parser_produce_push(state, produce_pipeline_rest, symbol.production);
