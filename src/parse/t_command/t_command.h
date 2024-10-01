@@ -41,10 +41,10 @@ typedef struct s_conditional {
 
 typedef struct s_subshell {
 	t_command cmd;
-	t_redir_list *redirections
+	t_redir_list *redirections;
 } t_subshell;
 
 typedef struct s_simple {
 	t_word_list	*words;
-	t_redir_list *redirections
+	t_redir_list *redirections;
 } t_simple;
