@@ -37,7 +37,7 @@ $(NAME): $(OBJS) $(LIBS)
 
 # compiling stage
 build/%.c.o: %.c
-	mkdir -p $(dir $@)
+	@mkdir -p $(dir $@)
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 $(LIBFT):
