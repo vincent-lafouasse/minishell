@@ -112,35 +112,6 @@ t_command	reduce_command(t_symbol *root)
 							   &root->production->data[1]);
 }
 
-static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket);
-
-t_redir_list *register_redirections(t_symbol *root)
-{
-	t_token_list	*leaves;
-	t_redir_list	*redirections;
-
-	redirections = NULL;
-	// no assertion b.c. potentially nothing follows subshell
-	leaves = gather_leaves(root);
-	while (leaves)
-	{
-		t_redirect	redir;
-		t_token		bracket;
-		t_token		word;
-
-		bracket = leaves->token;
-		word = leaves->next->token;
-		redir.kind = redir_kind_from_angle_bracket(bracket.type);
-		if (redir.kind == HERE_DOCUMENT)
-			redir.doc = (t_here_doc){NULL, word.literal};
-		else
-			redir.filename = word.literal;
-		rdl_push_back(&redirections, redir);
-		leaves = leaves->next->next;
-	}
-	return redirections;
-}
-
 t_command	reduce_complete_command(t_symbol *root);
 
 t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
@@ -154,60 +125,19 @@ t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
 	assert (sub != NULL);
 
 	sub->cmd = reduce_complete_command(subshell);
-	sub->redirections = register_redirections(trailing_redirs);
+	reduce_simple_command_like(trailing_redirs, NULL, &sub->redirections);
 
 	return (t_command){.type = SUBSHELL_CMD, .subshell = sub};
 }
 
-static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
-{
-	if (bracket == L_ANGLE_BRACKET)
-		return (FROM_FILE);
-	else if (bracket == R_ANGLE_BRACKET)
-		return (INTO_FILE);
-	else if (bracket == DL_ANGLE_BRACKET)
-		return (HERE_DOCUMENT);
-	else if (bracket == DR_ANGLE_BRACKET)
-		return (APPEND_INTO_FILE);
-	assert(true);
-	return (0);
-}
-
 t_command	reduce_simple_command(t_symbol *root)
 {
-	t_token_list	*leaves;
 	t_simple		*simple;
 
 	assert (root->kind == SIMPLE_COMMAND);
-	leaves = gather_leaves(root);
-	// we know `root` to be a `simple_command`, so it must contain one word
-	assert (leaves != NULL);
 	simple = malloc(sizeof(*simple));
 	assert (simple != NULL);
 	*simple = (t_simple){0};
-	while (leaves)
-	{
-		if (leaves->token.type == WORD)
-		{
-			wl_push_back(&simple->words, leaves->token.literal);
-			leaves = leaves->next;
-		}
-		else
-		{
-			t_redirect	redir;
-			t_token		bracket;
-			t_token		word;
-
-			bracket = leaves->token;
-			word = leaves->next->token;
-			redir.kind = redir_kind_from_angle_bracket(bracket.type);
-			if (redir.kind == HERE_DOCUMENT)
-				redir.doc = (t_here_doc){NULL, word.literal};
-			else
-				redir.filename = word.literal;
-			rdl_push_back(&simple->redirections, redir);
-			leaves = leaves->next->next;
-		}
-	}
+	reduce_simple_command_like(root, &simple->words, &simple->redirections);
 	return (t_command){.type = SIMPLE_CMD, .simple = simple};
 }
