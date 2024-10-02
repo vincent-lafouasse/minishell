@@ -198,6 +198,7 @@ static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
 		return (HERE_DOCUMENT);
 	else if (bracket == DR_ANGLE_BRACKET)
 		return (APPEND_INTO_FILE);
+	assert(true);
 	return (0);
 }
 
