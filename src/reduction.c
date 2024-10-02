@@ -85,8 +85,8 @@ t_redir_list *register_redirections(t_symbol *root)
 	t_redir_list	*redirections;
 
 	redirections = NULL;
+	// no assertion b.c. potentially nothing follows subshell
 	leaves = gather_leaves(root);
-	assert (leaves != NULL);
 	while (leaves)
 	{
 		t_redirect	redir;
@@ -144,6 +144,7 @@ t_command	reduce_simple_command(t_symbol *root)
 
 	assert (root->kind == SIMPLE_COMMAND);
 	leaves = gather_leaves(root);
+	// we know `root` to be a `simple_command`, so it must contain one word
 	assert (leaves != NULL);
 	simple = malloc(sizeof(*simple));
 	assert (simple != NULL);
