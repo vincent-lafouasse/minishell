@@ -62,6 +62,12 @@ t_token_list *gather_leaves(t_symbol* root)
 
 #include <stdlib.h>
 
+t_command	reduce_complete_command(t_symbol *root)
+{
+	(void)root;
+	return (t_command){0};
+}
+
 static bool recurse_pipeline(t_command *out, t_symbol *pipeline_rest)
 {
 	t_symbol_array	*productions;
