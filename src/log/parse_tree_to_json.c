@@ -101,7 +101,7 @@ void print_non_terminal(const t_symbol* node)
     printf("}");
 }
 
-void tree_to_json(const t_symbol *root)
+void parse_tree_to_json(const t_symbol *root)
 {
     printf("{");
 
