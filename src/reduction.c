@@ -77,19 +77,19 @@ static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
 t_command	reduce_simple_command(t_symbol *root)
 {
 	t_token_list	*leaves;
-	t_simple		*cmd;
+	t_simple		*simple;
 
 	assert (root->kind == SIMPLE_COMMAND);
 	leaves = gather_leaves(root);
 	assert (leaves != NULL);
-	cmd = malloc(sizeof(*cmd));
-	assert (cmd != NULL);
-	*cmd = (t_simple){0};
+	simple = malloc(sizeof(*simple));
+	assert (simple != NULL);
+	*simple = (t_simple){0};
 	while (leaves)
 	{
 		if (leaves->token.type == WORD)
 		{
-			wl_push_back(&cmd->words, leaves->token.literal);
+			wl_push_back(&simple->words, leaves->token.literal);
 			leaves = leaves->next;
 		}
 		else
@@ -105,9 +105,9 @@ t_command	reduce_simple_command(t_symbol *root)
 				redir.doc = (t_here_doc){NULL, word.literal};
 			else
 				redir.filename = word.literal;
-			rdl_push_back(&cmd->redirections, redir);
+			rdl_push_back(&simple->redirections, redir);
 			leaves = leaves->next->next;
 		}
 	}
-	return (t_command){.type = SIMPLE_CMD, .simple = cmd};
+	return (t_command){.type = SIMPLE_CMD, .simple = simple};
 }
