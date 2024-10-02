@@ -1,5 +1,4 @@
-#include "parse/t_command/t_command.h"
-#include "parse/t_symbol.h"
+#include "reduction.h"
 #include "log/log.h"
 #include "tokenize/t_token_list/t_token_list.h"
 #include "t_symbol_stack.h"

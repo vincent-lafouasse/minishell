@@ -7,6 +7,8 @@
 #include "parse/parse.h"
 #include "tokenize/tokenize.h"
 
+#include "reduction.h"
+
 #define SHELL_PROMPT "minishell$ "
 
 // TODO: copy bash implementation
@@ -19,7 +21,7 @@ int	main(void)
 {
 	char			*input;
 	t_token_list	*tokens;
-	t_symbol		symbol;
+	t_symbol		parse_tree;
 	t_error			err;
 
 	while (1)
@@ -30,10 +32,14 @@ int	main(void)
 		tokens = tokenize(input);
 		if (!tokens)
 			continue;
-		err = parse_command(tokens, &symbol);
+		err = parse_command(tokens, &parse_tree);
+
+		t_symbol* simple = find_simple_command(&parse_tree);
+		t_command simple_also = reduce_simple_command(simple);
+
 		printf("symbol status: %s\n", error_repr(err));
 		free(input);
 		tkl_clear(&tokens);
 	}
-	rl_clear_history();
+	clear_history();
 }
