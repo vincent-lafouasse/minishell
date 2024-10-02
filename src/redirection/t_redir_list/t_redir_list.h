@@ -31,13 +31,13 @@ typedef struct s_redir_list
 	t_redirect redirect;
 } t_redir_list;
 
-t_redir_list *rdl_new(char *contents);
+t_redir_list *rdl_new(t_redirect redir /* ! */);
 t_redir_list *rdl_clone(const t_redir_list *words);
 
 size_t rdl_len(const t_redir_list *words);
 
 // used in reduction.c
-t_error rdl_push_back(t_redir_list **words, char *contents);
+t_error rdl_push_back(t_redir_list **words, t_redirect redir);
 void rdl_push_back_link(t_redir_list **words, t_redir_list *link);
 t_redir_list *rdl_pop(t_redir_list **words);
 
