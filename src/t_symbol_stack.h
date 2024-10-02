@@ -18,3 +18,5 @@ bool						ss_push(t_symbol_stack **stack_p, t_symbol *sym);
 t_symbol					*ss_pop(t_symbol_stack **stack_p);
 
 bool ss_contains(const t_symbol_stack* stack, t_symbol* sym);
+
+void *ss_clear(t_symbol_stack **stack_p);
