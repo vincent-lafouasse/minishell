@@ -25,7 +25,7 @@ t_symbol* find_simple_command(t_symbol* root)
     return NULL;
 }
 
-void gather_leaves(t_symbol* root, t_token_list** leaves_p, t_symbol_stack** visited)
+static void recurse(t_symbol* root, t_token_list** leaves_p, t_symbol_stack** visited)
 {
     ss_push(visited, root);
     if (root->kind == TERMINAL)
@@ -38,9 +38,21 @@ void gather_leaves(t_symbol* root, t_token_list** leaves_p, t_symbol_stack** vis
 		{
 		    t_symbol* candidate = &root->production->data[i];
 		    if (!ss_contains(*visited, candidate))
-					gather_leaves(candidate, leaves_p, visited);
+				recurse(candidate, leaves_p, visited);
 		}
     }
+}
+
+t_token_list *gather_leaves(t_symbol* root)
+{
+	t_token_list* leaves;
+    t_symbol_stack* visited;
+
+	leaves = NULL;
+	visited = NULL;
+    recurse(root, &leaves, &visited);
+	//ss_clear(&visited);
+	return (leaves);
 }
 
 t_command	reduce_simple_command(t_symbol *root)
