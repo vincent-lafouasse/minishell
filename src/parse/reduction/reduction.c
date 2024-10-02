@@ -28,3 +28,12 @@ t_symbol* find_symbol(t_symbol* root, t_symbol_kind kind)
 
     return NULL;
 }
+
+t_command	reduce_parse_tree_into_command(t_symbol *parse_tree)
+{
+	t_command out;
+
+	out = reduce_complete_command(parse_tree);
+	symbol_clear(*parse_tree);
+	return out;
+}

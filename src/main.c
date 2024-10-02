@@ -8,6 +8,7 @@
 #include "parse/parse.h"
 #include "tokenize/tokenize.h"
 
+#include "parse/reduction/reduction.h"
 #include "parse/reduction/reduction_internals.h"
 
 #define SHELL_PROMPT "minishell$ "
