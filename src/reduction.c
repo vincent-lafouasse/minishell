@@ -111,7 +111,6 @@ t_command	reduce_complete_command(t_symbol *root);
 t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
 {
 	t_subshell	*sub;
-	t_command	inner;
 
 	assert (subshell->kind == SUBSHELL);
 	assert (trailing_redirs->kind == SUBSHELL_PRECEDES);
