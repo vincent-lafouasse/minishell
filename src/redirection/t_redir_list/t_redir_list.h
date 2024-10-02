@@ -12,6 +12,8 @@ typedef enum e_redir_kind {
 	HERE_DOCUMENT,
 } t_redir_kind;
 
+const char *redir_kind_repr(t_redir_kind kind);
+
 typedef struct s_here_doc {
 	char *contents; // null right after parsing
 	char *here_doc_eof; // pre-expansion
