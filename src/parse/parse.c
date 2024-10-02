@@ -21,6 +21,6 @@ t_error parse_command(t_token_list *tokens, t_symbol *out)
         symbol_clear(*out);
         return E_UNEXPECTED_TOKEN;
     }
-    tree_to_json(out);
+    //tree_to_json(out);
     return NO_ERROR;
 }

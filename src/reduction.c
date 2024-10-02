@@ -1,7 +1,30 @@
 #include "parse/t_command/t_command.h"
 #include "parse/t_symbol.h"
+#include "log/log.h"
 #include "tokenize/t_token_list/t_token_list.h"
 #include "t_symbol_stack.h"
+
+t_symbol* find_simple_command(t_symbol* root)
+{
+	t_symbol_stack* waiting_room = ss_new(root);
+
+	while (waiting_room != NULL)
+	{
+		t_symbol* current = ss_pop(&waiting_room);
+
+		if (current->kind == SIMPLE_COMMAND)
+		{
+			return current;
+		}
+
+		for (int i = current->production->len - 1; i >= 0; i--)
+		{
+			ss_push(&waiting_room, &current->production->data[i]);
+		}
+	}
+
+    return NULL;
+}
 
 t_token_list* gather_leaves(t_symbol* root)
 {
@@ -32,6 +55,7 @@ t_token_list* gather_leaves(t_symbol* root)
 t_command	reduce_simple_command(t_symbol *root)
 {
 	t_token_list* leaves = gather_leaves(root);
+	log_token_list(leaves);
 
 	return (t_command){};
 }
