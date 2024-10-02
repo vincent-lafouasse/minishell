@@ -32,12 +32,17 @@ int	main(void)
 		tokens = tokenize(input);
 		if (!tokens)
 			continue;
+
 		err = parse_command(tokens, &parse_tree);
+		if (err != NO_ERROR)
+		{
+			printf("symbol status: %s\n", error_repr(err));
+			continue;
+		}
 
 		t_symbol* simple = find_simple_command(&parse_tree);
 		t_command simple_also = reduce_simple_command(simple); // print aussi les tokens
 
-		printf("symbol status: %s\n", error_repr(err));
 		free(input);
 		tkl_clear(&tokens);
 	}
