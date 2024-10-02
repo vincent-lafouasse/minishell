@@ -27,12 +27,9 @@ void ss_push_link(t_symbol_stack** stack_p, t_symbol_stack* node)
 		return;
 	}
 
-	t_symbol_stack* last = *stack_p;
-	
-	while (last->next)
-		last = last->next;
-
-	last->next = node;
+	t_symbol_stack* old_head = *stack_p;
+	*stack_p = node;
+	node->next = old_head;
 }
 
 t_symbol_stack* ss_pop_link(t_symbol_stack** stack_p)
@@ -46,5 +43,9 @@ t_symbol_stack* ss_pop_link(t_symbol_stack** stack_p)
 	return out;
 }
 
+bool ss_push_(t_symbol_stack **stack_p, t_symbol* sym)
+{
+	
+}
 
-t_command reduce_simple_command(t_symbol* root);
+t_command reduce_simple_command(t_symbol *root);
