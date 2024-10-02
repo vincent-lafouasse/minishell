@@ -4,7 +4,7 @@
 #include "parse/t_symbol/t_symbol.h"
 #include "redirection/t_redir_list/t_redir_list.h"
 #include "tokenize/t_token_list/t_token_list.h"
-#include "t_symbol_stack.h"
+#include "parse/t_symbol/t_symbol_stack/t_symbol_stack.h"
 
 #include <assert.h>
 
