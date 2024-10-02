@@ -29,3 +29,13 @@ void log_error(t_error err)
     }
     printf("Error:\t%s\n", error_repr(err));
 }
+
+void log_word_list(const t_word_list *words)
+{
+    while (words)
+    {
+        printf(" > %s", words->contents);
+        printf("\n");
+        words = words->next;
+    }
+}
