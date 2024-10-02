@@ -116,7 +116,7 @@ t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
 	assert (trailing_redirs->kind == SUBSHELL_PRECEDES);
 
 	sub = malloc(sizeof(*sub));
-	assert (subshell != NULL);
+	assert (sub != NULL);
 
 	sub->cmd = reduce_complete_command(subshell);
 	sub->redirections = register_redirections(trailing_redirs);
