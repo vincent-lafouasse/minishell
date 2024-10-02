@@ -105,6 +105,8 @@ static void print_cmd(t_command other)
 {
     if (other.type == SIMPLE_CMD)
         return print_simple(other.simple);
+    if (other.type == SUBSHELL_CMD)
+        return print_subshell(other.subshell);
     if (other.any == NULL)
     {
         printf("{");
@@ -127,8 +129,6 @@ static void print_cmd(t_command other)
         printf(",");
         print_cmd(other.pipeline->second);
     }
-    else if (other.type == SUBSHELL_CMD)
-        print_subshell(other.subshell);
     else if (other.type == CONDITIONAL_CMD)
         print_cmd(other.subshell->cmd);
 
