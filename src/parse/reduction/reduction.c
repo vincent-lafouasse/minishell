@@ -97,8 +97,6 @@ t_command	reduce_pipeline(t_symbol *pipeline)
 	return (t_command){.type = PIPELINE_CMD, .pipeline = out};
 }
 
-t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs);
-
 // command : simple_command
 //         | subshell redirect_list
 //         | subshell
@@ -111,8 +109,6 @@ t_command	reduce_command(t_symbol *root)
 		return reduce_subshell(&root->production->data[0], \
 							   &root->production->data[1]);
 }
-
-t_command	reduce_complete_command(t_symbol *root);
 
 t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
 {
