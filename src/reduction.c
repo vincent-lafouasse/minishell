@@ -62,6 +62,64 @@ t_token_list *gather_leaves(t_symbol* root)
 
 #include <stdlib.h>
 
+static bool recurse_pipeline(t_command *out, t_symbol *pipeline_rest)
+{
+	t_symbol_array	*productions;
+	t_pipeline		*pipeline;
+	t_command		first;
+	t_command		second;
+
+	productions = pipeline_rest->production;
+
+	if (productions->len == 0)
+		return (false);
+
+	first = reduce_command(&productions->data[1]);
+	if (!recurse_pipeline(&second, &productions->data[2]))
+	{
+		*out = first;
+		return (true);
+	}
+
+	pipeline = malloc(sizeof(*pipeline));
+	assert (pipeline != NULL);
+
+	*pipeline = (t_pipeline){.first = first, .second = second};
+	*out = (t_command){.type = PIPELINE_CMD, .pipeline = pipeline};
+
+	return true;
+}
+
+t_command	reduce_pipeline_rest(t_symbol *pipeline_rest)
+{
+	t_command out;
+
+	assert (pipeline_rest->kind == PIPELINE_REST);
+	assert (pipeline_rest->production->len > 0);
+
+	recurse_pipeline(&out, pipeline_rest);
+
+	return out;
+}
+
+t_command	reduce_pipeline(t_symbol *pipeline)
+{
+	t_pipeline	*out;
+
+	assert (pipeline->kind == PIPELINE);
+
+	if (pipeline->production->data[1].production->len == 0)
+		return reduce_command(&pipeline->production->data[0]);
+
+	out = malloc(sizeof(*out));
+	assert (out != NULL);
+
+	out->first = reduce_command(&pipeline->production->data[0]);
+	out->second = reduce_pipeline_rest(&pipeline->production->data[1]);
+
+	return (t_command){.type = PIPELINE_CMD, .pipeline = out};
+}
+
 t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs);
 
 // command : simple_command
