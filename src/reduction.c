@@ -1,6 +1,7 @@
 #include "reduction.h"
 #include "log/log.h"
 #include "parse/t_command/t_command.h"
+#include "parse/t_symbol/t_symbol.h"
 #include "redirection/t_redir_list/t_redir_list.h"
 #include "tokenize/t_token_list/t_token_list.h"
 #include "t_symbol_stack.h"
@@ -60,6 +61,69 @@ t_token_list *gather_leaves(t_symbol* root)
 }
 
 #include <stdlib.h>
+
+t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs);
+
+// command : simple_command
+//         | subshell redirect_list
+//         | subshell
+t_command	reduce_command(t_symbol *root)
+{
+	assert (root->kind == COMMAND);
+	if (root->production->data[0].kind == SIMPLE_COMMAND)
+		return reduce_simple_command(&root->production->data[0]);
+	else
+		return reduce_subshell(&root->production->data[0], \
+							   &root->production->data[1]);
+}
+
+static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket);
+
+t_redir_list *register_redirections(t_symbol *root)
+{
+	t_token_list	*leaves;
+	t_redir_list	*redirections;
+
+	redirections = NULL;
+	leaves = gather_leaves(root);
+	assert (leaves != NULL);
+	while (leaves)
+	{
+		t_redirect	redir;
+		t_token		bracket;
+		t_token		word;
+
+		bracket = leaves->token;
+		word = leaves->next->token;
+		redir.kind = redir_kind_from_angle_bracket(bracket.type);
+		if (redir.kind == HERE_DOCUMENT)
+			redir.doc = (t_here_doc){NULL, word.literal};
+		else
+			redir.filename = word.literal;
+		rdl_push_back(&redirections, redir);
+		leaves = leaves->next->next;
+	}
+	return redirections;
+}
+
+t_command	reduce_complete_command(t_symbol *root);
+
+t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
+{
+	t_subshell	*sub;
+	t_command	inner;
+
+	assert (subshell->kind == SUBSHELL);
+	assert (trailing_redirs->kind == SUBSHELL_PRECEDES);
+
+	sub = malloc(sizeof(*sub));
+	assert (subshell != NULL);
+
+	sub->cmd = reduce_complete_command(subshell);
+	sub->redirections = register_redirections(trailing_redirs);
+
+	return (t_command){.type = SUBSHELL_CMD, .subshell = sub};
+}
 
 static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
 {
