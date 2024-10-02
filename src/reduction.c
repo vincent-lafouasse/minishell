@@ -7,7 +7,7 @@
 
 #include <assert.h>
 
-t_symbol* find_simple_command(t_symbol* root)
+t_symbol* find_symbol(t_symbol* root, t_symbol_kind kind)
 {
 	t_symbol_stack* waiting_room = ss_new(root);
 
@@ -15,7 +15,7 @@ t_symbol* find_simple_command(t_symbol* root)
 	{
 		t_symbol* current = ss_pop(&waiting_room);
 
-		if (current->kind == SIMPLE_COMMAND)
+		if (current->kind == kind)
 		{
 			return current;
 		}

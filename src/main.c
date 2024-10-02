@@ -40,7 +40,7 @@ int	main(void)
 			continue;
 		}
 
-		t_symbol* simple = find_simple_command(&parse_tree);
+		t_symbol* simple = find_symbol(&parse_tree, COMMAND);
 		t_command simple_also = reduce_simple_command(simple); // print aussi les tokens
 
 		free(input);
