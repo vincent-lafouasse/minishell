@@ -30,8 +30,8 @@ impl RdGenerator {
 
         writeln!(file, "#pragma once")?;
         writeln!(file)?;
-        writeln!(file, "#include \"../t_parser.h\"")?;
-        writeln!(file, "#include \"../t_symbol.h\"")?;
+        writeln!(file, "#include \"../t_parser/t_parser.h\"")?;
+        writeln!(file, "#include \"../t_symbol/t_symbol.h\"")?;
         writeln!(file, "#pragma once")?;
         writeln!(file)?;
         for variable in self.ll_properties.underlying_grammar().rules().keys() {
@@ -135,8 +135,6 @@ impl RdGenerator {
         (variable, production_rules): (&Symbol, &HashSet<Vec<Symbol>>),
     ) -> io::Result<()> {
         writeln!(out, "#include \"productions.h\"")?;
-        writeln!(out, "#include \"../t_symbol.h\"")?;
-        writeln!(out, "#include \"../t_parser.h\"")?;
         writeln!(out)?;
         writeln!(out, "t_symbol	produce_{variable}(t_parser *state)")?;
         writeln!(out, "{{")?;

@@ -1,6 +1,4 @@
 #include "productions.h"
-#include "../t_symbol.h"
-#include "../t_parser.h"
 
 t_symbol	produce_redirect_list(t_parser *state)
 {

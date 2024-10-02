@@ -1,5 +1,4 @@
 #include "t_symbol.h"
-
 #include <stdlib.h>
 
 void *symbol_clear(t_symbol symbol)

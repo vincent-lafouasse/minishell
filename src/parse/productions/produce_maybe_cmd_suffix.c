@@ -1,6 +1,4 @@
 #include "productions.h"
-#include "../t_symbol.h"
-#include "../t_parser.h"
 
 t_symbol	produce_maybe_cmd_suffix(t_parser *state)
 {

@@ -70,7 +70,7 @@ factor    : NUM
           ;";
 
 fn main() {
-    let yacc_grammar = include_str!("../../grammars/tinyshell.y");
+    let yacc_grammar = include_str!("../../grammars/LL_grammar.y");
     let grammar = Rc::new(dbg!(Grammar::from_yacc_text(yacc_grammar)));
     grammar.log_grammar(GrammarRepresentation::Canonical);
     let ll_properties = LLProperties::compute(grammar.clone());

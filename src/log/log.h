@@ -2,7 +2,7 @@
 
 #include "error/t_error.h"
 #include "tokenize/tokenize.h"
-#include "parse/t_symbol.h"
+#include "parse/t_symbol/t_symbol.h"
 
 void log_token(t_token token);
 void log_token_list(const t_token_list *tkl);
