@@ -25,6 +25,7 @@ typedef struct s_command {
 		t_conditional *conditional;
 		t_subshell *subshell;
 		t_simple *simple;
+		void *any;
 	};
 } t_command;
 
