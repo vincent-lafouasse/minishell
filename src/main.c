@@ -35,7 +35,7 @@ int	main(void)
 		err = parse_command(tokens, &parse_tree);
 
 		t_symbol* simple = find_simple_command(&parse_tree);
-		t_command simple_also = reduce_simple_command(simple);
+		t_command simple_also = reduce_simple_command(simple); // print aussi les tokens
 
 		printf("symbol status: %s\n", error_repr(err));
 		free(input);

@@ -1,6 +1,17 @@
 #include "t_symbol_stack.h"
 #include <stdlib.h>
 
+bool ss_contains(const t_symbol_stack* stack, t_symbol* sym)
+{
+	while (stack)
+	{
+		if (stack->sym == sym)
+			return true;
+		stack = stack->next;
+	}
+	return false;
+}
+
 t_symbol_stack	*ss_new(t_symbol *sym)
 {
 	t_symbol_stack	*out;

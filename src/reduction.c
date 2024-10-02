@@ -25,35 +25,30 @@ t_symbol* find_simple_command(t_symbol* root)
     return NULL;
 }
 
-t_token_list* gather_leaves(t_symbol* root)
+void gather_leaves(t_symbol* root, t_token_list** leaves_p, t_symbol_stack** visited)
 {
-    t_token_list* leaves = NULL;
-	t_symbol_stack* waiting_room = ss_new(root);
-
-	while (waiting_room != NULL)
-	{
-		t_symbol* current = ss_pop(&waiting_room);
-
-		if (current->kind == TERMINAL)
+    ss_push(visited, root);
+    if (root->kind == TERMINAL)
+    {
+        tkl_push_back(leaves_p, root->token);
+    }
+    else
+    {
+		for (size_t i = 0; i < root->production->len; i++)
 		{
-			tkl_push_back(&leaves, current->token);
-			// free the terminal ?
-			continue;
+		    t_symbol* candidate = &root->production->data[i];
+		    if (!ss_contains(*visited, candidate))
+					gather_leaves(candidate, leaves_p, visited);
 		}
-
-		for (int i = current->production->len - 1; i >= 0; i--)
-		{
-			ss_push(&waiting_room, &current->production->data[i]);
-		}
-		// free current ?
-	}
-
-    return leaves;
+    }
 }
 
 t_command	reduce_simple_command(t_symbol *root)
 {
-	t_token_list* leaves = gather_leaves(root);
+	t_token_list* leaves = NULL;
+    t_symbol_stack* visited = NULL;
+
+    gather_leaves(root, &leaves, &visited);
 	log_token_list(leaves);
 
 	return (t_command){};
