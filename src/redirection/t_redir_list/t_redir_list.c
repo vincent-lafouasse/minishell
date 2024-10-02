@@ -30,3 +30,13 @@ void rdl_push_back_link(t_redir_list **words, t_redir_list *link)
 
 	last->next = link;
 }
+
+t_error rdl_push_back(t_redir_list **words, char *contents)
+{
+	t_redir_list* new_last = rdl_new(contents);
+
+	if (new_last == NULL)
+		return E_OOM;
+	rdl_push_back_link(words, new_last);
+	return NO_ERROR;
+}
