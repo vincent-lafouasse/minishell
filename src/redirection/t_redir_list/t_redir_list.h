@@ -36,6 +36,7 @@ t_redir_list *rdl_clone(const t_redir_list *words);
 
 size_t rdl_len(const t_redir_list *words);
 
+// used in reduction.c
 t_error rdl_push_back(t_redir_list **words, char *contents);
 void rdl_push_back_link(t_redir_list **words, t_redir_list *link);
 t_redir_list *rdl_pop(t_redir_list **words);
