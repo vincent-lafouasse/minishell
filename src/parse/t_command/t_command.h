@@ -4,7 +4,10 @@
 #include "redirection/t_redir_list/t_redir_list.h"
 #include <stdbool.h>
 
-typedef bool (*t_truth_table)(bool, bool);
+typedef enum e_conditional_operator {
+	AND_OP,
+	OR_OP,
+} t_conditional_operator;
 
 typedef enum e_command_type {
 	PIPELINE_CMD,
@@ -35,7 +38,7 @@ typedef struct s_pipeline {
 } t_pipeline;
 
 typedef struct s_conditional {
-	t_truth_table condition;
+	t_conditional_operator operator;
 	t_command first;
 	t_command second;
 } t_conditional;
