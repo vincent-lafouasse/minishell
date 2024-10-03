@@ -5,17 +5,21 @@
 #include <cstring>
 #include <vector>
 
+#include "Words.h"
+
 extern "C"
 {
-#include "log/log.h"
 #include "parse/parse.h"
+
+#include "word/t_word_list/t_word_list.h"
+#include "log/log.h"
 };
 
 bool command_eq(t_command a, t_command b) {
 	if (a.type != b.type)
 		return false;
 	if (a.type == SIMPLE_CMD) {
-		if (!words_eq(a.simple->words, b.simple->words))
+		if (Words(a.simple) != Words(b.simple))
 			return false;
 		if (!redirections_eq(a.simple->redirections, b.simple->redirections))
 			return false;
@@ -46,6 +50,6 @@ TEST(ParserIntegration, SimpleWords)
 	err = parse(input, &actual);
 	ASSERT_EQ(err, NO_ERROR);
 
-	expected = command_new_simple(WordList({"echo", "hello", "world"}), nullptr);
+	expected = command_new_simple(Words({"echo", "hello", "world"}), nullptr);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
