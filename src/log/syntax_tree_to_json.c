@@ -93,7 +93,7 @@ static void print_pipeline(t_pipeline *pipeline)
 {
     printf("{");
 
-    printf("\"text\": { \"name\": \"Subshell\"},");
+    printf("\"text\": { \"name\": \"Pipeline\"},");
 
     printf("\"children\": [");
     print_cmd(pipeline->first);
