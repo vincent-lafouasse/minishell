@@ -2,6 +2,7 @@
 
 #include <stdbool.h>
 
+/* Update error_repr.c when adding a new variant */
 typedef enum e_error
 {
     NO_ERROR,
