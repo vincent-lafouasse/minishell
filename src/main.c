@@ -4,6 +4,7 @@
 #include <readline/history.h>
 
 #include "error/t_error.h"
+#include "log/log.h"
 #include "parse/parse.h"
 #include "tokenize/tokenize.h"
 
@@ -43,6 +44,7 @@ int	main(void)
 		t_symbol* simple = find_symbol(&parse_tree, COMMAND);
 		t_command simple_also = reduce_simple_command(simple); // print aussi les tokens
 
+		syntax_tree_to_json(simple_also);
 		free(input);
 		tkl_clear(&tokens);
 	}
