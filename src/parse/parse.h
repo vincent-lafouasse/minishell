@@ -5,4 +5,4 @@
 #include "t_command/t_command.h"
 #include "t_symbol/t_symbol.h"
 
-t_error parse_command(t_token_list *tokens, t_symbol *out);
+t_error parse(const char *input, t_command *out);
