@@ -41,6 +41,15 @@ bool Redirections::operator==(const Redirections& other) const
 
 	while (rhs && lhs)
 	{
+		t_redirect a = rhs->redirect;
+		t_redirect b = lhs->redirect;
+
+		if (a.kind != b.kind)
+			return false;
+		if (a.kind == HERE_DOCUMENT && strcmp(a.doc.here_doc_eof, b.doc.here_doc_eof) != 0)
+			return false;
+		if (a.kind != HERE_DOCUMENT && strcmp(a.filename, b.filename) != 0)
+			return false;
 		rhs = rhs->next;
 		lhs = lhs->next;
 	}

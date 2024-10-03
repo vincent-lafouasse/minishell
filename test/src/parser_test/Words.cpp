@@ -29,6 +29,8 @@ bool Words::operator==(const Words& other) const
 
 	while (rhs && lhs)
 	{
+		if (strcmp(rhs->contents, lhs->contents) != 0)
+			return false;
 		rhs = rhs->next;
 		lhs = lhs->next;
 	}
