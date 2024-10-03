@@ -1,12 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
+
 #include <readline/readline.h>
 #include <readline/history.h>
 
 #include "error/t_error.h"
 #include "log/log.h"
 #include "parse/parse.h"
-#include "tokenize/tokenize.h"
 
 #define SHELL_PROMPT "minishell$ "
 
