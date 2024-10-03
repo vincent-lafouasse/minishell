@@ -38,6 +38,8 @@ static void print_redir_list(const t_redir_list *rdl)
 
     printf("\"text\": { \"name\": \"Redir list\"},");
 
+
+    printf("\"collapsable\": true,");
     printf("\"stackChildren\": true,");
 
     printf("\"children\": [");
@@ -67,6 +69,8 @@ static void print_simple(t_simple *simple)
 
     printf("\"text\": { \"name\": \"Simple\"},");
 
+    printf("\"collapsable\": true,");
+
     //printf("\"HTMLclass\": \"terminal-symbol\",");
     printf("\"children\": [");
     print_word_list(simple->words);
@@ -83,6 +87,8 @@ static void print_subshell(t_subshell *subshell)
 
     printf("\"text\": { \"name\": \"Subshell\"},");
 
+    printf("\"collapsable\": true,");
+
     printf("\"children\": [");
     print_cmd(subshell->cmd);
     printf(",");
@@ -97,6 +103,8 @@ static void print_pipeline(t_pipeline *pipeline)
     printf("{");
 
     printf("\"text\": { \"name\": \"Pipeline\"},");
+
+    printf("\"collapsable\": true,");
 
     printf("\"children\": [");
     print_cmd(pipeline->first);
