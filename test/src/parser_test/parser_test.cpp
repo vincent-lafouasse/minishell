@@ -135,15 +135,58 @@ TEST(ParserIntegration, SimpleWordsAndTrailingHereDocument) {
 	);
     ASSERT_TRUE(command_eq(actual, expected));
 }
-// echo hello world > outfile < infile >> appendfile << eof
-TEST(ParserIntegration, SimpleWordsAndAllTrailingRedirections) {}
 
-// < infile echo hello world
-TEST(ParserIntegration, SimpleWordsAndLeadingInputRedirection) {}
-// > outfile echo hello world
-TEST(ParserIntegration, SimpleWordsAndLeadingOutputRedirection) {}
+TEST(ParserIntegration, SimpleWordsAndAllTrailingRedirections) {
+	const char* input = "echo hello world > outfile < infile >> appendfile << eof";
+	t_command actual;
+	t_command expected;
+	t_error err;
+
+	err = parse(input, &actual);
+	ASSERT_EQ(err, NO_ERROR);
+
+	expected = command_new_simple(
+		Words({"echo", "hello", "world"}).get(),
+		Redirections({IntoFile("outfile"), FromFile("infile"), AppendIntoFile("appendfile"), HereDoc("eof")}).get()
+	);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleWordsAndLeadingInputRedirection) {
+	const char* input = "< infile echo hello world";
+	t_command actual;
+	t_command expected;
+	t_error err;
+
+	err = parse(input, &actual);
+	ASSERT_EQ(err, NO_ERROR);
+
+	expected = command_new_simple(
+		Words({"echo", "hello", "world"}).get(),
+		Redirections({FromFile("infile")}).get()
+	);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleWordsAndLeadingOutputRedirection) {
+	const char* input = "> outfile echo hello world";
+	t_command actual;
+	t_command expected;
+	t_error err;
+
+	err = parse(input, &actual);
+	ASSERT_EQ(err, NO_ERROR);
+
+	expected = command_new_simple(
+		Words({"echo", "hello", "world"}).get(),
+		Redirections({IntoFile("outfile")}).get()
+	);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
 // >> appendfile echo hello world
-TEST(ParserIntegration, SimpleWordsAndLeadingAppendRedirection) {}
+TEST(ParserIntegration, SimpleWordsAndLeadingAppendRedirection) {
+}
 // << eof echo hello world
 TEST(ParserIntegration, SimpleWordsAndLeadingHereDocument) {}
 // > outfile < infile >> appendfile << eof echo hello world

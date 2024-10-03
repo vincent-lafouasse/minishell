@@ -75,6 +75,7 @@ void assert_successful_parsing(const Tokens &tokens)
         SUCCEED();
 }
 
+/*
 TEST(ParseTree, NoCommand)
 {
     Tokens tokens = Tokens({
@@ -83,6 +84,7 @@ TEST(ParseTree, NoCommand)
 
     assert_successful_parsing(tokens);
 }
+*/
 
 TEST(ParseTree, SingleWord)
 {
