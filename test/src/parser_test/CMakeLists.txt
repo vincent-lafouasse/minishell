@@ -107,6 +107,11 @@ target_sources(parser_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/parse_tree_test.cpp
 	${CMAKE_CURRENT_LIST_DIR}/parser_test.cpp
 
+	${CMAKE_CURRENT_LIST_DIR}/Redirections.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Redirections.h
+	${CMAKE_CURRENT_LIST_DIR}/Words.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Words.h
+
 	${tested_source}
 )
 

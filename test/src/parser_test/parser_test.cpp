@@ -1,4 +1,3 @@
-#include "parse/t_command/t_command.h"
 #include "gtest/gtest.h"
 
 #include <assert.h>
@@ -11,6 +10,7 @@
 extern "C"
 {
 #include "parse/parse.h"
+#include "parse/t_command/t_command.h"
 
 #include "word/t_word_list/t_word_list.h"
 #include "log/log.h"
@@ -51,7 +51,7 @@ TEST(ParserIntegration, SimpleWord)
 	err = parse(input, &actual);
 	ASSERT_EQ(err, NO_ERROR);
 
-	expected = command_new_simple(Words({"echo"}), nullptr);
+	expected = command_new_simple(Words({"echo"}).get(), nullptr);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
@@ -65,7 +65,7 @@ TEST(ParserIntegration, SimpleWords)
 	err = parse(input, &actual);
 	ASSERT_EQ(err, NO_ERROR);
 
-	expected = command_new_simple(Words({"echo", "hello", "world"}), nullptr);
+	expected = command_new_simple(Words({"echo", "hello", "world"}).get(), nullptr);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
