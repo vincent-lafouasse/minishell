@@ -1,9 +1,7 @@
 #include "t_command.h"
 #include "libft/stdlib.h"
-#include <stdbool.h>
-#include <stdlib.h>
 
-t_command	command_new(t_command_type type)
+t_command	command_new_empty(t_command_type type)
 {
 	void	*alloc;
 
@@ -18,9 +16,4 @@ t_command	command_new(t_command_type type)
 	else
 		alloc = NULL;
 	return (t_command){.type = type, .any = alloc};
-}
-
-bool	command_is_initialized(t_command command)
-{
-	return (command.any != NULL);
 }
