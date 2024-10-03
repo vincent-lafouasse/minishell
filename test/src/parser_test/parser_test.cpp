@@ -148,19 +148,91 @@ TEST(ParserIntegration, SimpleWordsAndLeadingOutputRedirection) {
 
 TEST(ParserIntegration, SimpleWordsAndLeadingAppendRedirection) {
 	const char* input = ">> appendfile echo hello world";
+	t_command expected = command_new_simple(
+		Words({"echo", "hello", "world"}).get(),
+		Redirections({AppendIntoFile("appendfile")}).get()
+	);
+
+    t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
 }
-// << eof echo hello world
-TEST(ParserIntegration, SimpleWordsAndLeadingHereDocument) {}
-// > outfile < infile >> appendfile << eof echo hello world
-TEST(ParserIntegration, SimpleWordsAndAllLeadingRedirections) {}
 
-// > outfile echo < infile hello >> appendfile world << eof
-TEST(ParserIntegration, SimpleWordsMixedWithAllLeadingRedirections) {}
+TEST(ParserIntegration, SimpleWordsAndLeadingHereDocument) {
+		const char* input = "<< eof echo hello world";
+		t_command expected = command_new_simple(
+				Words({"echo", "hello", "world"}).get(),
+				Redirections({HereDoc("eof")}).get()
+		);
 
-// < infile
-TEST(ParserIntegration, SimpleRedirection) {}
-// > outfile < infile >> appendfile << eof
-TEST(ParserIntegration, SimpleAllRedirections) {}
+		t_command actual;
+		ASSERT_EQ(parse(input, &actual), NO_ERROR);
+		ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleWordsAndAllLeadingRedirections) {
+		const char* input = "> outfile < infile >> appendfile << eof echo hello world";
+		t_command expected = command_new_simple(
+				Words({"echo", "hello", "world"}).get(),
+				Redirections({
+						IntoFile("outfile"),
+						FromFile("infile"),
+						AppendIntoFile("appendfile"),
+						HereDoc("eof"),
+				}).get()
+		);
+
+		t_command actual;
+		ASSERT_EQ(parse(input, &actual), NO_ERROR);
+		ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleWordsMixedWithAllLeadingRedirections) {
+		const char* input = "> outfile echo < infile hello >> appendfile world << eof";
+		t_command expected = command_new_simple(
+				Words({"echo", "hello", "world"}).get(),
+				Redirections({
+						IntoFile("outfile"),
+						FromFile("infile"),
+						AppendIntoFile("appendfile"),
+						HereDoc("eof"),
+				}).get()
+		);
+
+		t_command actual;
+		ASSERT_EQ(parse(input, &actual), NO_ERROR);
+		ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleRedirection) {
+		const char* input = "< infile";
+		t_command expected = command_new_simple(
+				nullptr,
+				Redirections({
+						FromFile("infile"),
+				}).get()
+		);
+
+		t_command actual;
+		ASSERT_EQ(parse(input, &actual), NO_ERROR);
+		ASSERT_TRUE(command_eq(actual, expected));
+}
+TEST(ParserIntegration, SimpleAllRedirections) {
+		const char* input = "> outfile < infile >> appendfile << eof";
+		t_command expected = command_new_simple(
+				nullptr,
+				Redirections({
+						IntoFile("outfile"),
+						FromFile("infile"),
+						AppendIntoFile("appendfile"),
+						HereDoc("eof"),
+				}).get()
+		);
+
+		t_command actual;
+		ASSERT_EQ(parse(input, &actual), NO_ERROR);
+		ASSERT_TRUE(command_eq(actual, expected));
+}
 
 // ------------------ PIPELINES ------------------
 
