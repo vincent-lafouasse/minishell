@@ -120,7 +120,7 @@ static void print_conditional(t_conditional *conditional)
     printf("{");
 
     const char *operator =
-        conditional->operator == AND_OP ? "And" : "Or";
+        conditional->op == AND_OP ? "And" : "Or";
     printf("\"text\": { \"name\": \"Conditional (%s)\" },", operator);
 
     printf("\"collapsable\": true,");

@@ -47,7 +47,7 @@ static bool recurse(t_command *out, t_symbol *complete_cmd_rest)
 	// exists
 	operator = operator_from_token_type(productions->data[2].production->data[0].token.type);
 	*conditional = (t_conditional){
-		.operator = operator,
+		.op = operator,
 		.first = first,
 		.second = second
 	};
@@ -80,7 +80,7 @@ t_command	reduce_complete_command(t_symbol *root)
 	out = malloc(sizeof(*out));
 	assert (out != NULL);
 
-	out->operator = operator_from_token_type(root->production->data[1].production->data[0].token.type);
+	out->op = operator_from_token_type(root->production->data[1].production->data[0].token.type);
 	out->first = reduce_pipeline(&root->production->data[0]);
 	out->second = reduce_complete_cmd_rest(&root->production->data[1]);
 
