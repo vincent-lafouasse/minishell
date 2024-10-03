@@ -103,17 +103,11 @@ static void print_subshell(t_subshell *subshell)
 
 static void print_cmd(t_command other)
 {
+    assert(other.any != NULL);
     if (other.type == SIMPLE_CMD)
         return print_simple(other.simple);
     if (other.type == SUBSHELL_CMD)
         return print_subshell(other.subshell);
-    if (other.any == NULL)
-    {
-        printf("{");
-        printf("\"text\": { \"name\": \"Complete Command\"},");
-        printf("}");
-        return ;
-    }
 
     printf("{");
 
