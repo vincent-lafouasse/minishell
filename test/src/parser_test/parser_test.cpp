@@ -84,7 +84,7 @@ TEST(ParserIntegration, SimpleWordsAndTrailingInputRedirection) {
 
 	expected = command_new_simple(
 				Words({"echo", "hello", "world"}).get(),
-				Redirections({IntoFile("infile")}).get());
+				Redirections({FromFile("infile")}).get());
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
@@ -131,7 +131,7 @@ TEST(ParserIntegration, SimpleWordsAndTrailingHereDocument) {
 
     expected = command_new_simple(
 		Words({"echo", "hello", "world"}).get(),
-        Redirections({HereDoc("appendfile")}).get()
+        Redirections({HereDoc("eof")}).get()
 	);
     ASSERT_TRUE(command_eq(actual, expected));
 }
