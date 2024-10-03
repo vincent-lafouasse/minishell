@@ -1,8 +1,8 @@
 #include "reduction_internals.h"
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
+#include "../tokenize/t_token.h"
 
-#include "tokenize/t_token.h"
 #include <stdbool.h>
 
 #include <stdlib.h> // temporarily

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "tokenize/t_token.h"
+#include "../tokenize/t_token.h"
 #include <stdbool.h>
 #include <stddef.h>
 

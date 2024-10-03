@@ -1,6 +1,6 @@
 #include "reduction_internals.h"
+#include "../tokenize/t_token.h"
 #include "redirection/t_redir_list/t_redir_list.h"
-#include "tokenize/t_token.h"
 
 #include <assert.h>
 

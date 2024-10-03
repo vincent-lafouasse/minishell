@@ -4,7 +4,7 @@
 
 extern "C"
 {
-#include "tokenize/t_token_list/t_token_list.h"
+#include "parse/tokenize/t_token_list/t_token_list.h"
 };
 
 TEST(TokenList, PushBack)
