@@ -18,7 +18,7 @@ Redirections::Redirections(const t_simple *simple) : self(nullptr)
     }
 }
 
-Redirections::Redirections(const t_subshell *subshell)
+Redirections::Redirections(const t_subshell* subshell): self(nullptr)
 {
     t_redir_list *redirs = subshell->redirections;
 
