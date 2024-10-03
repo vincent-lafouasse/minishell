@@ -2,23 +2,11 @@
 #include "parse/t_command/t_command.h"
 #include "redirection/t_redir_list/t_redir_list.h"
 
+#include <assert.h>
 #include <stdio.h>
 
 static void print_simple(t_simple *simple);
 static void print_cmd(t_command other);
-
-static const char *command_type_repr(t_command_type type)
-{
-    if (type == PIPELINE_CMD)
-        return "Pipeline";
-    else if (type == SUBSHELL_CMD)
-        return "Subshell";
-    else if (type == SIMPLE_CMD)
-        return "Simple";
-    else if (type == CONDITIONAL_CMD)
-        return "Conditional";
-    return NULL;
-}
 
 static void print_word_list(const t_word_list *wl)
 {
@@ -101,6 +89,42 @@ static void print_subshell(t_subshell *subshell)
     printf("}");
 }
 
+static void print_pipeline(t_pipeline *pipeline)
+{
+    printf("{");
+
+    printf("\"text\": { \"name\": \"Subshell\"},");
+
+    printf("\"children\": [");
+    print_cmd(pipeline->first);
+    printf(",");
+    print_cmd(pipeline->second);
+    printf("]");
+
+    printf("}");
+}
+
+static void print_conditional(t_conditional *conditional)
+{
+    printf("{");
+
+    const char *operator =
+        conditional->operator == AND_OP ? "And" : "Or";
+    printf("\"text\": { \"name\": \"Conditional (%s)\" },", operator);
+
+    printf("\"collapsable\": true,");
+
+    printf("\"children\": [");
+
+    print_cmd(conditional->first);
+    printf(",");
+    print_cmd(conditional->second);
+
+    printf("]");
+
+    printf("}");
+}
+
 static void print_cmd(t_command other)
 {
     assert(other.any != NULL);
@@ -108,27 +132,10 @@ static void print_cmd(t_command other)
         return print_simple(other.simple);
     if (other.type == SUBSHELL_CMD)
         return print_subshell(other.subshell);
-
-    printf("{");
-
-    printf("\"text\": { \"name\": \"%s\" },", command_type_repr(other.type));
-
-    printf("\"collapsable\": true,");
-
-    printf("\"children\": [");
-
     if (other.type == PIPELINE_CMD)
-    {
-        print_cmd(other.pipeline->first);
-        printf(",");
-        print_cmd(other.pipeline->second);
-    }
-    else if (other.type == CONDITIONAL_CMD)
-        print_cmd(other.subshell->cmd);
-
-    printf("]");
-
-    printf("}");
+        return print_pipeline(other.pipeline);
+    if (other.type == CONDITIONAL_CMD)
+        return print_conditional(other.conditional);
 }
 
 void syntax_tree_to_json(t_command tree)
