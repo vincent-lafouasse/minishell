@@ -52,3 +52,6 @@ typedef struct s_simple {
 	t_word_list	*words;
 	t_redir_list *redirections;
 } t_simple;
+
+t_command	command_new(t_command_type type);
+bool		command_is_initialized(t_command command);

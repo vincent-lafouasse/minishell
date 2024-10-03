@@ -138,7 +138,7 @@ static void print_conditional(t_conditional *conditional)
 
 static void print_cmd(t_command other)
 {
-    assert(other.any != NULL);
+    assert(command_is_initialized(other));
     if (other.type == SIMPLE_CMD)
         return print_simple(other.simple);
     if (other.type == SUBSHELL_CMD)
