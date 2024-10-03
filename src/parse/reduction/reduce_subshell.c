@@ -16,7 +16,7 @@ t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
 	sub = malloc(sizeof(*sub));
 	assert (sub != NULL);
 
-	sub->cmd = reduce_complete_command(subshell);
+	sub->cmd = reduce_complete_command(&subshell->production->data[1]);
 	reduce_simple_command_like(trailing_redirs, NULL, &sub->redirections);
 
 	return (t_command){.type = SUBSHELL_CMD, .subshell = sub};
