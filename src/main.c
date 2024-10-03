@@ -42,10 +42,9 @@ int	main(void)
 			continue;
 		}
 
-		t_symbol* simple = find_symbol(&parse_tree, COMMAND);
-		t_command simple_also = reduce_simple_command(simple); // print aussi les tokens
+		t_command cmd = reduce_parse_tree_into_command(&parse_tree);
 
-		syntax_tree_to_json(simple_also);
+		syntax_tree_to_json(cmd);
 		free(input);
 		tkl_clear(&tokens);
 	}
