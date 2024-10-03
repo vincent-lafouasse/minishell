@@ -13,6 +13,7 @@ static void print_word_list(const t_word_list *wl)
     printf("{");
 
     printf("\"text\": { \"name\": \"Word list\"},");
+    printf("\"stackChildren\": true,");
 
     printf("\"children\": [");
 
@@ -36,6 +37,8 @@ static void print_redir_list(const t_redir_list *rdl)
     printf("{");
 
     printf("\"text\": { \"name\": \"Redir list\"},");
+
+    printf("\"stackChildren\": true,");
 
     printf("\"children\": [");
 
