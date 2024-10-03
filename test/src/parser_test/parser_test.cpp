@@ -492,42 +492,254 @@ TEST(ParserIntegration, NestedSubshellPipelines) {
 
 // ------------------ CONDITIONALS ------------------
 
-// false || true
-TEST(ParserIntegration, SimpleCommandOrConditional) {}
-// true && true
-TEST(ParserIntegration, SimpleCommandAndConditional) {}
-// false || false || true
-TEST(ParserIntegration, ManySimplesOrConditional) {}
-// true && true && false
-TEST(ParserIntegration, ManySimplesAndConditional) {}
-// true && true || false
-TEST(ParserIntegration, ManySimplesAndOrConditional) {}
-// true | true && false | true
-TEST(ParserIntegration, PipelinesAndConditional) {}
-// true | false || false | true
-TEST(ParserIntegration, PipelinesOrConditional) {}
-// true || (false | true)
-TEST(ParserIntegration, SimplesAndSubshellsAndConditional) {}
-// (abc) || thing | (echo hello && world)
-TEST(ParserIntegration, SubshellsAndPipelinesConditional) {}
-// (bat cat) << bash || (sh && (dash)) | (ulimit) && idk << im just > saying | stuff
-TEST(ParserIntegration, AllCommandTypes) {}
+TEST(ParserIntegration, SimpleCommandOrConditional) {
+	const char *input = "false || true";
+	t_command expected = command_new_conditional(
+		OR_OP,
+		command_new_simple(Words({"false"}).get(), nullptr),
+		command_new_simple(Words({"true"}).get(), nullptr)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleCommandAndConditional) {
+	const char *input = "true && true";
+	t_command expected = command_new_conditional(
+		AND_OP,
+		command_new_simple(Words({"true"}).get(), nullptr),
+		command_new_simple(Words({"true"}).get(), nullptr)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, ManySimplesOrConditional) {
+	const char *input = "false || false || true";
+	t_command expected = command_new_conditional(
+		OR_OP,
+		command_new_simple(Words({"false"}).get(), nullptr),
+		command_new_conditional(
+			OR_OP,
+			command_new_simple(Words({"false"}).get(), nullptr),
+			command_new_simple(Words({"true"}).get(), nullptr)
+		)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, ManySimplesAndConditional) {
+	const char *input = "true && true && false";
+	t_command expected = command_new_conditional(
+		AND_OP,
+		command_new_simple(Words({"true"}).get(), nullptr),
+		command_new_conditional(
+			AND_OP,
+			command_new_simple(Words({"true"}).get(), nullptr),
+			command_new_simple(Words({"false"}).get(), nullptr)
+		)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, ManySimplesAndOrConditional) {
+	const char *input = "true && true || false";
+	t_command expected = command_new_conditional(
+		AND_OP,
+		command_new_simple(Words({"true"}).get(), nullptr),
+		command_new_conditional(
+			OR_OP,
+			command_new_simple(Words({"true"}).get(), nullptr),
+			command_new_simple(Words({"false"}).get(), nullptr)
+		)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, PipelinesAndConditional) {
+	const char *input = "true | true && false | true";
+	t_command expected = command_new_conditional(
+		AND_OP,
+		command_new_pipeline(
+			command_new_simple(Words({"true"}).get(), nullptr),
+			command_new_simple(Words({"true"}).get(), nullptr)
+		),
+		command_new_pipeline(
+			command_new_simple(Words({"false"}).get(), nullptr),
+			command_new_simple(Words({"true"}).get(), nullptr)
+		)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, PipelinesOrConditional) {
+	const char *input = "true | false || false | true";
+	t_command expected = command_new_conditional(
+		OR_OP,
+		command_new_pipeline(
+			command_new_simple(Words({"true"}).get(), nullptr),
+			command_new_simple(Words({"false"}).get(), nullptr)
+		),
+		command_new_pipeline(
+			command_new_simple(Words({"false"}).get(), nullptr),
+			command_new_simple(Words({"true"}).get(), nullptr)
+		)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimplesAndSubshellsAndConditional) {
+	const char *input = "true || (false | true)";
+	t_command subshell = command_new_subshell(
+		command_new_pipeline(
+			command_new_simple(Words({"false"}).get(), nullptr),
+			command_new_simple(Words({"true"}).get(), nullptr)
+		),
+		nullptr
+	);
+	t_command expected = command_new_conditional(
+		OR_OP,
+		command_new_simple(Words({"true"}).get(), nullptr),
+		subshell
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SubshellsAndPipelinesConditional) {
+	const char *input = "(abc) || thing | (echo hello && world)";
+	t_command subshell1 = command_new_subshell(
+		command_new_simple(Words({"abc"}).get(), nullptr),
+		nullptr
+	);
+	t_command subshell2 = command_new_subshell(
+		command_new_conditional(
+			AND_OP,
+			command_new_simple(Words({"echo", "hello"}).get(), nullptr),
+			command_new_simple(Words({"world"}).get(), nullptr)
+		),
+		nullptr
+	);
+	t_command expected = command_new_conditional(
+		OR_OP,
+		subshell1,
+		command_new_pipeline(
+			command_new_simple(Words({"thing"}).get(), nullptr),
+			subshell2
+		)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, AllCommandTypes) {
+	const char *input = "(bat cat) << bash || (sh && (dash)) | (ulimit) && idk << im just > saying | stuff";
+	t_command bat_cat = command_new_simple(Words({"bat", "cat"}).get(), nullptr);
+	t_command sh = command_new_simple(Words({"sh"}).get(), nullptr);
+	t_command dash = command_new_simple(Words({"dash"}).get(), nullptr);
+	t_command ulimit = command_new_simple(Words({"ulimit"}).get(), nullptr);
+	t_command stuff = command_new_simple(Words({"stuff"}).get(), nullptr);
+	t_command idk = command_new_simple(Words({"idk", "just"}).get(), Redirections({HereDoc("im"), IntoFile("saying")}).get());
+	t_command subshell_bat_cat = command_new_subshell(bat_cat, Redirections({HereDoc("bash")}).get());
+	t_command subshell_ulimit = command_new_subshell(ulimit, nullptr);
+	t_command subshell_sh_dash = command_new_subshell(
+		command_new_conditional(
+			AND_OP, sh, command_new_subshell(dash, nullptr)
+		), nullptr
+	);
+
+	t_command expected = command_new_conditional(
+		OR_OP,
+		subshell_bat_cat,
+		command_new_conditional(
+			AND_OP,
+			command_new_pipeline(subshell_sh_dash, subshell_ulimit),
+			command_new_pipeline(idk, stuff)
+		)
+	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
 
 // ------------------ PARSING ERRORS ------------------
 
-// < infile (hello world)
-TEST(ParserIntegration, RejectsSubshellWithLeadingRedirections) {}
-// (abc | (def)
-TEST(ParserIntegration, RejectsNoMatchingSubshellParen) {}
-// cat abc | grep def |
-TEST(ParserIntegration, RejectsUnterminatedPipeline) {}
-// (abc def | ghi
-TEST(ParserIntegration, RejectsUnterminatedSubshell) {}
-// echo hello world < > outfile
-TEST(ParserIntegration, RejectsRedirectionWithNoFollowingWord) {}
-// (  )
-TEST(ParserIntegration, RejectsEmptySubshell) {}
-// (  ) > outfile
-TEST(ParserIntegration, RejectsEmptySubshellWithTrailingRedirection) {}
-// (bat cat) << bash || (sh && (dash)) | << woops (ulimit) && idk << im just > saying | stuff
-TEST(ParserIntegration, RejectsWtfWithLeadingRedirectedSubshell) {}
+TEST(ParserIntegration, RejectsSubshellWithLeadingRedirections) {
+	const char *input = "< infile (hello world)";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
+
+TEST(ParserIntegration, RejectsNoMatchingSubshellParen) {
+	const char *input = "(abc | (def)";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
+
+TEST(ParserIntegration, RejectsUnterminatedPipeline) {
+	const char *input = "cat abc | grep def |";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
+
+TEST(ParserIntegration, RejectsUnterminatedSubshell) {
+	const char *input = "(abc def | ghi";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
+
+TEST(ParserIntegration, RejectsRedirectionWithNoFollowingWord) {
+	const char *input = "echo hello world < > outfile";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
+
+TEST(ParserIntegration, RejectsEmptySubshell) {
+	const char *input = "(  )";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
+
+TEST(ParserIntegration, RejectsEmptySubshellWithTrailingRedirection) {
+	const char *input = "(  ) > outfile";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
+
+TEST(ParserIntegration, RejectsWtfWithLeadingRedirectedSubshell) {
+	const char *input = "(bat cat) << bash || (sh && (dash)) | << woops (ulimit) && idk << im just > saying | stuff";
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), E_UNEXPECTED_TOKEN);
+}
