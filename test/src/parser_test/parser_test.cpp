@@ -162,15 +162,24 @@ TEST(ParserIntegration, PipelinesOrConditional) {}
 TEST(ParserIntegration, SimplesAndSubshellsAndConditional) {}
 // (abc) || thing | (echo hello && world)
 TEST(ParserIntegration, SubshellsAndPipelinesConditional) {}
+// (bat cat) << bash || (sh && (dash)) | (ulimit) && idk << im just > saying | stuff
+TEST(ParserIntegration, AllCommandTypes) {}
 
 // ------------------ PARSING ERRORS ------------------
 
-TEST(ParserIntegration, RejectsRedirectionWithoutWord) {}
+// < infile (hello world)
 TEST(ParserIntegration, RejectsSubshellWithLeadingRedirections) {}
+// (abc | (def)
 TEST(ParserIntegration, RejectsNoMatchingSubshellParen) {}
+// cat abc | grep def |
 TEST(ParserIntegration, RejectsUnterminatedPipeline) {}
+// (abc def | ghi
 TEST(ParserIntegration, RejectsUnterminatedSubshell) {}
+// echo hello world < > outfile
 TEST(ParserIntegration, RejectsRedirectionWithNoFollowingWord) {}
+// (  )
 TEST(ParserIntegration, RejectsEmptySubshell) {}
+// (  ) > outfile
 TEST(ParserIntegration, RejectsEmptySubshellWithTrailingRedirection) {}
+// (bat cat) << bash || (sh && (dash)) | << woops (ulimit) && idk << im just > saying | stuff
 TEST(ParserIntegration, RejectsWtfWithLeadingRedirectedSubshell) {}
