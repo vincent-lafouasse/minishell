@@ -1,4 +1,3 @@
-#include "parse/t_symbol.h"
 #include "gtest/gtest.h"
 
 #include <cstring>
@@ -8,6 +7,7 @@ extern "C"
 {
 #include "log/log.h"
 #include "parse/parse.h"
+#include "parse/t_symbol/t_symbol.h"
 #include "tokenize/t_token_list/t_token_list.h"
 };
 

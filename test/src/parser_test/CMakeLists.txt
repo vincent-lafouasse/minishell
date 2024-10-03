@@ -12,9 +12,6 @@ set(token_list_source
 
 set(parser_source
 	parse/parse.h
-	parse/t_symbol.c
-	parse/t_parser.h
-	parse/t_parser.c
 	parse/productions/produce_simple_command.c
 	parse/productions/produce_io_redirect.c
 	parse/productions/produce_redirect_list_rest.c
@@ -38,10 +35,17 @@ set(parser_source
 	parse/productions/produce_filename.c
 	parse/productions/produce_io_here.c
 	parse/productions/produce_maybe_cmd_suffix.c
+	parse/t_command/properties.c
 	parse/t_command/t_command.h
+	parse/t_command/empty.c
+	parse/t_command/constructor.c
 	parse/parse.c
-	parse/t_symbol.h
-
+	parse/t_parser/t_parser.c
+	parse/t_parser/t_parser.h
+	parse/t_symbol/t_symbol.c
+	parse/t_symbol/t_symbol.h
+	parse/t_symbol/t_symbol_stack/t_symbol_stack.h
+	parse/t_symbol/t_symbol_stack/t_symbol_stack.c
 )
 
 set(error_module
@@ -49,10 +53,10 @@ set(error_module
 	error/error_repr.c
 )
 set(log_module
-	log/log.c
+	#log/log_words.c
+	log/log_token.c
+	log/log_error.c
 	log/log.h
-	log/tree_to_json.c
-
 )
 
 set(tested_source
