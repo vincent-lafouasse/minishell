@@ -1,17 +1,39 @@
 add_executable(parser_test)
 
 set(token_list_source
+	tokenize/tokenize.h
 	tokenize/token_repr.c
+	tokenize/t_lexer/lexer_scan_metachar_operator.c
+	tokenize/t_lexer/lexer_internals.h
+	tokenize/t_lexer/lexer_skip_whitespace.c
+	tokenize/t_lexer/fill_token.c
+	tokenize/t_lexer/t_lexer_init.c
+	tokenize/t_lexer/lexer_scan_next_token.c
+	tokenize/t_lexer/lexer_scan_string.c
+	tokenize/t_lexer/t_lexer.h
+	tokenize/t_lexer/lexer_scan_word.c
+	tokenize/t_lexer/lexer_advance_peek.c
 	tokenize/t_token_list/tkl_clear.c
 	tokenize/t_token_list/tkl_delone.c
 	tokenize/t_token_list/tkl_push_back.c
 	tokenize/t_token_list/t_token_list.h
 	tokenize/t_token_list/tkl_new.c
 	tokenize/t_token.h
+	tokenize/tokenize.c
 )
 
 set(parser_source
 	parse/parse.h
+	parse/reduction/reduce_simple_command.c
+	parse/reduction/reduce_simple_command_like.c
+	parse/reduction/gather_leaves.c
+	parse/reduction/reduce_complete_command.c
+	parse/reduction/reduce_pipeline.c
+	parse/reduction/reduction.c
+	parse/reduction/reduce_command.c
+	parse/reduction/reduce_subshell.c
+	parse/reduction/reduction_internals.h
+	parse/reduction/reduction.h
 	parse/productions/produce_simple_command.c
 	parse/productions/produce_io_redirect.c
 	parse/productions/produce_redirect_list_rest.c
@@ -48,6 +70,17 @@ set(parser_source
 	parse/t_symbol/t_symbol_stack/t_symbol_stack.c
 )
 
+set(word_source
+	word/t_word_list/t_word_list.h
+	word/t_word_list/t_word_list.c
+)
+
+set(redirection_source
+	redirection/t_redir_list/t_redir_list.h
+	redirection/t_redir_list/t_redir_list.c
+	redirection/t_redir_list/redirection_repr.c
+)
+
 set(error_module
 	error/t_error.h
 	error/error_repr.c
@@ -62,6 +95,8 @@ set(log_module
 set(tested_source
 	${token_list_source}
 	${parser_source}
+	${word_source}
+	${redirection_source}
 	${error_module}
 	${log_module}
 )

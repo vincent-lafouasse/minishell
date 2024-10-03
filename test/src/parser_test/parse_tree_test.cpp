@@ -9,6 +9,8 @@ extern "C"
 #include "parse/parse.h"
 #include "parse/t_symbol/t_symbol.h"
 #include "tokenize/t_token_list/t_token_list.h"
+
+t_error parse_command(t_token_list *tokens, t_symbol *out);
 };
 
 #define FROM_FILE L_ANGLE_BRACKET
