@@ -53,7 +53,9 @@ TEST(ParserIntegration, SimpleWord)
 	err = parse(input, &actual);
 	ASSERT_EQ(err, NO_ERROR);
 
-	expected = command_new_simple(Words({"echo"}).get(), nullptr);
+	expected = command_new_simple(
+				Words({"echo"}).get(),
+				nullptr);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
@@ -80,16 +82,59 @@ TEST(ParserIntegration, SimpleWordsAndTrailingInputRedirection) {
 	err = parse(input, &actual);
 	ASSERT_EQ(err, NO_ERROR);
 
-	expected = command_new_simple(Words({"echo", "hello", "world"}).get(), Redirections({IntoFile("infile")}).get());
+	expected = command_new_simple(
+				Words({"echo", "hello", "world"}).get(),
+				Redirections({IntoFile("infile")}).get());
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
-// echo hello world > outfile
-TEST(ParserIntegration, SimpleWordsAndTrailingOutputRedirection) {}
-// echo hello world >> appendfile
-TEST(ParserIntegration, SimpleWordsAndTrailingAppendRedirection) {}
-// echo hello world << eof
-TEST(ParserIntegration, SimpleWordsAndTrailingHereDocument) {}
+TEST(ParserIntegration, SimpleWordsAndTrailingOutputRedirection) {
+	const char* input = "echo hello world > outfile";
+	t_command actual;
+	t_command expected;
+	t_error err;
+
+	err = parse(input, &actual);
+	ASSERT_EQ(err, NO_ERROR);
+
+	expected = command_new_simple(
+		Words({"echo", "hello", "world"}).get(),
+		Redirections({IntoFile("outfile")}).get()
+	);
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleWordsAndTrailingAppendRedirection) {
+    const char *input = "echo hello world >> appendfile";
+    t_command actual;
+    t_command expected;
+    t_error err;
+
+    err = parse(input, &actual);
+    ASSERT_EQ(err, NO_ERROR);
+
+    expected = command_new_simple(
+		Words({"echo", "hello", "world"}).get(),
+        Redirections({AppendIntoFile("appendfile")}).get()
+	);
+    ASSERT_TRUE(command_eq(actual, expected));
+}
+
+TEST(ParserIntegration, SimpleWordsAndTrailingHereDocument) {
+    const char *input = "echo hello world << eof";
+    t_command actual;
+    t_command expected;
+    t_error err;
+
+    err = parse(input, &actual);
+    ASSERT_EQ(err, NO_ERROR);
+
+    expected = command_new_simple(
+		Words({"echo", "hello", "world"}).get(),
+        Redirections({HereDoc("appendfile")}).get()
+	);
+    ASSERT_TRUE(command_eq(actual, expected));
+}
 // echo hello world > outfile < infile >> appendfile << eof
 TEST(ParserIntegration, SimpleWordsAndAllTrailingRedirections) {}
 
