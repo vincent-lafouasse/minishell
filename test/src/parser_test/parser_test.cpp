@@ -6,6 +6,7 @@
 #include <vector>
 
 #include "Words.h"
+#include "Redirections.h"
 
 extern "C"
 {
@@ -21,11 +22,11 @@ bool command_eq(t_command a, t_command b) {
 	if (a.type == SIMPLE_CMD) {
 		if (Words(a.simple) != Words(b.simple))
 			return false;
-		if (!redirections_eq(a.simple->redirections, b.simple->redirections))
+		if (Redirections(a.simple) != Redirections(b.simple))
 			return false;
 		return true;
 	} else if (a.type == SUBSHELL_CMD) {
-		if (!redirections_eq(a.subshell->redirections, b.subshell->redirections))
+		if (Redirections(a.subshell) != Redirections(b.subshell))
 			return false;
 		return command_eq(a.subshell->cmd, b.subshell->cmd);
 	} else if (a.type == CONDITIONAL_CMD) {
