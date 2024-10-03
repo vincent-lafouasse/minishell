@@ -153,7 +153,10 @@ void syntax_tree_to_json(t_command tree)
 {
     printf("{");
 
-    printf("\"chart\": { \"container\": \"#tree-simple\" },");
+    printf("\"chart\": {");
+    printf("\"container\": \"#tree-simple\",");
+    printf("\"connectors\": {\"type\": \"step\"}");
+    printf("},");
 
     printf("\"nodeStructure\": ");
 
