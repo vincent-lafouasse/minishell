@@ -50,7 +50,13 @@ void assert_unexpected_token_during_parsing(const Tokens &tokens)
     t_command parsed;
     t_error err = parse_command(tokens.self, &sym);
 
-    ASSERT_EQ(err, E_UNEXPECTED_TOKEN);
+    if (err != E_UNEXPECTED_TOKEN)
+    {
+        log_token_list(tokens.self);
+        ASSERT_EQ(err, E_UNEXPECTED_TOKEN) << error_repr(err);
+    }
+    else
+        SUCCEED();
 }
 void assert_successful_parsing(const Tokens &tokens)
 {
@@ -58,31 +64,35 @@ void assert_successful_parsing(const Tokens &tokens)
     t_command parsed;
     t_error err = parse_command(tokens.self, &sym);
 
-    ASSERT_EQ(err, NO_ERROR);
+    if (err != NO_ERROR)
+    {
+        log_token_list(tokens.self);
+        ASSERT_EQ(err, NO_ERROR) << error_repr(err);
+    }
+    else
+        SUCCEED();
 }
 
-TEST(Parser, NoCommand)
+TEST(ParseTree, NoCommand)
 {
     Tokens tokens = Tokens({
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SingleWord)
+TEST(ParseTree, SingleWord)
 {
     Tokens tokens = Tokens({
         Token("hello"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, ManyWords)
+TEST(ParseTree, ManyWords)
 {
     Tokens tokens = Tokens({
         Token("word"),
@@ -90,24 +100,22 @@ TEST(Parser, ManyWords)
         Token("word"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SingleRedirection)
+TEST(ParseTree, SingleRedirection)
 {
     Tokens tokens = Tokens({
         Token(FROM_FILE),
         Token("input"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, ManyRedirections)
+TEST(ParseTree, ManyRedirections)
 {
     Tokens tokens = Tokens({
         Token(FROM_FILE),
@@ -118,12 +126,11 @@ TEST(Parser, ManyRedirections)
         Token("input_again"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, WordAndSingleRedirection)
+TEST(ParseTree, WordAndSingleRedirection)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -131,12 +138,11 @@ TEST(Parser, WordAndSingleRedirection)
         Token("input"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, WordAndManyTrailingRedirections)
+TEST(ParseTree, WordAndManyTrailingRedirections)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -146,12 +152,11 @@ TEST(Parser, WordAndManyTrailingRedirections)
         Token("input"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, WordAndManySameTrailingRedirections)
+TEST(ParseTree, WordAndManySameTrailingRedirections)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -163,12 +168,11 @@ TEST(Parser, WordAndManySameTrailingRedirections)
         Token("output_three"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, ManyMixedRedirectionsAndWords)
+TEST(ParseTree, ManyMixedRedirectionsAndWords)
 {
     Tokens tokens = Tokens({
         Token(FROM_FILE),
@@ -181,12 +185,11 @@ TEST(Parser, ManyMixedRedirectionsAndWords)
         Token("output_two"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SimplePipeline)
+TEST(ParseTree, SimplePipeline)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -194,12 +197,11 @@ TEST(Parser, SimplePipeline)
         Token("goodbye"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SimplePipelineWithManyWords)
+TEST(ParseTree, SimplePipelineWithManyWords)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -208,12 +210,11 @@ TEST(Parser, SimplePipelineWithManyWords)
         Token("goodbye"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, MultiPipelineWithSingleWords)
+TEST(ParseTree, MultiPipelineWithSingleWords)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -223,12 +224,11 @@ TEST(Parser, MultiPipelineWithSingleWords)
         Token("goodbye"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, PipelineWithOnlyRedirections)
+TEST(ParseTree, PipelineWithOnlyRedirections)
 {
     Tokens tokens = Tokens({
         Token(FROM_FILE),
@@ -238,12 +238,11 @@ TEST(Parser, PipelineWithOnlyRedirections)
         Token("output_two"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SimplePipelineWithLeadingRedirection)
+TEST(ParseTree, SimplePipelineWithLeadingRedirection)
 {
     Tokens tokens = Tokens({
         Token(INTO_FILE),
@@ -253,12 +252,11 @@ TEST(Parser, SimplePipelineWithLeadingRedirection)
         Token("goodbye"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, PipexWithMixedWordsAndRedirections)
+TEST(ParseTree, PipexWithMixedWordsAndRedirections)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -272,12 +270,11 @@ TEST(Parser, PipexWithMixedWordsAndRedirections)
         Token("hello"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, Pipex)
+TEST(ParseTree, Pipex)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -289,12 +286,11 @@ TEST(Parser, Pipex)
         Token("mars"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SimpleSubshell)
+TEST(ParseTree, SimpleSubshell)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -303,12 +299,11 @@ TEST(Parser, SimpleSubshell)
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SubshellWithTrailingRedirection)
+TEST(ParseTree, SubshellWithTrailingRedirection)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -319,12 +314,11 @@ TEST(Parser, SubshellWithTrailingRedirection)
         Token("mars"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SubshellWithPipexWithMixedWordsAndRedirections)
+TEST(ParseTree, SubshellWithPipexWithMixedWordsAndRedirections)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -340,12 +334,11 @@ TEST(Parser, SubshellWithPipexWithMixedWordsAndRedirections)
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, PipelineInSubshellWithTrailingRedirection)
+TEST(ParseTree, PipelineInSubshellWithTrailingRedirection)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -358,12 +351,11 @@ TEST(Parser, PipelineInSubshellWithTrailingRedirection)
         Token("mars"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, SubshellWithManyTrailingRedirections)
+TEST(ParseTree, SubshellWithManyTrailingRedirections)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -380,12 +372,11 @@ TEST(Parser, SubshellWithManyTrailingRedirections)
         Token("infile2"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, WordsSeperatedByConditional)
+TEST(ParseTree, WordsSeperatedByConditional)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -394,12 +385,11 @@ TEST(Parser, WordsSeperatedByConditional)
         Token("goodbye"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, WordsAndSubshellSeperatedByConditional)
+TEST(ParseTree, WordsAndSubshellSeperatedByConditional)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -412,12 +402,11 @@ TEST(Parser, WordsAndSubshellSeperatedByConditional)
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, PipelinesSeperatedByConditonal)
+TEST(ParseTree, PipelinesSeperatedByConditonal)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -433,12 +422,11 @@ TEST(Parser, PipelinesSeperatedByConditonal)
         Token("goodbye"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, PipelinesSeperatedByConditonalWithPriorities)
+TEST(ParseTree, PipelinesSeperatedByConditonalWithPriorities)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -462,12 +450,11 @@ TEST(Parser, PipelinesSeperatedByConditonalWithPriorities)
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, NestedSimpleSubshell)
+TEST(ParseTree, NestedSimpleSubshell)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -484,12 +471,11 @@ TEST(Parser, NestedSimpleSubshell)
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, Wtf)
+TEST(ParseTree, Wtf)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -521,12 +507,11 @@ TEST(Parser, Wtf)
         Token("stuff"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_successful_parsing(tokens);
 }
 
-TEST(Parser, RejectsTrailingBracket)
+TEST(ParseTree, RejectsTrailingBracket)
 {
     Tokens tokens = Tokens({
         Token("abc"),
@@ -537,12 +522,11 @@ TEST(Parser, RejectsTrailingBracket)
         Token("world"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsSubshellWithLeadingRedirections)
+TEST(ParseTree, RejectsSubshellWithLeadingRedirections)
 {
     Tokens tokens = Tokens({
         Token(FROM_FILE),
@@ -557,12 +541,11 @@ TEST(Parser, RejectsSubshellWithLeadingRedirections)
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsNoMatchingSubshellParen)
+TEST(ParseTree, RejectsNoMatchingSubshellParen)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -574,12 +557,11 @@ TEST(Parser, RejectsNoMatchingSubshellParen)
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsUnterminatedPipeline)
+TEST(ParseTree, RejectsUnterminatedPipeline)
 {
     Tokens tokens = Tokens({
         Token("hello"),
@@ -588,12 +570,11 @@ TEST(Parser, RejectsUnterminatedPipeline)
         Token(PIPE),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsUnterminatedSubshell)
+TEST(ParseTree, RejectsUnterminatedSubshell)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -602,12 +583,11 @@ TEST(Parser, RejectsUnterminatedSubshell)
         Token("world"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsRedirectionWithNoFollowingWord)
+TEST(ParseTree, RejectsRedirectionWithNoFollowingWord)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -617,24 +597,22 @@ TEST(Parser, RejectsRedirectionWithNoFollowingWord)
         Token("world"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsEmptySubshell)
+TEST(ParseTree, RejectsEmptySubshell)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
         Token(R_PAREN),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsEmptySubshellWithTrailingRedirection)
+TEST(ParseTree, RejectsEmptySubshellWithTrailingRedirection)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -643,12 +621,11 @@ TEST(Parser, RejectsEmptySubshellWithTrailingRedirection)
         Token("file"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }
 
-TEST(Parser, RejectsWtfWithLeadingRedirectedSubshell)
+TEST(ParseTree, RejectsWtfWithLeadingRedirectedSubshell)
 {
     Tokens tokens = Tokens({
         Token(L_PAREN),
@@ -682,7 +659,6 @@ TEST(Parser, RejectsWtfWithLeadingRedirectedSubshell)
         Token("stuff"),
         Token(EOF_TOKEN),
     });
-    log_token_list(tokens.self);
 
     assert_unexpected_token_during_parsing(tokens);
 }

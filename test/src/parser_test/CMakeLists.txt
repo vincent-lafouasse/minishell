@@ -69,7 +69,7 @@ list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 
 target_sources(parser_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
-	${CMAKE_CURRENT_LIST_DIR}/parser_test.cpp
+	${CMAKE_CURRENT_LIST_DIR}/parse_tree_test.cpp
 
 	${tested_source}
 )
