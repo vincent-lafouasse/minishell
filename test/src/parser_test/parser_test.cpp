@@ -41,6 +41,8 @@ bool command_eq(t_command a, t_command b) {
 	assert(false);
 }
 
+// ------------------ SIMPLES ------------------
+
 TEST(ParserIntegration, SimpleWord)
 {
 	const char *input = "echo";
@@ -69,45 +71,99 @@ TEST(ParserIntegration, SimpleWords)
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
-TEST(ParserIntegration, SimpleWordsAndTrailingInputRedirection) {}
+TEST(ParserIntegration, SimpleWordsAndTrailingInputRedirection) {
+	const char *input = "echo hello world < infile";
+	t_command actual;
+	t_command expected;
+	t_error err;
+
+	err = parse(input, &actual);
+	ASSERT_EQ(err, NO_ERROR);
+
+	expected = command_new_simple(Words({"echo", "hello", "world"}).get(), Redirections({IntoFile("infile")}).get());
+	ASSERT_TRUE(command_eq(actual, expected));
+}
+
+// echo hello world > outfile
 TEST(ParserIntegration, SimpleWordsAndTrailingOutputRedirection) {}
+// echo hello world >> appendfile
 TEST(ParserIntegration, SimpleWordsAndTrailingAppendRedirection) {}
+// echo hello world << eof
 TEST(ParserIntegration, SimpleWordsAndTrailingHereDocument) {}
+// echo hello world > outfile < infile >> appendfile << eof
 TEST(ParserIntegration, SimpleWordsAndAllTrailingRedirections) {}
 
+// < infile echo hello world
 TEST(ParserIntegration, SimpleWordsAndLeadingInputRedirection) {}
+// > outfile echo hello world
 TEST(ParserIntegration, SimpleWordsAndLeadingOutputRedirection) {}
+// >> appendfile echo hello world
 TEST(ParserIntegration, SimpleWordsAndLeadingAppendRedirection) {}
+// << eof echo hello world
 TEST(ParserIntegration, SimpleWordsAndLeadingHereDocument) {}
+// > outfile < infile >> appendfile << eof echo hello world
 TEST(ParserIntegration, SimpleWordsAndAllLeadingRedirections) {}
 
+// > outfile echo < infile hello >> appendfile world << eof
 TEST(ParserIntegration, SimpleWordsMixedWithAllLeadingRedirections) {}
 
+// < infile
 TEST(ParserIntegration, SimpleRedirection) {}
+// > outfile < infile >> appendfile << eof
 TEST(ParserIntegration, SimpleAllRedirections) {}
 
+// ------------------ PIPELINES ------------------
+
+// cat /etc/passwd | sort
 TEST(ParserIntegration, SimplePipeline) {}
+// cat /etc/passwd | sort | head -n3
 TEST(ParserIntegration, MultiPipeline) {}
+// cat /etc/passwd | < Makefile sort | head -n3 > outfile
 TEST(ParserIntegration, PipelineAndRedirections) {}
+// < infile sort | head > outfile
 TEST(ParserIntegration, PipelineWithTrailingLeadingRedirections) {}
+// < infile sort | grep 'c' | cut -d: | head > outfile
 TEST(ParserIntegration, MultiPipelineWithTrailingLeadingRedirections) {}
 
+// ------------------ SUBSHELLS ------------------
+
+// (echo hello world)
 TEST(ParserIntegration, SimpleSubshell) {}
+// (cat /etc/passwd | sort)
 TEST(ParserIntegration, SubshellWithPipeline) {}
+// (cat /etc/passwd | sort) > outfile
 TEST(ParserIntegration, SubshellWithTrailingRedirection) {}
-TEST(ParserIntegration, SubshellWithTrailingRedirections) {}
+// (cat /etc/passwd | sort) > outfile < infile >> appendfile
 TEST(ParserIntegration, SubshellInPipeline) {}
-TEST(ParserIntegration, SimpleNestedSubshell) {}
+// ((cat /etc/passwd | grep a) | sort | grep abc)
+TEST(ParserIntegration, SubshellWithTrailingRedirections) {}
+// cat /etc/passwd | (sort | grep abc) | wc
+TEST(ParserIntegration, SimpleNestedSubshellPipeline) {}
+// (a | (b | (c | (d | (e | (f | g))))))
 TEST(ParserIntegration, NestedSubshellPipelines) {}
 
+// ------------------ CONDITIONALS ------------------
+
+// false || true
 TEST(ParserIntegration, SimpleCommandOrConditional) {}
+// true && true
 TEST(ParserIntegration, SimpleCommandAndConditional) {}
+// false || false || true
 TEST(ParserIntegration, ManySimplesOrConditional) {}
+// true && true && false
 TEST(ParserIntegration, ManySimplesAndConditional) {}
+// true && true || false
+TEST(ParserIntegration, ManySimplesAndOrConditional) {}
+// true | true && false | true
 TEST(ParserIntegration, PipelinesAndConditional) {}
+// true | false || false | true
 TEST(ParserIntegration, PipelinesOrConditional) {}
+// true || (false | true)
 TEST(ParserIntegration, SimplesAndSubshellsAndConditional) {}
+// (abc) || thing | (echo hello && world)
 TEST(ParserIntegration, SubshellsAndPipelinesConditional) {}
+
+// ------------------ PARSING ERRORS ------------------
 
 TEST(ParserIntegration, RejectsRedirectionWithoutWord) {}
 TEST(ParserIntegration, RejectsSubshellWithLeadingRedirections) {}
