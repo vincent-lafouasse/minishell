@@ -1,8 +1,7 @@
-#include "t_command.h"
 #include "libft/stdlib.h"
-#include "word/t_word_list/t_word_list.h"
 #include "redirection/t_redir_list/t_redir_list.h"
-
+#include "t_command.h"
+#include "word/t_word_list/t_word_list.h"
 #include <stddef.h>
 
 t_pipeline	*pipeline_new(t_command first, t_command second)
@@ -11,32 +10,82 @@ t_pipeline	*pipeline_new(t_command first, t_command second)
 
 	pipeline = ft_calloc(1, sizeof(*pipeline));
 	if (!pipeline)
-		return NULL;
-	*pipeline = (t_pipeline){
-		.first = first,
-		.second = second,
-	};
-	return pipeline;
+		return (NULL);
+	*pipeline = (t_pipeline){first, second};
+	return (pipeline);
 }
 
 t_command	command_from_pipeline(t_pipeline *pipeline)
 {
-	return (t_command){.type = PIPELINE_CMD, .pipeline = pipeline};
+	return ((t_command){.type = PIPELINE_CMD, .pipeline = pipeline});
 }
 
 t_command	command_new_pipeline(t_command first, t_command second)
 {
-	//return (t_command){.type = PIPELINE_CMD, .pipeline = pipeline};
+	return (command_from_pipeline(pipeline_new(first, second)));
 }
 
-t_conditional	*conditional_new(t_conditional_operator operator, t_command first, t_command second);
-t_command	command_from_conditional(t_conditional *conditional);
-t_command	command_new_conditional(t_conditional_operator operator, t_command first, t_command second);
+t_conditional	*conditional_new(t_conditional_operator operator,
+		t_command first, t_command second)
+{
+	t_conditional	*conditional;
 
-t_subshell	*subshell_new(t_command cmd, t_redir_list *redirections);
-t_command	command_from_subshell(t_subshell *subshell);
-t_command	command_new_subshell(t_command cmd, t_redir_list *redirections);
+	conditional = ft_calloc(1, sizeof(*conditional));
+	if (!conditional)
+		return (NULL);
+	*conditional = (t_conditional){operator, first, second};
+	return (conditional);
+}
 
-t_simple	*simple_new(t_word_list	*words, t_redir_list *redirections);
-t_command	command_from_simple(t_simple *simple);
-t_command	command_new_simple(t_word_list	*words, t_redir_list *redirections);
+t_command	command_from_conditional(t_conditional *conditional)
+{
+	return ((t_command){.type = CONDITIONAL_CMD, .conditional = conditional});
+}
+
+t_command	command_new_conditional(t_conditional_operator operator,
+		t_command first, t_command second)
+{
+	return (command_from_conditional(conditional_new(operator, first, second)));
+}
+
+t_subshell	*subshell_new(t_command cmd, t_redir_list *redirections)
+{
+	t_subshell	*subshell;
+
+	subshell = ft_calloc(1, sizeof(*subshell));
+	if (!subshell)
+		return (NULL);
+	*subshell = (t_subshell){.cmd = cmd, .redirections = redirections};
+	return (subshell);
+}
+
+t_command	command_from_subshell(t_subshell *subshell)
+{
+	return ((t_command){.type = SUBSHELL_CMD, .subshell = subshell});
+}
+
+t_command	command_new_subshell(t_command cmd, t_redir_list *redirections)
+{
+	return (command_from_subshell(subshell_new(cmd, redirections)));
+}
+
+t_simple	*simple_new(t_word_list *words, t_redir_list *redirections)
+{
+	t_simple	*simple;
+
+	simple = ft_calloc(1, sizeof(*simple));
+	if (!simple)
+		return (NULL);
+	*simple = (t_simple){.words = words, .redirections = redirections};
+	return (simple);
+}
+
+t_command	command_from_simple(t_simple *simple)
+{
+	return ((t_command){.type = SIMPLE_CMD, .simple = simple});
+}
+
+t_command	command_new_simple(t_word_list *words, t_redir_list *redirections)
+{
+	return (command_from_simple(simple_new(words, redirections)));
+}
