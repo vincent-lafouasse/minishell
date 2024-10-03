@@ -11,10 +11,10 @@ extern "C"
 struct Redirections {
 	t_redir_list* self;
 
-	Redirections(const std::vector<const char*>& words);
+	Redirections(const std::vector<t_redirect>& redirs);
 	Redirections(const t_simple* simple);
 	Redirections(const t_subshell* subshell);
-	t_word_list* get() const;
+	t_redir_list* get() const;
 	bool operator==(const Redirections& other) const;
 	bool operator!=(const Redirections& other) const;
 };
