@@ -56,7 +56,7 @@ fclean: clean
 
 .PHONY: test
 test: $(LIBS)
-	cmake -S test -B build/test
+	cmake -DCMAKE_BUILD_TYPE=DEBUG -S test -B build/test
 	cmake --build build/test
 	GTEST_COLOR=1 ctest --test-dir build/test $(CTEST_OPT)
 
