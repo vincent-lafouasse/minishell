@@ -238,84 +238,61 @@ TEST(ParserIntegration, SimpleAllRedirections) {
 
 TEST(ParserIntegration, SimplePipeline) {
 	const char *input = "cat /etc/passwd | sort";
-	t_command actual;
-	t_command expected;
-	t_error err;
-
-	err = parse(input, &actual);
-	ASSERT_EQ(err, NO_ERROR);
-
-	expected = command_new_pipeline(
+	t_command expected = command_new_pipeline(
 		command_new_simple(Words({"cat", "/etc/passwd"}).get(), nullptr),
 		command_new_simple(Words({"sort"}).get(), nullptr)
 	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
 TEST(ParserIntegration, MultiPipeline) {
 	const char *input = "cat /etc/passwd | sort | head -n3";
-	t_command actual;
-	t_command expected;
-	t_error err;
-
-	err = parse(input, &actual);
-	ASSERT_EQ(err, NO_ERROR);
-
-	expected = command_new_pipeline(
+	t_command expected = command_new_pipeline(
 		command_new_simple(Words({"cat", "/etc/passwd"}).get(), nullptr),
 		command_new_pipeline(
 			command_new_simple(Words({"sort"}).get(), nullptr),
 			command_new_simple(Words({"head", "-n3"}).get(), nullptr)
 		)
 	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
 TEST(ParserIntegration, PipelineAndRedirections) {
 	const char *input = "cat /etc/passwd | < Makefile sort | head -n3 > outfile";
-	t_command actual;
-	t_command expected;
-	t_error err;
-
-	err = parse(input, &actual);
-	ASSERT_EQ(err, NO_ERROR);
-
-	expected = command_new_pipeline(
+	t_command expected = command_new_pipeline(
 		command_new_simple(Words({"cat", "/etc/passwd"}).get(), nullptr),
 		command_new_pipeline(
 			command_new_simple(Words({"sort"}).get(), Redirections({FromFile("Makefile")}).get()),
 			command_new_simple(Words({"head", "-n3"}).get(), Redirections({IntoFile("outfile")}).get())
 		)
 	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
 TEST(ParserIntegration, PipelineWithTrailingLeadingRedirections) {
 	const char *input = "< infile sort | head -n3 > outfile";
-	t_command actual;
-	t_command expected;
-	t_error err;
-
-	err = parse(input, &actual);
-	ASSERT_EQ(err, NO_ERROR);
-
-	expected = command_new_pipeline(
+	t_command expected = command_new_pipeline(
 		command_new_simple(Words({"sort"}).get(), Redirections({FromFile("infile")}).get()),
 		command_new_simple(Words({"head", "-n3"}).get(), Redirections({IntoFile("outfile")}).get())
 	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
 TEST(ParserIntegration, MultiPipelineWithTrailingLeadingRedirections) {
 	const char *input = "< infile sort | grep c | cut -d: | head > outfile";
-	t_command actual;
-	t_command expected;
-	t_error err;
-
-	err = parse(input, &actual);
-	ASSERT_EQ(err, NO_ERROR);
-
-	expected = command_new_pipeline(
+	t_command expected = command_new_pipeline(
 		command_new_simple(Words({"sort"}).get(), Redirections({FromFile("infile")}).get()),
 		command_new_pipeline(
 			command_new_simple(Words({"grep", "c"}).get(), nullptr),
@@ -325,6 +302,9 @@ TEST(ParserIntegration, MultiPipelineWithTrailingLeadingRedirections) {
 			)
 		)
 	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
@@ -332,17 +312,13 @@ TEST(ParserIntegration, MultiPipelineWithTrailingLeadingRedirections) {
 
 TEST(ParserIntegration, SimpleSubshell) {
 	const char *input = "(echo hello world)";
-	t_command actual;
-	t_command expected;
-	t_error err;
-
-	err = parse(input, &actual);
-	ASSERT_EQ(err, NO_ERROR);
-
-	expected = command_new_subshell(
+	t_command expected = command_new_subshell(
 		command_new_simple(Words({"echo", "hello", "world"}).get(), nullptr),
 		nullptr
 	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
@@ -363,20 +339,16 @@ TEST(ParserIntegration, SubshellWithPipeline) {
 
 TEST(ParserIntegration, SubshellWithTrailingRedirection) {
 	const char *input = "(cat /etc/passwd | sort) > outfile";
-	t_command actual;
-	t_command expected;
-	t_error err;
-
-	err = parse(input, &actual);
-	ASSERT_EQ(err, NO_ERROR);
-
-	expected = command_new_subshell(
+	t_command expected = command_new_subshell(
 		command_new_pipeline(
 			command_new_simple(Words({"cat", "/etc/passwd"}).get(), nullptr),
 			command_new_simple(Words({"sort"}).get(), nullptr)
 		),
 		Redirections({IntoFile("outfile")}).get()
 	);
+
+	t_command actual;
+	ASSERT_EQ(parse(input, &actual), NO_ERROR);
 	ASSERT_TRUE(command_eq(actual, expected));
 }
 
