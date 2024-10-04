@@ -10,23 +10,24 @@
 
 #define SHELL_PROMPT "minishell$ "
 
-// TODO: copy bash implementation
-int	line_should_be_saved_in_history(const char *input)
-{
-	return (*input != '\0');
-}
-
 int	main(void)
 {
 	char			*input;
 	t_error			err;
-	t_command			cmd;
+	t_command		cmd;
 
 	while (1)
 	{
 		input = readline(SHELL_PROMPT);
-		if (line_should_be_saved_in_history(input))
-			add_history(input);
+		if (!input)
+			break; /* eof */
+		// TODO: double check that bash really does behaves like this
+		if (*input == '\0')
+		{
+			free(input);
+			continue;
+		}
+		add_history(input);
 
 		err = parse(input, &cmd);
 		if (err != NO_ERROR)
