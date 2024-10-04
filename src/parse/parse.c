@@ -1,10 +1,10 @@
-#include "log/log.h"
 #include "parse.h"
 #include "productions/productions.h"
+#include "tokenize/tokenize.h"
 #include "tokenize/t_token.h"
 #include "tokenize/t_token_list/t_token_list.h"
 #include "t_symbol/t_symbol.h"
-#include "parse/reduction/reduction.h"
+#include "reduction/reduction.h"
 
 t_error parse_command(t_token_list *tokens, t_symbol *out)
 {

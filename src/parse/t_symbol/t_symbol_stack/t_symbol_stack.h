@@ -1,6 +1,6 @@
 #pragma once
 
-#include "parse/t_symbol/t_symbol.h"
+#include "../t_symbol.h"
 
 typedef struct s_symbol_stack
 {

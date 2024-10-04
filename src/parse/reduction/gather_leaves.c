@@ -1,5 +1,5 @@
 #include "reduction_internals.h"
-#include "parse/t_symbol/t_symbol_stack/t_symbol_stack.h"
+#include "../t_symbol/t_symbol_stack/t_symbol_stack.h"
 
 static void recurse(t_symbol* root, t_token_list** leaves_p, t_symbol_stack** visited)
 {

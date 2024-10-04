@@ -1,10 +1,8 @@
 #include "reduction.h"
 #include "reduction_internals.h"
-#include "../tokenize/t_token_list/t_token_list.h"
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
 #include "../t_symbol/t_symbol_stack/t_symbol_stack.h"
-#include "redirection/t_redir_list/t_redir_list.h"
 #include "log/log.h"
 
 t_symbol* find_symbol(t_symbol* root, t_symbol_kind kind)
