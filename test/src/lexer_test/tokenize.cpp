@@ -7,6 +7,7 @@ extern "C"
 {
 #include "parse/tokenize/t_token.h"
 #include "parse/tokenize/tokenize.h"
+#include "log/log.h"
 };
 
 struct TokenList
@@ -36,9 +37,16 @@ TokenList::TokenList(const std::vector<t_token> &src) : head(nullptr)
 
 TokenList::~TokenList() { tkl_clear(&head); }
 
+const char* log_tkl_wrapper(const t_token_list* tks)
+{
+    log_token_list(tks);
+    return "";
+}
+
 static void assert_tkl_equality(const t_token_list *tokens,
                                 const std::vector<t_token> &expected_tokens)
 {
+    const auto head = tokens;
     auto expected_it = expected_tokens.cbegin();
 
     while (expected_it != expected_tokens.cend() && tokens)
@@ -48,13 +56,13 @@ static void assert_tkl_equality(const t_token_list *tokens,
 
         ASSERT_EQ(expected.type, actual.type)
             << "Mismatched token types, expected " << token_repr(expected)
-            << " was " << token_repr(actual);
-        ASSERT_STREQ(expected.literal, actual.literal);
+            << " was " << token_repr(actual) << log_tkl_wrapper(head);
+        ASSERT_STREQ(expected.literal, actual.literal) << log_tkl_wrapper(head);
         expected_it++;
         tokens = tokens->next;
     }
-    ASSERT_EQ(tokens, nullptr);
-    ASSERT_EQ(expected_it, expected_tokens.cend());
+    ASSERT_EQ(tokens, nullptr) << log_tkl_wrapper(head);
+    ASSERT_EQ(expected_it, expected_tokens.cend()) << log_tkl_wrapper(head);
 }
 
 static t_token Token(t_token_type type)
@@ -188,13 +196,13 @@ TEST(Tokenize, SeparatedJoinedQuotedAndUnquotedWords) {
 TEST(Tokenize, RejectsUnterminatedQuotes) {
     const char *input = "echo 'hello world";
 
-    ASSERT_FALSE("unimplemented");
+    ASSERT_EQ(tokenize(input), nullptr);
 }
 
 TEST(Tokenize, RejectsJoinedWordsAndUnterminatedQuotes) {
     const char *input = "echo hel'lo world";
 
-    ASSERT_FALSE("unimplemented");
+    ASSERT_EQ(tokenize(input), nullptr);
 }
 
 TEST(Tokenize, QuotesEscapeOperators) {
