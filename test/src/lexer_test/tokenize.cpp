@@ -62,6 +62,42 @@ static t_token Token(t_token_type type, const char *literal)
     return (t_token){.type = type, .literal = const_cast<char *>(literal)};
 }
 
+/*
+TEST(Tokenize, SingleWord) {}
+TEST(Tokenize, SeparatedWords) {}
+TEST(Tokenize, SingleQuotedWord) {}
+TEST(Tokenize, SeparatedQuotedWords) {}
+TEST(Tokenize, SeparatedQuotedAndUnquotedWords) {}
+TEST(Tokenize, JoinedQuotedAndUnquotedWords) {}
+TEST(Tokenize, JoinedQuotedWords) {}
+TEST(Tokenize, RejectsUnterminatedQuotes) {}
+TEST(Tokenize, TabSeparatedTokens) {}
+TEST(Tokenize, QuotesEscapeOperators) {}
+TEST(Tokenize, LogicalOperatorsAndWords) {}
+TEST(Tokenize, LogicalOperatorsAndWords) {}
+TEST(Tokenize, WordsAndRedirectionOperators) {}
+TEST(Tokenize, WordsAndLogicalOperators) {}
+TEST(Tokenize, WordsAndControlOperators) {}
+TEST(Tokenize, WordsAndParens) {}
+TEST(Tokenize, JoinedWordsAndRedirectionOperators) {}
+TEST(Tokenize, JoinedWordsAndLogicalOperators) {}
+TEST(Tokenize, JoinedWordsAndControlOperators) {}
+TEST(Tokenize, JoinedWordsAndParens) {}
+TEST(Tokenize, AllJoinedOperatorsWithoutWords) {}
+TEST(Tokenize, WordsAndOperatorsInNestedParens) {}
+TEST(Tokenize, WordsInsideOfParens) {}
+TEST(Tokenize, WordsAndControlPlusLogicalOperators) {}
+TEST(Tokenize, WordsAndRedirectionOperators) {}
+TEST(Tokenize, WordsAndAllOperators) {}
+TEST(Tokenize, WordsAndAllOperatorsPlusParens) {}
+TEST(Tokenize, SeparatorsYieldEmptyTokenList) {}
+TEST(Tokenize, LogicalAndControlOperatorsWithWords) {}
+TEST(Tokenize, Pipex) {}
+TEST(Tokenize, BigPipex) {}
+TEST(Tokenize, BigPipexNoWhitespace) {}
+TEST(Tokenize, BigPipexLotsOfWhitespace) {}
+*/
+
 TEST(Tokenize, Word)
 {
     const char *source = "hello";
