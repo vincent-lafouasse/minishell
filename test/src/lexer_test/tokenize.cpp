@@ -289,7 +289,7 @@ TEST(Tokenize, WordsAndParens) {
 }
 
 TEST(Tokenize, JoinedWordsAndRedirectionOperators) {
-    const char *input = "<<'e'of joined\"he\"ll 'o '>outfile";
+    const char *input = "<<'e'of joined\"he\"ll'o '>outfile";
     std::vector<t_token> expected = {
         Token(DL_ANGLE_BRACKET),
         Token("'e'of"),
@@ -305,7 +305,7 @@ TEST(Tokenize, JoinedWordsAndRedirectionOperators) {
 }
 
 TEST(Tokenize, JoinedWordsAndLogicalOperators) {
-    const char *input = "he\"llo\"&&'world'""||true";
+    const char *input = "he\"llo\"&&'world'\"\"||true";
     std::vector<t_token> expected = {
         Token("he\"llo\""),
         Token(AND_AND),
