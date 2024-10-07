@@ -3,7 +3,6 @@
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
 #include "../t_symbol/t_symbol_stack/t_symbol_stack.h"
-#include "log/log.h"
 
 t_symbol* find_symbol(t_symbol* root, t_symbol_kind kind)
 {
