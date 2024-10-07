@@ -7,7 +7,7 @@ typedef void (*t_destructor)(char *);
 
 typedef struct s_word_list
 {
-	struct s_token_list *next;
+	struct s_word_list *next;
 	char *contents;
 } t_word_list;
 

@@ -32,7 +32,6 @@ impl RdGenerator {
         writeln!(file)?;
         writeln!(file, "#include \"../t_parser/t_parser.h\"")?;
         writeln!(file, "#include \"../t_symbol/t_symbol.h\"")?;
-        writeln!(file, "#pragma once")?;
         writeln!(file)?;
         for variable in self.ll_properties.underlying_grammar().rules().keys() {
             writeln!(file, "t_symbol	produce_{variable}(t_parser *state);")?;

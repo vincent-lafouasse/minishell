@@ -5,8 +5,8 @@
 
 extern "C"
 {
-#include "tokenize/t_token.h"
-#include "tokenize/tokenize.h"
+#include "parse/tokenize/t_token.h"
+#include "parse/tokenize/tokenize.h"
 };
 
 struct TokenList

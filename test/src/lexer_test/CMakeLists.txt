@@ -1,32 +1,33 @@
 add_executable(lexer_test)
 
 set(tokenize_module
-	tokenize/tokenize.h
-	tokenize/token_repr.c
-	tokenize/t_lexer/lexer_scan_metachar_operator.c
-	tokenize/t_lexer/lexer_skip_whitespace.c
-	tokenize/t_lexer/lexer_internals.h
-	tokenize/t_lexer/fill_token.c
-	tokenize/t_lexer/t_lexer_init.c
-	tokenize/t_lexer/lexer_scan_next_token.c
-	tokenize/t_lexer/lexer_scan_string.c
-	tokenize/t_lexer/t_lexer.h
-	tokenize/t_lexer/lexer_scan_word.c
-	tokenize/t_lexer/lexer_advance_peek.c
-	tokenize/t_token_list/tkl_clear.c
-	tokenize/t_token_list/tkl_delone.c
-	tokenize/t_token_list/tkl_push_back.c
-	tokenize/t_token_list/t_token_list.h
-	tokenize/t_token_list/tkl_new.c
-	tokenize/t_token.h
-	tokenize/tokenize.c
+	parse/tokenize/tokenize.h
+	parse/tokenize/token_repr.c
+	parse/tokenize/t_lexer/lexer_scan_metachar_operator.c
+	parse/tokenize/t_lexer/lexer_skip_whitespace.c
+	parse/tokenize/t_lexer/lexer_internals.h
+	parse/tokenize/t_lexer/fill_token.c
+	parse/tokenize/t_lexer/t_lexer_init.c
+	parse/tokenize/t_lexer/lexer_scan_next_token.c
+	parse/tokenize/t_lexer/lexer_scan_string.c
+	parse/tokenize/t_lexer/t_lexer.h
+	parse/tokenize/t_lexer/lexer_scan_word.c
+	parse/tokenize/t_lexer/lexer_advance_peek.c
+	parse/tokenize/t_token_list/tkl_clear.c
+	parse/tokenize/t_token_list/tkl_delone.c
+	parse/tokenize/t_token_list/tkl_push_back.c
+	parse/tokenize/t_token_list/t_token_list.h
+	parse/tokenize/t_token_list/tkl_new.c
+	parse/tokenize/t_token.h
+	parse/tokenize/tokenize.c
 )
 set(error_module
 	error/t_error.h
 	error/error_repr.c
 )
 set(log_module
-	log/log.c
+	log/log_error.c
+	log/log_token.c
 	log/log.h
 )
 

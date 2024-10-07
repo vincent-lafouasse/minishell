@@ -2,7 +2,6 @@
 
 #include "../t_parser/t_parser.h"
 #include "../t_symbol/t_symbol.h"
-#pragma once
 
 t_symbol	produce_redirect_list_rest(t_parser *state);
 t_symbol	produce_subshell_precedes(t_parser *state);
