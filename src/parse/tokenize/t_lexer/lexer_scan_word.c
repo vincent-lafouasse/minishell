@@ -47,13 +47,14 @@ t_error	append_next_word_or_string(t_lexer *lexer, char **onto)
 		err = extract_simple_word(lexer, &next);
 	if (err != NO_ERROR)
 		return (err);
-	buffer = ft_strjoin(*onto, next);
+	buffer = ft_strjoin((const char*)*onto, next);
 	if (!buffer)
 	{
 		free(next);
 		return (E_OOM);
 	}
 	free(*onto);
+	free(next);
 	*onto = buffer;
 	return (NO_ERROR);
 }
@@ -97,14 +98,4 @@ t_error	extract_quoted_string(t_lexer *lexer, char **str_out)
 		return (E_OOM);
 	*str_out = out;
 	return (NO_ERROR);
-}
-
-char	*easy_concatenation(char *a, char *b)
-{
-	char	*out;
-
-	out = ft_strjoin(a, b);
-	free(a);
-	free(b);
-	return (out);
 }
