@@ -9,7 +9,6 @@ set(tokenize_module
 	parse/tokenize/t_lexer/fill_token.c
 	parse/tokenize/t_lexer/t_lexer_init.c
 	parse/tokenize/t_lexer/lexer_scan_next_token.c
-	parse/tokenize/t_lexer/lexer_scan_string.c
 	parse/tokenize/t_lexer/t_lexer.h
 	parse/tokenize/t_lexer/lexer_scan_word.c
 	parse/tokenize/t_lexer/lexer_advance_peek.c

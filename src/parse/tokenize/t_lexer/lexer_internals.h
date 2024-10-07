@@ -6,9 +6,7 @@
 #define WHITESPACE " \t\n"
 #define SHELL_BREAK_CHARS METACHARACTERS WHITESPACE
 
-t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
-                                       char current);
-t_error lexer_scan_string(t_lexer *lexer, t_token *out, char stop);
+t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out);
 t_error lexer_scan_word(t_lexer *lexer, t_token *out);
 
 char lexer_advance(t_lexer *lexer);

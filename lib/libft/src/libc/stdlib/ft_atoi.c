@@ -6,14 +6,13 @@
 /*   By: vlafouas <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/07 11:36:35 by vlafouas          #+#    #+#             */
-/*   Updated: 2023/11/30 23:28:36 by poss             ###   ########.fr       */
+/*   Updated: 2024/10/07 17:14:35 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
 static unsigned int	ft_stripped_to_unsigned(const char *num_str);
-static int			ft_isspace(int c);
 
 int	ft_atoi(const char *num_str)
 {
@@ -47,9 +46,4 @@ static unsigned int	ft_stripped_to_unsigned(const char *num_str)
 		num_str++;
 	}
 	return (output);
-}
-
-static int	ft_isspace(int c)
-{
-	return ((c >= '\t' && c <= '\r') || c == ' ');
 }

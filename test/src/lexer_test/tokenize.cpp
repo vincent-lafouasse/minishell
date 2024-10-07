@@ -7,6 +7,7 @@ extern "C"
 {
 #include "parse/tokenize/t_token.h"
 #include "parse/tokenize/tokenize.h"
+#include "log/log.h"
 };
 
 struct TokenList
@@ -36,9 +37,16 @@ TokenList::TokenList(const std::vector<t_token> &src) : head(nullptr)
 
 TokenList::~TokenList() { tkl_clear(&head); }
 
+const char* log_tkl_wrapper(const t_token_list* tks)
+{
+    log_token_list(tks);
+    return "";
+}
+
 static void assert_tkl_equality(const t_token_list *tokens,
                                 const std::vector<t_token> &expected_tokens)
 {
+    const auto head = tokens;
     auto expected_it = expected_tokens.cbegin();
 
     while (expected_it != expected_tokens.cend() && tokens)
@@ -48,257 +56,504 @@ static void assert_tkl_equality(const t_token_list *tokens,
 
         ASSERT_EQ(expected.type, actual.type)
             << "Mismatched token types, expected " << token_repr(expected)
-            << " was " << token_repr(actual);
-        ASSERT_STREQ(expected.literal, actual.literal);
+            << " was " << token_repr(actual) << log_tkl_wrapper(head);
+        ASSERT_STREQ(expected.literal, actual.literal) << log_tkl_wrapper(head);
         expected_it++;
         tokens = tokens->next;
     }
-    ASSERT_EQ(tokens, nullptr);
-    ASSERT_EQ(expected_it, expected_tokens.cend());
+    ASSERT_EQ(tokens, nullptr) << log_tkl_wrapper(head);
+    ASSERT_EQ(expected_it, expected_tokens.cend()) << log_tkl_wrapper(head);
 }
 
-static t_token Token(t_token_type type, const char *literal)
+static t_token Token(t_token_type type)
 {
-    return (t_token){.type = type, .literal = const_cast<char *>(literal)};
+    assert(type != WORD);
+    return (t_token){.type = type, .literal = nullptr};
 }
 
-TEST(Tokenize, Word)
+static t_token Token(const char *literal)
 {
-    const char *source = "hello";
+    assert(literal != nullptr);
+    return (t_token){.type = WORD, .literal = const_cast<char *>(literal)};
+}
+
+TEST(Tokenize, Word) {
+    const char *input = "hello";
     std::vector<t_token> expected = {
-        Token(WORD, "hello"),
-        Token(EOF_TOKEN, nullptr),
+        Token("hello"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, SingleQuotedString)
-{
-    const char *source = "'hello'";
+TEST(Tokenize, SeparatedWords) {
+    const char *input = "echo     \n hello  \tworld";
     std::vector<t_token> expected = {
-        Token(SINGLE_QUOTE_STRING, "hello"),
-        Token(EOF_TOKEN, nullptr),
+        Token("echo"),
+        Token("hello"),
+        Token("world"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, DoubleQuotedString)
-{
-    const char *source = "\"hello\"";
+TEST(Tokenize, QuotedWord) {
+    const char *input = "'hello'";
     std::vector<t_token> expected = {
-        Token(DOUBLE_QUOTE_STRING, "hello"),
-        Token(EOF_TOKEN, nullptr),
+        Token("'hello'"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, WordFollowedByUnterminatedStringIsInvalid)
-{
-    const char *source = "hello \"world";
-
-    t_token_list *tokens = tokenize(source);
-    ASSERT_EQ(tokens, nullptr);
-}
-
-TEST(Tokenize, WhitespaceSeperatedWords)
-{
-    const char *source = "hello world";
+TEST(Tokenize, DoubleQuotedWord) {
+    const char *input = "\"hello\"";
     std::vector<t_token> expected = {
-        Token(WORD, "hello"),
-        Token(WORD, "world"),
-        Token(EOF_TOKEN, nullptr),
+        Token("\"hello\""),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, WhitespaceSeperatedWordAndString)
-{
-    const char *source = "hello 'world'";
+TEST(Tokenize, SeparatedQuotedWords) {
+    const char *input = "'echo' \n \"hello\" 'world'";
     std::vector<t_token> expected = {
-        Token(WORD, "hello"),
-        Token(SINGLE_QUOTE_STRING, "world"),
-        Token(EOF_TOKEN, nullptr),
+        Token("'echo'"),
+        Token("\"hello\""),
+        Token("'world'"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, TabSeperatedWords)
-{
-    const char *source = "hello\tworld";
+TEST(Tokenize, SeparatedQuotedAndUnquotedWords) {
+    const char *input = "echo 'hello' world";
     std::vector<t_token> expected = {
-        Token(WORD, "hello"),
-        Token(WORD, "world"),
-        Token(EOF_TOKEN, nullptr),
+        Token("echo"),
+        Token("'hello'"),
+        Token("world"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, Whitespaces)
-{
-    const char *source = "   ";
+TEST(Tokenize, JoinedQuotedAndUnquotedWords) {
+    const char *input = "'he'l\"lo\"world";
     std::vector<t_token> expected = {
-        Token(EOF_TOKEN, nullptr),
+        Token("'he'l\"lo\"world"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, Tabs)
-{
-    const char *source = "\t\t\t";
+TEST(Tokenize, JoinedQuotedWords) {
+    const char *input = "'hello'\"world\"";
     std::vector<t_token> expected = {
-        Token(EOF_TOKEN, nullptr),
+        Token("'hello'\"world\""),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, Operator)
-{
-    const char *source = "<";
+TEST(Tokenize, SeparatedJoinedQuotedAndUnquotedWords) {
+    const char *input = "e\"c\"h'o' 'he'l\"lo\" world";
     std::vector<t_token> expected = {
-        Token(L_ANGLE_BRACKET, nullptr),
-        Token(EOF_TOKEN, nullptr),
+        Token("e\"c\"h'o'"),
+        Token("'he'l\"lo\""),
+        Token("world"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, SingleQuotedOperator)
-{
-    const char *source = "'<'";
-    std::vector<t_token> expected = {
-        Token(SINGLE_QUOTE_STRING, "<"),
-        Token(EOF_TOKEN, nullptr),
-    };
+TEST(Tokenize, RejectsUnterminatedQuotes) {
+    const char *input = "echo 'hello world";
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    ASSERT_EQ(tokenize(input), nullptr);
 }
 
-TEST(Tokenize, ConcatenatedWordsAndStrings)
-{
-    const char *source = "e\"c\"h'o'";
-    std::vector<t_token> expected = {
-        Token(WORD, "e"),          Token(DOUBLE_QUOTE_STRING, "c"),
-        Token(WORD, "h"),          Token(SINGLE_QUOTE_STRING, "o"),
-        Token(EOF_TOKEN, nullptr),
-    };
+TEST(Tokenize, RejectsJoinedWordsAndUnterminatedQuotes) {
+    const char *input = "echo hel'lo world";
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    ASSERT_EQ(tokenize(input), nullptr);
 }
 
-TEST(Tokenize, ConcatenatedSentence)
-{
-    const char *source = "e\"c\"h'o' hello \"world\"";
+TEST(Tokenize, QuotesEscapeOperators) {
+    const char *input = "<< hello world || abc";
     std::vector<t_token> expected = {
-        Token(WORD, "e"),          Token(DOUBLE_QUOTE_STRING, "c"),
-        Token(WORD, "h"),          Token(SINGLE_QUOTE_STRING, "o"),
-        Token(WORD, "hello"),      Token(DOUBLE_QUOTE_STRING, "world"),
-        Token(EOF_TOKEN, nullptr),
+        Token(DL_ANGLE_BRACKET),
+        Token("hello"),
+        Token("world"),
+        Token(OR_OR),
+        Token("abc"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
-TEST(Tokenize, SimpleCommandWithOutputRedirection)
-{
-    const char *source = "hello > world";
+TEST(Tokenize, WordsAndRedirectionOperators) {
+    const char *input = "<< eof < infile hello > outfile";
     std::vector<t_token> expected = {
-        Token(WORD, "hello"),
-        Token(R_ANGLE_BRACKET, nullptr),
-        Token(WORD, "world"),
-        Token(EOF_TOKEN, nullptr),
+        Token(DL_ANGLE_BRACKET),
+        Token("eof"),
+        Token(L_ANGLE_BRACKET),
+        Token("infile"),
+        Token("hello"),
+        Token(R_ANGLE_BRACKET),
+        Token("outfile"),
+        Token(EOF_TOKEN)
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, WordsAndLogicalOperators) {
+    const char *input = "hello && world || true";
+    std::vector<t_token> expected = {
+        Token("hello"),
+        Token(AND_AND),
+        Token("world"),
+        Token(OR_OR),
+        Token("true"),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, WordsAndControlOperators) {
+    const char *input = "hello  | | world |";
+    std::vector<t_token> expected = {
+        Token("hello"),
+        Token(PIPE),
+        Token(PIPE),
+        Token("world"),
+        Token(PIPE),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, WordsAndParens) {
+    const char *input = "(ulimit abc) hello words";
+    std::vector<t_token> expected = {
+        Token(L_PAREN),
+        Token("ulimit"),
+        Token("abc"),
+        Token(R_PAREN),
+        Token("hello"),
+        Token("words"),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, JoinedWordsAndRedirectionOperators) {
+    const char *input = "<<'e'of joined\"he\"ll'o '>outfile";
+    std::vector<t_token> expected = {
+        Token(DL_ANGLE_BRACKET),
+        Token("'e'of"),
+        Token("joined\"he\"ll'o '"),
+        Token(R_ANGLE_BRACKET),
+        Token("outfile"),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, JoinedWordsAndLogicalOperators) {
+    const char *input = "he\"llo\"&&'world'\"\"||true";
+    std::vector<t_token> expected = {
+        Token("he\"llo\""),
+        Token(AND_AND),
+        Token("'world'\"\""),
+        Token(OR_OR),
+        Token("true"),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, JoinedWordsAndControlOperators) {
+    const char *input = "hel'lo'|'world'";
+    std::vector<t_token> expected = {
+        Token("hel'lo'"),
+        Token(PIPE),
+        Token("'world'"),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, JoinedWordsAndParens) {
+    const char *input = "(hello'world')";
+    std::vector<t_token> expected = {
+        Token(L_PAREN),
+        Token("hello'world'"),
+        Token(R_PAREN),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, SeparatedOperators) {
+    const char *input = "( << <\t >> >\n|| &&\t)";
+    std::vector<t_token> expected = {
+        Token(L_PAREN),
+        Token(DL_ANGLE_BRACKET),
+        Token(L_ANGLE_BRACKET),
+        Token(DR_ANGLE_BRACKET),
+        Token(R_ANGLE_BRACKET),
+        Token(OR_OR),
+        Token(AND_AND),
+        Token(R_PAREN),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, JoinedOperators) {
+    const char *input = "(<<<>>>||&&)";
+    std::vector<t_token> expected = {
+        Token(L_PAREN),
+        Token(DL_ANGLE_BRACKET),
+        Token(L_ANGLE_BRACKET),
+        Token(DR_ANGLE_BRACKET),
+        Token(R_ANGLE_BRACKET),
+        Token(OR_OR),
+        Token(AND_AND),
+        Token(R_PAREN),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, WordsAndOperatorsInNestedParens) {
+    const char *input = "(a | (b | (c)))";
+    std::vector<t_token> expected = {
+        Token(L_PAREN),
+        Token("a"),
+        Token(PIPE),
+        Token(L_PAREN),
+        Token("b"),
+        Token(PIPE),
+        Token(L_PAREN),
+        Token("c"),
+        Token(R_PAREN),
+        Token(R_PAREN),
+        Token(R_PAREN),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, WordsAndControlPlusLogicalOperators) {
+    const char *input = "echo abc && cat Makefile | grep c | wc -l || false";
+    std::vector<t_token> expected = {
+        Token("echo"),
+        Token("abc"),
+        Token(AND_AND),
+        Token("cat"),
+        Token("Makefile"),
+        Token(PIPE),
+        Token("grep"),
+        Token("c"),
+        Token(PIPE),
+        Token("wc"),
+        Token("-l"),
+        Token(OR_OR),
+        Token("false"),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, WordsAndAllOperators) {
+    const char *input = "'word1' << word2 <>>>|| word3&&";
+    std::vector<t_token> expected = {
+        Token("'word1'"),
+        Token(DL_ANGLE_BRACKET),
+        Token("word2"),
+        Token(L_ANGLE_BRACKET),
+        Token(DR_ANGLE_BRACKET),
+        Token(R_ANGLE_BRACKET),
+        Token(OR_OR),
+        Token("word3"),
+        Token(AND_AND),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, WordsAndAllOperatorsPlusParens) {
+    const char *input = "('word1' << word2 <>>>|| word3&&)";
+    std::vector<t_token> expected = {
+        Token(L_PAREN),
+        Token("'word1'"),
+        Token(DL_ANGLE_BRACKET),
+        Token("word2"),
+        Token(L_ANGLE_BRACKET),
+        Token(DR_ANGLE_BRACKET),
+        Token(R_ANGLE_BRACKET),
+        Token(OR_OR),
+        Token("word3"),
+        Token(AND_AND),
+        Token(R_PAREN),
+        Token(EOF_TOKEN)
+    };
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
+}
+
+TEST(Tokenize, SeparatorsYieldEmptyTokenList) {
+    const char *input = "     \t\n             \t \t";
+    std::vector<t_token> expected = {Token(EOF_TOKEN)};
+
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
 TEST(Tokenize, Pipex)
 {
-    const char *source = "< infile cmd1 | cmd2 > outfile";
+    const char *input = "< infile cmd1 | cmd2 > outfile";
     std::vector<t_token> expected = {
-        Token(L_ANGLE_BRACKET, nullptr),
-        Token(WORD, "infile"),
-        Token(WORD, "cmd1"),
-        Token(PIPE, nullptr),
-        Token(WORD, "cmd2"),
-        Token(R_ANGLE_BRACKET, nullptr),
-        Token(WORD, "outfile"),
-        Token(EOF_TOKEN, nullptr),
+        Token(L_ANGLE_BRACKET),
+        Token("infile"),
+        Token("cmd1"),
+        Token(PIPE),
+        Token("cmd2"),
+        Token(R_ANGLE_BRACKET),
+        Token("outfile"),
+        Token(EOF_TOKEN),
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
 TEST(Tokenize, BigPipex)
 {
-    const char *source =
+    const char *input =
         "cppcheck < file.cpp | cat | sort | wc | a_cmd >> outfile";
     std::vector<t_token> expected = {
-        Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, nullptr),
-        Token(WORD, "file.cpp"), Token(PIPE, nullptr),
-        Token(WORD, "cat"),      Token(PIPE, nullptr),
-        Token(WORD, "sort"),     Token(PIPE, nullptr),
-        Token(WORD, "wc"),       Token(PIPE, nullptr),
-        Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, nullptr),
-        Token(WORD, "outfile"),  Token(EOF_TOKEN, nullptr),
+        Token("cppcheck"), Token(L_ANGLE_BRACKET),
+        Token("file.cpp"), Token(PIPE),
+        Token("cat"),      Token(PIPE),
+        Token("sort"),     Token(PIPE),
+        Token("wc"),       Token(PIPE),
+        Token("a_cmd"),    Token(DR_ANGLE_BRACKET),
+        Token("outfile"),  Token(EOF_TOKEN),
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
 TEST(Tokenize, BigPipexNoWhitespace)
 {
-    const char *source = "cppcheck<file.cpp|cat|sort|wc|a_cmd>>outfile";
+    const char *input = "cppcheck<file.cpp|cat|sort|wc|a_cmd>>outfile";
     std::vector<t_token> expected = {
-        Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, nullptr),
-        Token(WORD, "file.cpp"), Token(PIPE, nullptr),
-        Token(WORD, "cat"),      Token(PIPE, nullptr),
-        Token(WORD, "sort"),     Token(PIPE, nullptr),
-        Token(WORD, "wc"),       Token(PIPE, nullptr),
-        Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, nullptr),
-        Token(WORD, "outfile"),  Token(EOF_TOKEN, nullptr),
+        Token("cppcheck"), Token(L_ANGLE_BRACKET),
+        Token("file.cpp"), Token(PIPE),
+        Token("cat"),      Token(PIPE),
+        Token("sort"),     Token(PIPE),
+        Token("wc"),       Token(PIPE),
+        Token("a_cmd"),    Token(DR_ANGLE_BRACKET),
+        Token("outfile"),  Token(EOF_TOKEN),
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
 
 TEST(Tokenize, BigPipexLotsOfWhitespace)
 {
-    const char *source = "   cppcheck   <   file.cpp   |   cat | sort | wc | "
+    const char *input = "   cppcheck   <   file.cpp   |   cat | sort | wc | "
                          "a_cmd >> outfile   ";
     std::vector<t_token> expected = {
-        Token(WORD, "cppcheck"), Token(L_ANGLE_BRACKET, nullptr),
-        Token(WORD, "file.cpp"), Token(PIPE, nullptr),
-        Token(WORD, "cat"),      Token(PIPE, nullptr),
-        Token(WORD, "sort"),     Token(PIPE, nullptr),
-        Token(WORD, "wc"),       Token(PIPE, nullptr),
-        Token(WORD, "a_cmd"),    Token(DR_ANGLE_BRACKET, nullptr),
-        Token(WORD, "outfile"),  Token(EOF_TOKEN, nullptr),
+        Token("cppcheck"), Token(L_ANGLE_BRACKET),
+        Token("file.cpp"), Token(PIPE),
+        Token("cat"),      Token(PIPE),
+        Token("sort"),     Token(PIPE),
+        Token("wc"),       Token(PIPE),
+        Token("a_cmd"),    Token(DR_ANGLE_BRACKET),
+        Token("outfile"),  Token(EOF_TOKEN),
     };
 
-    t_token_list *tokens = tokenize(source);
-    assert_tkl_equality(tokens, expected);
+    t_token_list *actual = tokenize(input);
+    ASSERT_NE(actual, nullptr);
+    assert_tkl_equality(actual, expected);
 }
