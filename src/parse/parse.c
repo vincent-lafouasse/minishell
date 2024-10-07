@@ -33,9 +33,9 @@ t_error parse(const char *input, t_command *out)
     t_symbol parse_tree;
     t_error err;
 
-    tokens = tokenize(input);
-    if (!tokens)
-        return E_UNRECOGNIZED_TOKEN;
+    err = tokenize(input, &tokens);
+    if (err != NO_ERROR)
+        return err;
     err = parse_command(tokens, &parse_tree);
     if (err != NO_ERROR)
     {
