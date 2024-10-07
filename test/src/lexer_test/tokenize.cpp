@@ -7,35 +7,9 @@ extern "C"
 {
 #include "parse/tokenize/t_token.h"
 #include "parse/tokenize/tokenize.h"
+#include "error/t_error.h"
 #include "log/log.h"
 };
-
-struct TokenList
-{
-    TokenList();
-    TokenList(const std::string &src);
-    TokenList(const std::vector<t_token> &src);
-    ~TokenList();
-
-    void assert_eq(const t_token_list* other);
-    void assert_eq(const TokenList& other);
-
-    t_token_list *head;
-};
-
-TokenList::TokenList() : head(nullptr) {}
-
-TokenList::TokenList(const std::string &src) : head(tokenize(src.c_str())) {}
-
-TokenList::TokenList(const std::vector<t_token> &src) : head(nullptr)
-{
-    for (const t_token &token : src)
-    {
-        tkl_push_back(&head, token);
-    }
-}
-
-TokenList::~TokenList() { tkl_clear(&head); }
 
 const char* log_tkl_wrapper(const t_token_list* tks)
 {
@@ -65,6 +39,23 @@ static void assert_tkl_equality(const t_token_list *tokens,
     ASSERT_EQ(expected_it, expected_tokens.cend()) << log_tkl_wrapper(head);
 }
 
+static void assert_lexing_ok(const char* input, const std::vector<t_token>& expected)
+{
+    t_token_list* actual;
+    
+    t_error err = tokenize(input, &actual);
+    ASSERT_EQ(err, NO_ERROR) << "Lexing failed with error code " << error_repr(err);
+    assert_tkl_equality(actual, expected);
+}
+
+static void assert_lexing_fail(const char* input, t_error expected)
+{
+    t_token_list* tokens;
+    
+    t_error actual = tokenize(input, &tokens);
+    ASSERT_EQ(actual, expected) << "Expected error code " << error_repr(expected) << " was " << error_repr(actual);
+}
+
 static t_token Token(t_token_type type)
 {
     assert(type != WORD);
@@ -84,9 +75,7 @@ TEST(Tokenize, Word) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, SeparatedWords) {
@@ -98,9 +87,7 @@ TEST(Tokenize, SeparatedWords) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, QuotedWord) {
@@ -110,9 +97,7 @@ TEST(Tokenize, QuotedWord) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, DoubleQuotedWord) {
@@ -122,9 +107,7 @@ TEST(Tokenize, DoubleQuotedWord) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, SeparatedQuotedWords) {
@@ -136,9 +119,7 @@ TEST(Tokenize, SeparatedQuotedWords) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, SeparatedQuotedAndUnquotedWords) {
@@ -150,9 +131,7 @@ TEST(Tokenize, SeparatedQuotedAndUnquotedWords) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, JoinedQuotedAndUnquotedWords) {
@@ -162,9 +141,7 @@ TEST(Tokenize, JoinedQuotedAndUnquotedWords) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, JoinedQuotedWords) {
@@ -174,9 +151,7 @@ TEST(Tokenize, JoinedQuotedWords) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, SeparatedJoinedQuotedAndUnquotedWords) {
@@ -188,21 +163,21 @@ TEST(Tokenize, SeparatedJoinedQuotedAndUnquotedWords) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, RejectsUnterminatedQuotes) {
     const char *input = "echo 'hello world";
+    t_error expected = E_UNTERMINATED_QUOTE;
 
-    ASSERT_EQ(tokenize(input), nullptr);
+    assert_lexing_fail(input, expected);
 }
 
 TEST(Tokenize, RejectsJoinedWordsAndUnterminatedQuotes) {
     const char *input = "echo hel'lo world";
+    t_error expected = E_UNTERMINATED_QUOTE;
 
-    ASSERT_EQ(tokenize(input), nullptr);
+    assert_lexing_fail(input, expected);
 }
 
 TEST(Tokenize, QuotesEscapeOperators) {
@@ -216,9 +191,7 @@ TEST(Tokenize, QuotesEscapeOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndRedirectionOperators) {
@@ -234,9 +207,7 @@ TEST(Tokenize, WordsAndRedirectionOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndLogicalOperators) {
@@ -250,9 +221,7 @@ TEST(Tokenize, WordsAndLogicalOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndControlOperators) {
@@ -266,9 +235,7 @@ TEST(Tokenize, WordsAndControlOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndParens) {
@@ -283,9 +250,7 @@ TEST(Tokenize, WordsAndParens) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, JoinedWordsAndRedirectionOperators) {
@@ -299,9 +264,7 @@ TEST(Tokenize, JoinedWordsAndRedirectionOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, JoinedWordsAndLogicalOperators) {
@@ -315,9 +278,7 @@ TEST(Tokenize, JoinedWordsAndLogicalOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, JoinedWordsAndControlOperators) {
@@ -329,9 +290,7 @@ TEST(Tokenize, JoinedWordsAndControlOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, JoinedWordsAndParens) {
@@ -343,9 +302,7 @@ TEST(Tokenize, JoinedWordsAndParens) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, SeparatedOperators) {
@@ -362,9 +319,7 @@ TEST(Tokenize, SeparatedOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, JoinedOperators) {
@@ -381,9 +336,7 @@ TEST(Tokenize, JoinedOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndOperatorsInNestedParens) {
@@ -403,9 +356,7 @@ TEST(Tokenize, WordsAndOperatorsInNestedParens) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndControlPlusLogicalOperators) {
@@ -427,9 +378,7 @@ TEST(Tokenize, WordsAndControlPlusLogicalOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndAllOperators) {
@@ -447,9 +396,7 @@ TEST(Tokenize, WordsAndAllOperators) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, WordsAndAllOperatorsPlusParens) {
@@ -469,18 +416,14 @@ TEST(Tokenize, WordsAndAllOperatorsPlusParens) {
         Token(EOF_TOKEN)
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, SeparatorsYieldEmptyTokenList) {
     const char *input = "     \t\n             \t \t";
     std::vector<t_token> expected = {Token(EOF_TOKEN)};
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, Pipex)
@@ -497,9 +440,7 @@ TEST(Tokenize, Pipex)
         Token(EOF_TOKEN),
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, BigPipex)
@@ -516,9 +457,7 @@ TEST(Tokenize, BigPipex)
         Token("outfile"),  Token(EOF_TOKEN),
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, BigPipexNoWhitespace)
@@ -534,9 +473,7 @@ TEST(Tokenize, BigPipexNoWhitespace)
         Token("outfile"),  Token(EOF_TOKEN),
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
 
 TEST(Tokenize, BigPipexLotsOfWhitespace)
@@ -553,7 +490,5 @@ TEST(Tokenize, BigPipexLotsOfWhitespace)
         Token("outfile"),  Token(EOF_TOKEN),
     };
 
-    t_token_list *actual = tokenize(input);
-    ASSERT_NE(actual, nullptr);
-    assert_tkl_equality(actual, expected);
+    assert_lexing_ok(input, expected);
 }
