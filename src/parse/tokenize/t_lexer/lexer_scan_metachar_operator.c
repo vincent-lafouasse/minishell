@@ -3,9 +3,10 @@
 static t_error lexer_scan_redirection_operators(t_lexer *lexer, t_token *out,
                                                 char current);
 
-t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out,
-                                       char current)
+t_error lexer_scan_metacharacter_token(t_lexer *lexer, t_token *out)
 {
+    char current = lexer_advance(lexer);
+
     if (current == '(')
         return (fill_token((t_token){.type = L_PAREN}, out));
     if (current == ')')

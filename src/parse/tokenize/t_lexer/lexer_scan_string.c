@@ -2,11 +2,12 @@
 
 #include "libft/ft_string.h"
 
-t_error lexer_scan_string(t_lexer *lexer, t_token *out, char stop)
+t_error lexer_scan_string(t_lexer *lexer, t_token *out)
 {
     char *literal;
     t_token_type token_type;
     size_t sz;
+    char stop = lexer_advance(lexer);
 
     while (lexer_peek(lexer) != stop && lexer->current < lexer->src_len)
         lexer_advance(lexer);
