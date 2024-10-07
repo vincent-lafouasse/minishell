@@ -1,7 +1,6 @@
 #include "tokenize.h"
-#include "log/log.h"
 #include "t_lexer/t_lexer.h"
-#include <stdio.h>
+#include "log/log.h"
 
 static void cleanup_log(t_lexer *lexer, t_error err);
 
@@ -10,7 +9,7 @@ static void cleanup_log(t_lexer *lexer, t_error err);
  * ie do not ignore failability of tkl_push_back
  */
 
-t_token_list *tokenize(const char *input)
+t_error tokenize(const char *input, t_token_list** out)
 {
     t_lexer lexer;
     t_token token;
@@ -23,12 +22,16 @@ t_token_list *tokenize(const char *input)
         lexer.start = lexer.current;
         err = lexer_scan_next_token(&lexer, &token);
         if (err != NO_ERROR)
-            return cleanup_log(&lexer, err), NULL;
+        {
+            cleanup_log(&lexer, err);
+            return (err);
+        }
         err = tkl_push_back(&lexer.tokens, token);
         lexer_skip_whitespace(&lexer);
     }
     tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
-    return (lexer.tokens);
+    *out = lexer.tokens;
+    return (NO_ERROR);
 }
 
 static void cleanup_log(t_lexer *lexer, t_error err)
