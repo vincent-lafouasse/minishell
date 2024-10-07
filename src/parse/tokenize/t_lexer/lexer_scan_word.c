@@ -12,44 +12,60 @@
 
 t_error extract_quoted_string(t_lexer* lexer, char** str_out);
 t_error extract_simple_word(t_lexer* lexer, char** str_out);
-char* easy_concatenation(char* a, char* b);
+t_error append_next_word_or_string(t_lexer* lexer, char **onto);
 
 t_error lexer_scan_word(t_lexer *lexer, t_token *out)
 {
     char* str_out = ft_strdup("");
     bool must_continue = true;
-    char* buffer;
     t_error err;
 
     while (must_continue)
     {
-        if (ft_strchr("\"'", lexer_peek(lexer)))
+        err = append_next_word_or_string(lexer, &str_out);
+        if (err != NO_ERROR)
         {
-            err = extract_quoted_string(lexer, &buffer);
-            if (err != NO_ERROR)
-            {
-                free(str_out);
-                return err;
-            }
-            str_out = easy_concatenation(str_out, buffer);
-            if (!str_out)
-                return E_OOM;
-        }
-        else
-        {
-            err = extract_simple_word(lexer, &buffer);
-            if (err != NO_ERROR)
-            {
-                free(str_out);
-                return err;
-            }
-            str_out = easy_concatenation(str_out, buffer);
-            if (!str_out)
-                return E_OOM;
+            free(str_out);
+            return err;
         }
         must_continue = ft_strchr(SHELL_BREAK_CHARS, lexer_peek(lexer)) == NULL;
     }
     return fill_token((t_token){.type = WORD, .literal = str_out}, out);
+}
+
+t_error append_next_word_or_string(t_lexer* lexer, char **onto)
+{
+    char* next;
+    char* buffer;
+    t_error err;
+
+    if (ft_strchr("\"'", lexer_peek(lexer)))
+    {
+        err = extract_quoted_string(lexer, &next);
+        if (err != NO_ERROR)
+            return err;
+        buffer = ft_strjoin(*onto, next);
+        if (!buffer)
+        {
+            free(next);
+            return E_OOM;
+        }
+    }
+    else
+{
+        err = extract_simple_word(lexer, &next);
+        if (err != NO_ERROR)
+            return err;
+        buffer = ft_strjoin(*onto, next);
+        if (!buffer)
+        {
+            free(next);
+            return E_OOM;
+        }
+    }
+    free(*onto);
+    *onto = buffer;
+    return NO_ERROR;
 }
 
 t_error extract_simple_word(t_lexer* lexer, char** str_out)
