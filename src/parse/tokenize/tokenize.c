@@ -25,7 +25,6 @@ t_token_list *tokenize(const char *input)
         if (err != NO_ERROR)
             return cleanup_log(&lexer, err), NULL;
         err = tkl_push_back(&lexer.tokens, token);
-        lexer_skip_whitespace(&lexer);
     }
     tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});
     return (lexer.tokens);
