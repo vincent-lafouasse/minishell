@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATTERNS=(bad dummy hack todo)
+PATTERNS=(bad dummy hack todo temporarily)
 
 for pattern in "${PATTERNS[@]}"; do
 	grep --recursive --ignore-case "${pattern}" ./src/
