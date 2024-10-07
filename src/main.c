@@ -37,7 +37,7 @@ int	main(void)
 			continue;
 		}
 
-		syntax_tree_to_json(cmd);
+		//syntax_tree_to_json(cmd);
 		free(input);
 	}
 	clear_history();
