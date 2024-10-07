@@ -57,9 +57,10 @@ static void assert_tkl_equality(const t_token_list *tokens,
     ASSERT_EQ(expected_it, expected_tokens.cend());
 }
 
-static t_token Token(t_token_type type, const char *literal)
+static t_token Token(t_token_type type)
 {
-    return (t_token){.type = type, .literal = const_cast<char *>(literal)};
+    assert(type != WORD);
+    return (t_token){.type = type, .literal = nullptr};
 }
 
 /*
@@ -97,6 +98,11 @@ TEST(Tokenize, BigPipex) {}
 TEST(Tokenize, BigPipexNoWhitespace) {}
 TEST(Tokenize, BigPipexLotsOfWhitespace) {}
 */
+static t_token Token(const char *literal)
+{
+    assert(literal != nullptr);
+    return (t_token){.type = WORD, .literal = const_cast<char *>(literal)};
+}
 
 
 TEST(Tokenize, Pipex)
