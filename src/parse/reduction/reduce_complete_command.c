@@ -2,6 +2,7 @@
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
 #include "../tokenize/t_token.h"
+#include "error/t_error.h"
 
 #include <stdbool.h>
 
@@ -32,7 +33,8 @@ static bool recurse(t_command *out, t_symbol *complete_cmd_rest)
 	if (productions->len == 0)
 		return (false);
 
-	first = reduce_pipeline(&productions->data[1]);
+	// bad, should check for errs
+	reduce_pipeline(&productions->data[1], &first);
 	if (!recurse(&second, &productions->data[2]))
 	{
 		*out = first;
@@ -63,21 +65,25 @@ static t_command	reduce_complete_cmd_rest(t_symbol *symbol)
 	return out;
 }
 
-t_command	reduce_complete_command(t_symbol *root)
+t_error	reduce_complete_command(t_symbol *root, t_command *out)
 {
-	t_conditional	*out;
+	t_error err;
 
 	assert (root->kind == COMPLETE_COMMAND);
 
 	if (root->production->data[1].production->len == 0)
-		return reduce_pipeline(&root->production->data[0]);
+		return reduce_pipeline(&root->production->data[0], out);
 
-	out = conditional_new(0, (t_command){0}, (t_command){0});
+	out->conditional = conditional_new(0, (t_command){0}, (t_command){0});
 	assert (out != NULL);
 
-	out->op = operator_from_token_type(root->production->data[1].production->data[0].token.type);
-	out->first = reduce_pipeline(&root->production->data[0]);
-	out->second = reduce_complete_cmd_rest(&root->production->data[1]);
+	out->conditional->op = operator_from_token_type(root->production->data[1].production->data[0].token.type);
+	err = reduce_pipeline(&root->production->data[0], &out->conditional->first);
+	if (err != NO_ERROR)
+		return (err);
+	// bad, should check for error
+	out->conditional->second = reduce_complete_cmd_rest(&root->production->data[1]);
 
-	return command_from_conditional(out);
+	*out = command_from_conditional(out->conditional);
+	return (NO_ERROR);
 }

@@ -18,7 +18,8 @@ static bool recurse(t_command *out, t_symbol *pipeline_rest)
 	if (productions->len == 0)
 		return (false);
 
-	first = reduce_command(&productions->data[1]);
+	// bad, should check for errors
+	reduce_command(&productions->data[1], &first);
 	if (!recurse(&second, &productions->data[2]))
 	{
 		*out = first;
@@ -45,20 +46,25 @@ static t_command	reduce_pipeline_rest(t_symbol *pipeline_rest)
 	return out;
 }
 
-t_command	reduce_pipeline(t_symbol *pipeline)
+t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)
 {
-	t_pipeline	*out;
+	t_error err;
 
 	assert (pipeline->kind == PIPELINE);
 
 	if (pipeline->production->data[1].production->len == 0)
-		return reduce_command(&pipeline->production->data[0]);
+		return reduce_command(&pipeline->production->data[0], out);
 
-	out = pipeline_new((t_command){0}, (t_command){0});
-	assert (out != NULL);
+	out->pipeline = pipeline_new((t_command){0}, (t_command){0});
+	if (!out->pipeline)
+		return E_OOM;
 
-	out->first = reduce_command(&pipeline->production->data[0]);
-	out->second = reduce_pipeline_rest(&pipeline->production->data[1]);
+	err = reduce_command(&pipeline->production->data[0], &out->pipeline->first);
+	if (err != NO_ERROR)
+		return (err);
+	// bad, should check for errors
+	out->pipeline->second = reduce_pipeline_rest(&pipeline->production->data[1]);
 
-	return command_from_pipeline(out);
+	*out = command_from_pipeline(out->pipeline);
+	return NO_ERROR;
 }

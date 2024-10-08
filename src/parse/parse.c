@@ -35,6 +35,12 @@ t_error parse(const char *input, t_command *out)
         tkl_clear(&tokens);
         return err;
     }
-    *out = reduce_parse_tree_into_command(&parse_tree);
+    err = reduce_parse_tree_into_command(&parse_tree, out);
+    if (err != NO_ERROR)
+    {
+        tkl_clear(&tokens);
+        symbol_clear(parse_tree);
+        return err;
+    }
     return (NO_ERROR);
 }
