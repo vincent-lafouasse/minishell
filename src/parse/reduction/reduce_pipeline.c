@@ -32,19 +32,7 @@ static bool recurse(t_command *out, t_symbol *pipeline_rest)
 	*out = command_from_pipeline(pipeline);
 
 	return true;
-}
 
-static t_error	reduce_pipeline_rest(t_symbol *pipeline_rest, t_command *out)
-{
-	t_error err;
-
-	assert (pipeline_rest->kind == PIPELINE_REST);
-	assert (pipeline_rest->production->len > 0);
-
-	recurse(out, pipeline_rest);
-
-	err = NO_ERROR;
-	return err;
 }
 
 t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)

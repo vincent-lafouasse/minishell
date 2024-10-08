@@ -51,19 +51,8 @@ static bool recurse(t_command *out, t_symbol *complete_cmd_rest)
 	*out = command_from_conditional(conditional);
 
 	return true;
-}
 
-static t_error	reduce_complete_cmd_rest(t_symbol *symbol, t_command *out)
-{
-	t_error err;
 
-	assert (symbol->kind == COMPLETE_COMMAND_REST);
-	assert (symbol->production->len > 0);
-
-	recurse(out, symbol);
-
-	err = NO_ERROR;
-	return err;
 }
 
 t_error	reduce_complete_command(t_symbol *root, t_command *out)
