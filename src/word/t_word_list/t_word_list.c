@@ -41,3 +41,9 @@ t_error wl_push_back(t_word_list **words, char *contents)
 	wl_push_back_link(words, new_last);
 	return NO_ERROR;
 }
+
+void wl_clear(t_word_list **words, t_destructor del)
+{
+	(void)del;
+	*words = NULL;
+}

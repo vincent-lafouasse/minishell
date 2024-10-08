@@ -38,9 +38,3 @@ bool Words::operator==(const Words &other) const
 bool Words::operator!=(const Words &other) const { return !(*this == other); }
 
 Words::~Words() { wl_clear(&self, nullptr); }
-
-void wl_clear(t_word_list **words, t_destructor del)
-{
-    (void)words;
-    (void)del;
-}
