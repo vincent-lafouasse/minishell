@@ -5,7 +5,7 @@
 #include <readline/history.h>
 
 #include "error/t_error.h"
-#include "log/log.h"
+#include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
 
 #define SHELL_PROMPT "minishell$ "
