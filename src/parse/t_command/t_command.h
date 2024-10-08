@@ -71,4 +71,10 @@ t_simple	*simple_new(t_word_list	*words, t_redir_list *redirections);
 t_command	command_from_simple(t_simple *simple);
 t_command	command_new_simple(t_word_list	*words, t_redir_list *redirections);
 
+void	pipeline_destroy(t_pipeline *pipeline);
+void	conditional_destroy(t_conditional *conditional);
+void	subshell_destroy(t_subshell *subshell);
+void	simple_destroy(t_simple *simple);
+void	command_destroy(t_command command);
+
 bool		command_is_initialized(t_command command);
