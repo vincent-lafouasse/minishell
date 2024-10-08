@@ -53,16 +53,17 @@ static bool recurse(t_command *out, t_symbol *complete_cmd_rest)
 	return true;
 }
 
-static t_command	reduce_complete_cmd_rest(t_symbol *symbol)
+static t_error	reduce_complete_cmd_rest(t_symbol *symbol, t_command *out)
 {
-	t_command out;
+	t_error err;
 
 	assert (symbol->kind == COMPLETE_COMMAND_REST);
 	assert (symbol->production->len > 0);
 
-	recurse(&out, symbol);
+	recurse(out, symbol);
 
-	return out;
+	err = NO_ERROR;
+	return err;
 }
 
 t_error	reduce_complete_command(t_symbol *root, t_command *out)
@@ -81,8 +82,9 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 	err = reduce_pipeline(&root->production->data[0], &out->conditional->first);
 	if (err != NO_ERROR)
 		return (err);
-	// bad, should check for error
-	out->conditional->second = reduce_complete_cmd_rest(&root->production->data[1]);
+	err = reduce_complete_cmd_rest(&root->production->data[1], &out->conditional->second);
+	if (err != NO_ERROR)
+		return (err);
 
 	*out = command_from_conditional(out->conditional);
 	return (NO_ERROR);
