@@ -56,7 +56,8 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 		return reduce_pipeline(&root->production->data[0], out);
 
 	out->conditional = conditional_new(0, (t_command){0}, (t_command){0});
-	assert (out != NULL);
+	if (!out->conditional)
+		return (E_OOM);
 
 	out->conditional->op = operator_from_token_type(root->production->data[1].production->data[0].token.type);
 	err = reduce_pipeline(&root->production->data[0], &out->conditional->first);
