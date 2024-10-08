@@ -13,7 +13,7 @@ static t_conditional_operator operator_from_token_type(t_token_type type)
 		return AND_OP;
 	else if (type == OR_OR)
 		return OR_OP;
-	assert(true);
+	assert(false);
 	return (0);
 }
 
