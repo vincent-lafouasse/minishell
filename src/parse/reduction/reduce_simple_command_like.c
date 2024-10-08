@@ -37,7 +37,10 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 	t_token_list	*leaves;
 	t_error			err;
 
-	leaves = gather_leaves(symbol);
+	leaves = NULL;
+	err = gather_leaves(symbol, &leaves);
+	if (err != NO_ERROR)
+		return err;
 	while (leaves)
 	{
 		if (leaves->token.type == WORD)

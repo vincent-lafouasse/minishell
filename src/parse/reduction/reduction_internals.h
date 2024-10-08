@@ -7,7 +7,7 @@
 # include "redirection/t_redir_list/t_redir_list.h"
 # include "word/t_word_list/t_word_list.h"
 
-t_token_list *gather_leaves(t_symbol *root);
+t_error gather_leaves(t_symbol *root, t_token_list **out);
 
 t_error	reduce_complete_command(t_symbol *root, t_command *out);
 t_error	reduce_pipeline(t_symbol *pipeline, t_command *out);
