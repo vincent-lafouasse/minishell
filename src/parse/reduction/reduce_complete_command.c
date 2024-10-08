@@ -18,41 +18,32 @@ static t_conditional_operator operator_from_token_type(t_token_type type)
 	return (0);
 }
 
-static bool recurse(t_command *out, t_symbol *complete_cmd_rest)
+static t_error	reduce_complete_cmd_rest(t_symbol *cmd_rest, t_command *out)
 {
 	t_symbol_array			*productions;
-	t_conditional			*conditional;
+	t_symbol				next_cmd_rest;
 	t_conditional_operator	operator;
-	t_command				first;
-	t_command				second;
+	t_error err;
 
-	assert(complete_cmd_rest->kind == COMPLETE_COMMAND_REST);
+	assert(cmd_rest->kind == COMPLETE_COMMAND_REST);
 
-	productions = complete_cmd_rest->production;
+	productions = cmd_rest->production;
+	next_cmd_rest = productions->data[2];
 
-	if (productions->len == 0)
-		return (false);
+	if (next_cmd_rest.production->len == 0)
+		return reduce_pipeline(&productions->data[1], out);
 
-	// bad, should check for errs
-	reduce_pipeline(&productions->data[1], &first);
-	if (!recurse(&second, &productions->data[2]))
-	{
-		*out = first;
-		return (true);
-	}
+	operator = operator_from_token_type(next_cmd_rest.production->data[0].token.type);
 
-	// get the operator from the next `complete_command_rest`, as we know it
-	// exists
-	operator = operator_from_token_type(productions->data[2].production->data[0].token.type);
+	*out = command_new_conditional(operator, (t_command){0}, (t_command){0});
+	if (!command_is_initialized(*out))
+		return (E_OOM);
 
-	conditional = conditional_new(operator, first, second);
-	assert (conditional != NULL);
+	err = reduce_pipeline(&productions->data[1], &out->conditional->first);
+	if (err != NO_ERROR)
+		return (err);
 
-	*out = command_from_conditional(conditional);
-
-	return true;
-
-
+	return reduce_complete_cmd_rest(&next_cmd_rest, &out->conditional->second);
 }
 
 t_error	reduce_complete_command(t_symbol *root, t_command *out)

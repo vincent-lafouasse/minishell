@@ -6,33 +6,25 @@
 
 #include <assert.h> // temporarily
 
-static bool recurse(t_command *out, t_symbol *pipeline_rest)
+static t_error reduce_pipeline_rest(t_symbol *pipeline_rest, t_command *out)
 {
 	t_symbol_array	*productions;
-	t_pipeline		*pipeline;
-	t_command		first;
-	t_command		second;
+	t_error err;
 
 	productions = pipeline_rest->production;
 
-	if (productions->len == 0)
-		return (false);
+	if (productions->data[2].production->len == 0)
+		return reduce_command(&productions->data[1], out);
 
-	// bad, should check for errors
-	reduce_command(&productions->data[1], &first);
-	if (!recurse(&second, &productions->data[2]))
-	{
-		*out = first;
-		return (true);
-	}
+	*out = command_new_pipeline((t_command){0}, (t_command){0});
+	if (!command_is_initialized(*out))
+		return (E_OOM);
 
-	pipeline = pipeline_new(first, second);
-	assert (pipeline != NULL);
+	err = reduce_command(&productions->data[1], &out->pipeline->first);
+	if (err != NO_ERROR)
+		return (err);
 
-	*out = command_from_pipeline(pipeline);
-
-	return true;
-
+	return reduce_pipeline_rest(&productions->data[2], &out->pipeline->second);
 }
 
 t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)
