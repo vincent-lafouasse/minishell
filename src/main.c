@@ -40,5 +40,5 @@ int	main(void)
 		//syntax_tree_to_json(cmd);
 		free(input);
 	}
-	clear_history();
+	clear_history(); // BAD, it's only here bc i couldnt make it compile with rl_x - poss
 }
