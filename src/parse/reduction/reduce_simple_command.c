@@ -2,8 +2,6 @@
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
 
-#include <stddef.h> // temporarily
-#include <stdlib.h> // temporarily
 #include <assert.h> // temporarily
 
 t_command	reduce_simple_command(t_symbol *root)
@@ -17,5 +15,5 @@ t_command	reduce_simple_command(t_symbol *root)
 	err = reduce_simple_command_like(root, &simple->words, &simple->redirections);
 	if (err != NO_ERROR)
 		assert("unimplemented");
-	return (t_command){.type = SIMPLE_CMD, .simple = simple};
+	return command_from_simple(simple);
 }

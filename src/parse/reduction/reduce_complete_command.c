@@ -5,7 +5,6 @@
 
 #include <stdbool.h>
 
-#include <stdlib.h> // temporarily
 #include <assert.h> // temporarily
 
 static t_conditional_operator operator_from_token_type(t_token_type type)
@@ -40,18 +39,14 @@ static bool recurse(t_command *out, t_symbol *complete_cmd_rest)
 		return (true);
 	}
 
-	conditional = malloc(sizeof(*conditional));
-	assert (conditional != NULL);
-
 	// get the operator from the next `complete_command_rest`, as we know it
 	// exists
 	operator = operator_from_token_type(productions->data[2].production->data[0].token.type);
-	*conditional = (t_conditional){
-		.op = operator,
-		.first = first,
-		.second = second
-	};
-	*out = (t_command){.type = CONDITIONAL_CMD, .conditional = conditional};
+
+	conditional = conditional_new(operator, first, second);
+	assert (conditional != NULL);
+
+	*out = command_from_conditional(conditional);
 
 	return true;
 }
@@ -77,12 +72,12 @@ t_command	reduce_complete_command(t_symbol *root)
 	if (root->production->data[1].production->len == 0)
 		return reduce_pipeline(&root->production->data[0]);
 
-	out = malloc(sizeof(*out));
+	out = conditional_new(0, (t_command){0}, (t_command){0});
 	assert (out != NULL);
 
 	out->op = operator_from_token_type(root->production->data[1].production->data[0].token.type);
 	out->first = reduce_pipeline(&root->production->data[0]);
 	out->second = reduce_complete_cmd_rest(&root->production->data[1]);
 
-	return (t_command){.type = CONDITIONAL_CMD, .conditional = out};
+	return command_from_conditional(out);
 }

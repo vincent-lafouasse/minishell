@@ -4,7 +4,6 @@
 
 #include <stdbool.h>
 
-#include <stdlib.h> // temporarily
 #include <assert.h> // temporarily
 
 static bool recurse(t_command *out, t_symbol *pipeline_rest)
@@ -26,11 +25,10 @@ static bool recurse(t_command *out, t_symbol *pipeline_rest)
 		return (true);
 	}
 
-	pipeline = malloc(sizeof(*pipeline));
+	pipeline = pipeline_new(first, second);
 	assert (pipeline != NULL);
 
-	*pipeline = (t_pipeline){.first = first, .second = second};
-	*out = (t_command){.type = PIPELINE_CMD, .pipeline = pipeline};
+	*out = command_from_pipeline(pipeline);
 
 	return true;
 }
@@ -56,11 +54,11 @@ t_command	reduce_pipeline(t_symbol *pipeline)
 	if (pipeline->production->data[1].production->len == 0)
 		return reduce_command(&pipeline->production->data[0]);
 
-	out = malloc(sizeof(*out));
+	out = pipeline_new((t_command){0}, (t_command){0});
 	assert (out != NULL);
 
 	out->first = reduce_command(&pipeline->production->data[0]);
 	out->second = reduce_pipeline_rest(&pipeline->production->data[1]);
 
-	return (t_command){.type = PIPELINE_CMD, .pipeline = out};
+	return command_from_pipeline(out);
 }

@@ -2,8 +2,6 @@
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
 
-#include <stddef.h> // temporarily
-#include <stdlib.h> // temporarily
 #include <assert.h> // temporarily
 
 t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
@@ -14,7 +12,7 @@ t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
 	assert (subshell->kind == SUBSHELL);
 	assert (trailing_redirs->kind == SUBSHELL_PRECEDES);
 
-	sub = malloc(sizeof(*sub));
+	sub = subshell_new((t_command){0}, NULL);
 	assert (sub != NULL);
 
 	sub->cmd = reduce_complete_command(&subshell->production->data[1]);
@@ -22,5 +20,5 @@ t_command	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs)
 	if (err != NO_ERROR)
 		assert("unimplemented");
 
-	return (t_command){.type = SUBSHELL_CMD, .subshell = sub};
+	return command_from_subshell(sub);
 }
