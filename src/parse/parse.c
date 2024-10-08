@@ -39,7 +39,6 @@ t_error parse(const char *input, t_command *out)
     if (err != NO_ERROR)
     {
         tkl_clear(&tokens);
-        symbol_clear(parse_tree);
         return err;
     }
     return (NO_ERROR);
