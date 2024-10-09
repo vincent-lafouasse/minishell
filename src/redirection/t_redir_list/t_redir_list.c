@@ -2,6 +2,17 @@
 
 #include <stdlib.h>
 
+void redirect_clear(t_redirect *redir, t_destructor del)
+{
+	if (!del)
+		return ;
+	if (redir->kind == HERE_DOCUMENT)
+		del(redir->doc.contents);
+	else
+		del(redir->filename);
+	*redir = (t_redirect){0};
+}
+
 t_redir_list *rdl_new(t_redirect redir)
 {
 	t_redir_list* out;
@@ -41,9 +52,23 @@ t_error rdl_push_back(t_redir_list **words, t_redirect redir)
 	return NO_ERROR;
 }
 
-// bad: dummy rdl_clear
+void rdl_delone(t_redir_list **rdl, t_destructor del)
+{
+	t_redir_list *buffer;
+
+	if (!rdl || !*rdl)
+		return;
+	buffer = (*rdl)->next;
+	redirect_clear(&(*rdl)->redirect, del);
+	free(*rdl);
+	*rdl = buffer;
+	return;
+}
+
 void rdl_clear(t_redir_list **rdl, t_destructor del)
 {
-	(void)del;
-	*rdl = NULL;
+	if (!rdl)
+		return;
+	while (*rdl)
+		rdl_delone(rdl, del);
 }

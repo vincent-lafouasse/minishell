@@ -33,6 +33,8 @@ typedef struct s_redir_list
 	t_redirect redirect;
 } t_redir_list;
 
+void redirect_clear(t_redirect *redir, t_destructor del);
+
 t_redir_list *rdl_new(t_redirect redir /* ! */);
 t_redir_list *rdl_clone(const t_redir_list *rdl);
 
