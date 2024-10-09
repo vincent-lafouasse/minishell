@@ -5,7 +5,7 @@
 #include <readline/history.h>
 
 #include "error/t_error.h"
-#include "log/log.h"
+#include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
 
 #define SHELL_PROMPT "minishell$ "
@@ -40,5 +40,5 @@ int	main(void)
 		//syntax_tree_to_json(cmd);
 		free(input);
 	}
-	clear_history();
+	clear_history(); // BAD, it's only here bc i couldnt make it compile with rl_x - poss
 }
