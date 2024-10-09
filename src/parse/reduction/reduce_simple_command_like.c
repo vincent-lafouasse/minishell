@@ -1,3 +1,4 @@
+#include "parse/tokenize/t_token_list/t_token_list.h"
 #include "reduction_internals.h"
 #include "../tokenize/t_token.h"
 #include "redirection/t_redir_list/t_redir_list.h"
@@ -59,5 +60,6 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 			leaves = leaves->next->next;
 		}
 	}
+	tkl_clear(&leaves, NULL);
 	return (NO_ERROR);
 }
