@@ -9,6 +9,7 @@ extern "C"
 #include "parse/parse.h"
 #include "parse/t_symbol/t_symbol.h"
 #include "parse/tokenize/t_token_list/t_token_list.h"
+#include "error/t_error.h"
 
 t_error parse_command(t_token_list *tokens, t_symbol *out);
 };
@@ -52,13 +53,14 @@ void assert_unexpected_token_during_parsing(const Tokens &tokens)
     t_command parsed;
     t_error err = parse_command(tokens.self, &sym);
 
-    if (err != E_UNEXPECTED_TOKEN)
-    {
-        log_token_list(tokens.self);
-        ASSERT_EQ(err, E_UNEXPECTED_TOKEN) << error_repr(err);
-    }
-    else
+    if (err == E_UNEXPECTED_TOKEN)
         SUCCEED();
+
+    log_token_list(tokens.self);
+    if (err == NO_ERROR)
+        symbol_clear(sym);
+
+    ASSERT_EQ(err, E_UNEXPECTED_TOKEN) << error_repr(err);
 }
 void assert_successful_parsing(const Tokens &tokens)
 {
@@ -72,7 +74,10 @@ void assert_successful_parsing(const Tokens &tokens)
         ASSERT_EQ(err, NO_ERROR) << error_repr(err);
     }
     else
+    {
+        symbol_clear(sym);
         SUCCEED();
+    }
 }
 
 /*
