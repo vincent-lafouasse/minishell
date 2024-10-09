@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include "error/t_error.h"
 
-typedef void (*t_destructor)(char *);
+typedef void (*t_destructor)(void *);
 
 typedef struct s_word_list
 {
