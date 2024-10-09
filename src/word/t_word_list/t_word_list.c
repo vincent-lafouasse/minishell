@@ -42,9 +42,24 @@ t_error wl_push_back(t_word_list **words, char *contents)
 	return NO_ERROR;
 }
 
-// bad: dummy wl_clear
+void wl_delone(t_word_list **words, t_destructor del)
+{
+	t_word_list *buffer;
+
+	if (!words || !*words)
+		return;
+	buffer = (*words)->next;
+	if (del)
+		del((*words)->contents);
+	free(*words);
+	*words = buffer;
+	return;
+}
+
 void wl_clear(t_word_list **words, t_destructor del)
 {
-	(void)del;
-	*words = NULL;
+	if (!words)
+		return;
+	while (*words)
+		wl_delone(words, del);
 }
