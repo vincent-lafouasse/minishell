@@ -9,8 +9,7 @@
 typedef struct s_parser t_parser;
 struct s_parser
 {
-    const t_token_list *_head;
-    const t_token_list *current_token;
+    const t_token_list *current;
     t_error err;
 };
 

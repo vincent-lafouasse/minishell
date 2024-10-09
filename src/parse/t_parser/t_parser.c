@@ -58,16 +58,16 @@ parser_accept_push(t_parser *parser, t_token_type type, t_symbol_array *out)
 
 const t_token *parser_peek(const t_parser *parser)
 {
-    return (&parser->current_token->token);
+    return (&parser->current->token);
 }
 
 t_token parser_advance(t_parser *parser)
 {
     t_token token;
 
-    token = parser->current_token->token;
+    token = parser->current->token;
     if (token.type != EOF_TOKEN)
-        parser->current_token = parser->current_token->next;
+        parser->current = parser->current->next;
     // TODO: clear node either here or at the top of parse
     return (token);
 }
