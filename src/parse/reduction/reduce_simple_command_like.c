@@ -3,6 +3,7 @@
 #include "../tokenize/t_token.h"
 #include "redirection/t_redir_list/t_redir_list.h"
 
+#include <stdlib.h>
 #include <assert.h>
 
 static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)

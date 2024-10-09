@@ -2,6 +2,8 @@
 #include "reduction_internals.h"
 #include "../tokenize/t_token_list/t_token_list.h"
 
+#include <stdlib.h>
+
 static t_error recurse(t_symbol* root, t_token_list** leaves_p)
 {
 	size_t	i;
