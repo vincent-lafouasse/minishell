@@ -42,6 +42,7 @@ t_error wl_push_back(t_word_list **words, char *contents)
 	return NO_ERROR;
 }
 
+// bad: dummy wl_clear
 void wl_clear(t_word_list **words, t_destructor del)
 {
 	(void)del;
