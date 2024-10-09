@@ -33,7 +33,7 @@ t_error gather_leaves(t_symbol* root, t_token_list **out)
     err = recurse(root, out);
 	if (err != NO_ERROR)
 	{
-		tkl_clear(out, NULL);
+		tkl_clear(out, free);
 		return err;
 	}
 	return (NO_ERROR);
