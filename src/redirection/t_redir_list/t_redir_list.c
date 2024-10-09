@@ -7,7 +7,10 @@ void redirect_clear(t_redirect *redir, t_destructor del)
 	if (!del)
 		return ;
 	if (redir->kind == HERE_DOCUMENT)
+	{
+		del(redir->doc.here_doc_eof);
 		del(redir->doc.contents);
+	}
 	else
 		del(redir->filename);
 	*redir = (t_redirect){0};
