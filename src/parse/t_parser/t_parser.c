@@ -10,7 +10,7 @@ t_parser parser_new(const t_token_list *tokens)
 
 bool parser_matches(const t_parser *parser, t_token_type type)
 {
-    return (parser_peek_token(parser)->type == type);
+    return (parser_peek(parser)->type == type);
 }
 
 bool parser_matches_one_of(const t_parser *parser, const t_token_type types[],
@@ -51,17 +51,17 @@ parser_accept_push(t_parser *parser, t_token_type type, t_symbol_array *out)
 		parser->err = E_UNEXPECTED_TOKEN;
         return false;
 	}
-    symbol = symbol_new_terminal(parser_advance_token(parser));
+    symbol = symbol_new_terminal(parser_advance(parser));
     symbol_array_push(out, symbol);
     return true;
 }
 
-const t_token *parser_peek_token(const t_parser *parser)
+const t_token *parser_peek(const t_parser *parser)
 {
     return (&parser->current_token->token);
 }
 
-t_token parser_advance_token(t_parser *parser)
+t_token parser_advance(t_parser *parser)
 {
     t_token token;
 

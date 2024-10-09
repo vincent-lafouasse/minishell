@@ -25,5 +25,5 @@ bool parser_accept_push(t_parser *parser, t_token_type type,
                         t_symbol_array *out);
 bool parser_produce_push(t_parser *parser, t_production prod,
                          t_symbol_array *out);
-const t_token *parser_peek_token(const t_parser *parser);
-t_token parser_advance_token(t_parser *parser);
+const t_token *parser_peek(const t_parser *parser);
+t_token parser_advance(t_parser *parser);
