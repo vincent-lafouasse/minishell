@@ -1,6 +1,8 @@
 #include "tokenize.h"
 #include "t_lexer/t_lexer.h"
 
+#include <stdlib.h>
+
 static t_error cleanup_propagate(t_lexer *lexer, t_error err);
 
 t_error tokenize(const char *input, t_token_list** out)
@@ -31,6 +33,6 @@ t_error tokenize(const char *input, t_token_list** out)
 
 static t_error cleanup_propagate(t_lexer *lexer, t_error err)
 {
-    tkl_clear(&lexer->tokens);
+    tkl_clear(&lexer->tokens, free);
     return err;
 }

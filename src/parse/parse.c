@@ -7,6 +7,8 @@
 #include "t_symbol/t_symbol.h"
 #include "reduction/reduction.h"
 
+#include <stdlib.h>
+
 t_error parse_command(const t_token_list *tokens, t_symbol *out)
 {
     t_parser state;
@@ -38,10 +40,10 @@ t_error parse(const char *input, t_command *out)
     err = parse_command(tokens, &parse_tree);
     if (err != NO_ERROR)
     {
-        tkl_clear(&tokens);
+        tkl_clear(&tokens, free);
         return err;
     }
-    tkl_clear(&tokens);
+    tkl_clear(&tokens, free);
     err = reduce_parse_tree_into_command(&parse_tree, out);
     if (err != NO_ERROR)
     {

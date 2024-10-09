@@ -44,7 +44,7 @@ struct Tokens
         }
     }
 
-    ~Tokens() { tkl_clear(&self); }
+    ~Tokens() { tkl_clear(&self, free); }
 };
 void assert_unexpected_token_during_parsing(const Tokens &tokens)
 {
