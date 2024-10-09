@@ -26,7 +26,7 @@ void	subshell_destroy(t_subshell *subshell)
 	if (subshell == NULL)
 		return ;
 	command_destroy(subshell->cmd);
-	rdl_clear(&subshell->redirections, NULL);
+	rdl_clear(&subshell->redirections, free);
 	free(subshell);
 }
 
@@ -34,8 +34,8 @@ void	simple_destroy(t_simple *simple)
 {
 	if (simple == NULL)
 		return ;
-	rdl_clear(&simple->redirections, NULL);
-	wl_clear(&simple->words, NULL);
+	rdl_clear(&simple->redirections, free);
+	wl_clear(&simple->words, free);
 	free(simple);
 }
 
