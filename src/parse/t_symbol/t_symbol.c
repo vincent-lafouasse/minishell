@@ -8,6 +8,8 @@ void *symbol_clear(t_symbol symbol)
     if (symbol.kind != TERMINAL && symbol.production == NULL)
         return NULL;
 
+    // bad, should free
+
     return NULL;
 }
 
