@@ -1,59 +1,78 @@
 #include "Redirections.h"
+#include "redirection/t_redir_list/t_redir_list.h"
 #include <cstring>
 
-Redirections::Redirections(const std::vector<t_redirect> &redirs)
-    : self(nullptr)
+static t_redirect redirect_copy(t_redirect redir)
 {
-    for (const t_redirect &redir : redirs)
-        rdl_push_back(&self, redir);
+    if (redir.kind == HERE_DOCUMENT)
+    {
+        t_here_doc here_document = (t_here_doc){
+            .here_doc_eof = strdup(redir.doc.here_doc_eof)
+        };
+        return (t_redirect){.kind = HERE_DOCUMENT, .doc = here_document};
+    }
+    else
+        return (t_redirect){.kind = redir.kind, .filename = strdup(redir.filename)};
 }
 
-Redirections::Redirections(const t_simple *simple) : self(nullptr)
+static bool redirect_eq(t_redirect a, t_redirect b)
+{
+    if (a.kind != b.kind)
+        return false;
+    if (a.kind == HERE_DOCUMENT)
+        return strcmp(a.doc.here_doc_eof, b.doc.here_doc_eof) == 0;
+    else
+        return strcmp(a.filename, b.filename) == 0;
+}
+
+Redirections::Redirections(const std::vector<t_redirect> &redirs)
+    : redirections(redirs) {}
+
+Redirections::Redirections(const t_simple *simple) : redirections(std::vector<t_redirect>{})
 {
     t_redir_list *redirs = simple->redirections;
 
     while (redirs)
     {
-        rdl_push_back(&self, redirs->redirect);
+        this->redirections.push_back(redirs->redirect);
         redirs = redirs->next;
     }
 }
 
-Redirections::Redirections(const t_subshell* subshell): self(nullptr)
+Redirections::Redirections(const t_subshell* subshell): redirections(std::vector<t_redirect>{})
 {
     t_redir_list *redirs = subshell->redirections;
 
     while (redirs)
     {
-        rdl_push_back(&self, redirs->redirect);
+        this->redirections.push_back(redirs->redirect);
         redirs = redirs->next;
     }
 }
 
-t_redir_list *Redirections::get() const { return this->self; }
+t_redir_list *Redirections::to_list() const {
+    t_redir_list *out = nullptr;
+
+    for (const auto &redir : redirections)
+    {
+        rdl_push_back(&out, redirect_copy(redir));
+    }
+
+    return (out);
+}
 
 bool Redirections::operator==(const Redirections &other) const
 {
-    t_redir_list *rhs = this->get();
-    t_redir_list *lhs = other.get();
+    if (this->redirections.size() != other.redirections.size())
+        return false;
 
-    while (rhs && lhs)
+    for (size_t i = 0; i < this->redirections.size(); i++)
     {
-        t_redirect a = rhs->redirect;
-        t_redirect b = lhs->redirect;
-
-        if (a.kind != b.kind)
-            return false;
-        if (a.kind == HERE_DOCUMENT &&
-            strcmp(a.doc.here_doc_eof, b.doc.here_doc_eof) != 0)
-            return false;
-        if (a.kind != HERE_DOCUMENT && strcmp(a.filename, b.filename) != 0)
-            return false;
-        rhs = rhs->next;
-        lhs = lhs->next;
+        if (!redirect_eq(this->redirections[i], other.redirections[i]))
+            return (false);
     }
 
-    return (!rhs && !lhs);
+    return (true);
 }
 
 bool Redirections::operator!=(const Redirections &other) const
@@ -80,4 +99,4 @@ t_redirect AppendIntoFile(const char *file)
     return (t_redirect){.kind = APPEND_INTO_FILE, .filename = (char *)file};
 }
 
-Redirections::~Redirections() { rdl_clear(&self, nullptr); }
+Redirections::~Redirections() {}

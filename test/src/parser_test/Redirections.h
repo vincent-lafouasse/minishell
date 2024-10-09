@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <iostream>
 
 extern "C"
 {
@@ -10,14 +11,26 @@ extern "C"
 
 struct Redirections
 {
-    t_redir_list *self;
+    std::vector<t_redirect> redirections;
 
     Redirections(const std::vector<t_redirect> &redirs);
     Redirections(const t_simple *simple);
     Redirections(const t_subshell *subshell);
     ~Redirections();
 
-    t_redir_list *get() const;
+    friend std::ostream& operator<<(std::ostream& os, const Redirections& redir)
+    {
+        os << "Redirections {";
+        for (const auto &redir: redir.redirections)
+        {
+            char *lit = redir.kind != HERE_DOCUMENT ? redir.filename : redir.doc.here_doc_eof;
+            os << redir_kind_repr(redir.kind) << " '" << lit << "', ";
+        }
+        os << "}" << std::endl;
+        return (os);
+    }
+
+    t_redir_list *to_list() const;
     bool operator==(const Redirections &other) const;
     bool operator!=(const Redirections &other) const;
 };

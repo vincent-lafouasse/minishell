@@ -1,41 +1,41 @@
 #include "Words.h"
-#include <cstring>
 
-Words::Words(const std::vector<const char *> &words) : self(nullptr)
-{
-    for (const char *word : words)
-        wl_push_back(&self, (char *)word);
+extern "C" {
+#include "word/t_word_list/t_word_list.h"
 }
 
-Words::Words(const t_simple *simple) : self(nullptr)
-{
-    t_word_list *words = simple->words;
+#include <string>
+#include <cstring>
 
-    while (words)
+Words::Words(const std::vector<std::string> &words) : words(words) {}
+
+Words::Words(const t_simple *simple) : words(std::vector<std::string>{})
+{
+    t_word_list *word_list = simple->words;
+
+    while (word_list)
     {
-        wl_push_back(&self, words->contents);
-        words = words->next;
+        this->words.push_back(std::string(word_list->contents));
+        word_list = word_list->next;
     }
 }
 
-t_word_list *Words::get() const { return this->self; }
+t_word_list *Words::to_list() const {
+    t_word_list *out = nullptr;
+
+    for (const auto &word : words)
+    {
+        wl_push_back(&out, const_cast<char *>(strdup(word.c_str())));
+    }
+
+    return (out);
+}
 
 bool Words::operator==(const Words &other) const
 {
-    t_word_list *rhs = this->get();
-    t_word_list *lhs = other.get();
-
-    while (rhs && lhs)
-    {
-        if (strcmp(rhs->contents, lhs->contents) != 0)
-            return false;
-        rhs = rhs->next;
-        lhs = lhs->next;
-    }
-
-    return (!rhs && !lhs);
+    return (this->words == other.words);
 }
 
 bool Words::operator!=(const Words &other) const { return !(*this == other); }
 
-Words::~Words() { wl_clear(&self, nullptr); }
+Words::~Words() {}

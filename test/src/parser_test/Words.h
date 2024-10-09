@@ -1,6 +1,8 @@
 #pragma once
 
 #include <vector>
+#include <string>
+#include <iostream>
 
 extern "C"
 {
@@ -10,13 +12,25 @@ extern "C"
 
 struct Words
 {
-    t_word_list *self;
+    std::vector<std::string> words;
 
-    Words(const std::vector<const char *> &words);
+    Words(const std::vector<std::string> &words);
     Words(const t_simple *simple);
     ~Words();
 
-    t_word_list *get() const;
+
+    friend std::ostream& operator<<(std::ostream& os, const Words& words)
+    {
+        os << "Words {";
+        for (const auto &word: words.words)
+        {
+            os << "'" << word << "', ";
+        }
+        os << "}" << std::endl;
+        return (os);
+    }
+
+    t_word_list *to_list() const;
     bool operator==(const Words &other) const;
     bool operator!=(const Words &other) const;
 };
