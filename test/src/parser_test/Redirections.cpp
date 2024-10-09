@@ -1,4 +1,5 @@
 #include "Redirections.h"
+#include <cstring>
 
 Redirections::Redirections(const std::vector<t_redirect> &redirs)
     : self(nullptr)

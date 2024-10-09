@@ -1,4 +1,5 @@
 #include "Words.h"
+#include <cstring>
 
 Words::Words(const std::vector<const char *> &words) : self(nullptr)
 {
