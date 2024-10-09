@@ -34,4 +34,5 @@ TEST(TokenList, PushBack)
     }
     ASSERT_EQ(it, expected.cend());
     ASSERT_EQ(current, nullptr);
+    tkl_clear(&actual, NULL);
 }
