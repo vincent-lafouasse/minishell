@@ -6,7 +6,7 @@
 #include "t_symbol/t_symbol.h"
 #include "reduction/reduction.h"
 
-t_error parse_command(t_token_list *tokens, t_symbol *out)
+t_error parse_command(const t_token_list *tokens, t_symbol *out)
 {
     t_parser state;
 

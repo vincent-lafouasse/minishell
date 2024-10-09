@@ -1,4 +1,5 @@
 #include "t_parser.h"
+#include "parse/tokenize/t_token.h"
 #include <stdbool.h>
 #include <stddef.h>
 
@@ -43,6 +44,7 @@ parser_accept_push(t_parser *parser, t_token_type type, t_symbol_array *out)
 {
     bool matches;
     t_symbol symbol;
+    t_token token;
 
     matches = parser_matches(parser, type);
     if (!matches)
@@ -50,7 +52,10 @@ parser_accept_push(t_parser *parser, t_token_type type, t_symbol_array *out)
 		parser->err = E_UNEXPECTED_TOKEN;
         return false;
 	}
-    symbol = symbol_new_terminal(parser_advance(parser));
+    parser->err = parser_advance_copy(parser, &token);
+    if (parser->err != NO_ERROR)
+        return false;
+    symbol = symbol_new_terminal(token);
     symbol_array_push(out, symbol);
     return true;
 }
@@ -60,13 +65,15 @@ const t_token *parser_peek(const t_parser *parser)
     return (&parser->current->token);
 }
 
-t_token parser_advance(t_parser *parser)
+t_error parser_advance_copy(t_parser *parser, t_token *out)
 {
-    t_token token;
+    t_error err;
 
-    token = parser->current->token;
-    if (token.type != EOF_TOKEN)
+    err = token_duplicate(parser->current->token, out);
+    if (err != NO_ERROR)
+        return err;
+    if (out->type != EOF_TOKEN)
         parser->current = parser->current->next;
     // TODO: clear node either here or at the top of parse
-    return (token);
+    return (NO_ERROR);
 }
