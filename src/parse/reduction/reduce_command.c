@@ -7,12 +7,15 @@
 // command : simple_command
 //         | subshell redirect_list
 //         | subshell
-t_command	reduce_command(t_symbol *root)
+t_error	reduce_command(t_symbol *root, t_command *out)
 {
+	t_error err;
+
 	assert (root->kind == COMMAND);
 	if (root->production->data[0].kind == SIMPLE_COMMAND)
-		return reduce_simple_command(&root->production->data[0]);
+		err = reduce_simple_command(&root->production->data[0], out);
 	else
-		return reduce_subshell(&root->production->data[0], \
-							   &root->production->data[1]);
+		err = reduce_subshell(&root->production->data[0], \
+							   &root->production->data[1], out);
+	return err;
 }

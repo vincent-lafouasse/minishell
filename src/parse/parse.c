@@ -6,8 +6,6 @@
 #include "t_symbol/t_symbol.h"
 #include "reduction/reduction.h"
 
-#include "log/log.h" // todo remove
-
 t_error parse_command(t_token_list *tokens, t_symbol *out)
 {
     t_parser state;
@@ -19,7 +17,7 @@ t_error parse_command(t_token_list *tokens, t_symbol *out)
         symbol_clear(*out);
         return state.err;
     }
-    if (parser_peek_token(&state)->type != EOF_TOKEN)
+    if (parser_peek(&state)->type != EOF_TOKEN)
     {
         symbol_clear(*out);
         return E_UNEXPECTED_TOKEN;
@@ -42,6 +40,11 @@ t_error parse(const char *input, t_command *out)
         tkl_clear(&tokens);
         return err;
     }
-    *out = reduce_parse_tree_into_command(&parse_tree);
+    err = reduce_parse_tree_into_command(&parse_tree, out);
+    if (err != NO_ERROR)
+    {
+        tkl_clear(&tokens);
+        return err;
+    }
     return (NO_ERROR);
 }

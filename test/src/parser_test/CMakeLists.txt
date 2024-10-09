@@ -62,8 +62,6 @@ set(parser_source
 	parse/t_parser/t_parser.h
 	parse/t_symbol/t_symbol.c
 	parse/t_symbol/t_symbol.h
-	parse/t_symbol/t_symbol_stack/t_symbol_stack.h
-	parse/t_symbol/t_symbol_stack/t_symbol_stack.c
 )
 
 set(word_source

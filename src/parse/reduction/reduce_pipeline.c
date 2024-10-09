@@ -4,63 +4,49 @@
 
 #include <stdbool.h>
 
-#include <stdlib.h> // temporarily
 #include <assert.h> // temporarily
 
-static bool recurse(t_command *out, t_symbol *pipeline_rest)
+static t_error reduce_pipeline_rest(t_symbol *pipeline_rest, t_command *out)
 {
 	t_symbol_array	*productions;
-	t_pipeline		*pipeline;
-	t_command		first;
-	t_command		second;
+	t_error err;
 
 	productions = pipeline_rest->production;
 
-	if (productions->len == 0)
-		return (false);
+	if (productions->data[2].production->len == 0)
+		return reduce_command(&productions->data[1], out);
 
-	first = reduce_command(&productions->data[1]);
-	if (!recurse(&second, &productions->data[2]))
-	{
-		*out = first;
-		return (true);
-	}
+	*out = command_new_pipeline((t_command){0}, (t_command){0});
+	if (!command_is_initialized(*out))
+		return (E_OOM);
 
-	pipeline = malloc(sizeof(*pipeline));
-	assert (pipeline != NULL);
+	err = reduce_command(&productions->data[1], &out->pipeline->first);
+	if (err != NO_ERROR)
+		return (err);
 
-	*pipeline = (t_pipeline){.first = first, .second = second};
-	*out = (t_command){.type = PIPELINE_CMD, .pipeline = pipeline};
-
-	return true;
+	return reduce_pipeline_rest(&productions->data[2], &out->pipeline->second);
 }
 
-static t_command	reduce_pipeline_rest(t_symbol *pipeline_rest)
+t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)
 {
-	t_command out;
-
-	assert (pipeline_rest->kind == PIPELINE_REST);
-	assert (pipeline_rest->production->len > 0);
-
-	recurse(&out, pipeline_rest);
-
-	return out;
-}
-
-t_command	reduce_pipeline(t_symbol *pipeline)
-{
-	t_pipeline	*out;
+	t_error err;
 
 	assert (pipeline->kind == PIPELINE);
 
 	if (pipeline->production->data[1].production->len == 0)
-		return reduce_command(&pipeline->production->data[0]);
+		return reduce_command(&pipeline->production->data[0], out);
 
-	out = malloc(sizeof(*out));
-	assert (out != NULL);
+	out->pipeline = pipeline_new((t_command){0}, (t_command){0});
+	if (!out->pipeline)
+		return E_OOM;
 
-	out->first = reduce_command(&pipeline->production->data[0]);
-	out->second = reduce_pipeline_rest(&pipeline->production->data[1]);
+	err = reduce_command(&pipeline->production->data[0], &out->pipeline->first);
+	if (err != NO_ERROR)
+		return (err);
+	err = reduce_pipeline_rest(&pipeline->production->data[1], &out->pipeline->second);
+	if (err != NO_ERROR)
+		return (err);
 
-	return (t_command){.type = PIPELINE_CMD, .pipeline = out};
+	*out = command_from_pipeline(out->pipeline);
+	return NO_ERROR;
 }

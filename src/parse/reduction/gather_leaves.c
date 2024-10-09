@@ -1,32 +1,33 @@
 #include "reduction_internals.h"
-#include "../t_symbol/t_symbol_stack/t_symbol_stack.h"
+#include "../tokenize/t_token_list/t_token_list.h"
 
-static void recurse(t_symbol* root, t_token_list** leaves_p, t_symbol_stack** visited)
+static t_error recurse(t_symbol* root, t_token_list** leaves_p)
 {
-    ss_push(visited, root);
+	size_t	i;
+	t_error	err;
+
+	i = 0;
     if (root->kind == TERMINAL)
-    {
-        tkl_push_back(leaves_p, root->token);
-    }
-    else
-    {
-		for (size_t i = 0; i < root->production->len; i++)
-		{
-		    t_symbol* candidate = &root->production->data[i];
-		    if (!ss_contains(*visited, candidate))
-				recurse(candidate, leaves_p, visited);
-		}
-    }
+        return tkl_push_back(leaves_p, root->token);
+	while (i < root->production->len)
+	{
+		err = recurse(&root->production->data[i], leaves_p);
+		if (err != NO_ERROR)
+			return err;
+		i++;
+	}
+	return (NO_ERROR);
 }
 
-t_token_list *gather_leaves(t_symbol* root)
+t_error gather_leaves(t_symbol* root, t_token_list **out)
 {
-	t_token_list* leaves;
-    t_symbol_stack* visited;
+    t_error err;
 
-	leaves = NULL;
-	visited = NULL;
-    recurse(root, &leaves, &visited);
-	//ss_clear(&visited);
-	return (leaves);
+    err = recurse(root, out);
+	if (err != NO_ERROR)
+	{
+		tkl_clear(out);
+		return err;
+	}
+	return (NO_ERROR);
 }

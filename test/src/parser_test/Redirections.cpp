@@ -80,9 +80,3 @@ t_redirect AppendIntoFile(const char *file)
 }
 
 Redirections::~Redirections() { rdl_clear(&self, nullptr); }
-
-void rdl_clear(t_redir_list **rdl, t_destructor del)
-{
-    (void)rdl;
-    (void)del;
-}

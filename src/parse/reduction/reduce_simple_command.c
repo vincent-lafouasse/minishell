@@ -2,18 +2,22 @@
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
 
-#include <stddef.h> // temporarily
-#include <stdlib.h> // temporarily
 #include <assert.h> // temporarily
 
-t_command	reduce_simple_command(t_symbol *root)
+t_error	reduce_simple_command(t_symbol *root, t_command *out)
 {
-	t_simple		*simple;
+	t_error		err;
 
 	assert (root->kind == SIMPLE_COMMAND);
-	simple = malloc(sizeof(*simple));
-	assert (simple != NULL);
-	*simple = (t_simple){0};
-	reduce_simple_command_like(root, &simple->words, &simple->redirections);
-	return (t_command){.type = SIMPLE_CMD, .simple = simple};
+
+	out->simple = simple_new(NULL, NULL);
+	if (!out->simple)
+		return (E_OOM);
+
+	err = reduce_simple_command_like(root, &out->simple->words, &out->simple->redirections);
+	if (err != NO_ERROR)
+		return (err);
+
+	*out = command_from_simple(out->simple);
+	return (NO_ERROR);
 }
