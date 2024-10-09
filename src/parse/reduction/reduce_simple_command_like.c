@@ -36,6 +36,7 @@ static t_redirect	redir_from_tokens(t_token bracket, t_token word)
 t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 							t_redir_list **redirections)
 {
+	t_token_list	*head;
 	t_token_list	*leaves;
 	t_error			err;
 
@@ -43,6 +44,7 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 	err = gather_leaves(symbol, &leaves);
 	if (err != NO_ERROR)
 		return err;
+	head = leaves;
 	while (leaves)
 	{
 		if (leaves->token.type == WORD)
@@ -66,6 +68,6 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 			leaves = leaves->next->next;
 		}
 	}
-	tkl_clear(&leaves, NULL);
+	tkl_clear(&head, NULL);
 	return (NO_ERROR);
 }
