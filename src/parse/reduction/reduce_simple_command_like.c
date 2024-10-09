@@ -49,14 +49,20 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 		{
 			err = wl_push_back(words, leaves->token.literal);
 			if (err != NO_ERROR)
+			{
+				tkl_clear(&leaves, free);
 				return E_OOM;
+			}
 			leaves = leaves->next;
 		}
 		else
 		{
 			err = rdl_push_back(redirections, redir_from_tokens(leaves->token, leaves->next->token));
 			if (err != NO_ERROR)
+			{
+				tkl_clear(&leaves, free);
 				return E_OOM;
+			}
 			leaves = leaves->next->next;
 		}
 	}
