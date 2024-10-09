@@ -41,6 +41,7 @@ t_error rdl_push_back(t_redir_list **words, t_redirect redir)
 	return NO_ERROR;
 }
 
+// bad: dummy rdl_clear
 void rdl_clear(t_redir_list **rdl, t_destructor del)
 {
 	(void)del;
