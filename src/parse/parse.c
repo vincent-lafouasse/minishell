@@ -17,7 +17,7 @@ t_error parse_command(t_token_list *tokens, t_symbol *out)
         symbol_clear(*out);
         return state.err;
     }
-    if (parser_peek_token(&state)->type != EOF_TOKEN)
+    if (parser_peek(&state)->type != EOF_TOKEN)
     {
         symbol_clear(*out);
         return E_UNEXPECTED_TOKEN;
