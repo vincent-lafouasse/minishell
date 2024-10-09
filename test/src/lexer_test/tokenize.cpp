@@ -7,6 +7,7 @@ extern "C"
 {
 #include "parse/tokenize/t_token.h"
 #include "parse/tokenize/tokenize.h"
+#include "parse/tokenize/t_token_list/t_token_list.h"
 #include "error/t_error.h"
 #include "log/log.h"
 };
@@ -46,6 +47,7 @@ static void assert_lexing_ok(const char* input, const std::vector<t_token>& expe
     t_error err = tokenize(input, &actual);
     ASSERT_EQ(err, NO_ERROR) << "Lexing failed with error code " << error_repr(err);
     assert_tkl_equality(actual, expected);
+    tkl_clear(&actual, free);
 }
 
 static void assert_lexing_fail(const char* input, t_error expected)
