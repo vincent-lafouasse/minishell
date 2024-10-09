@@ -31,6 +31,7 @@ static t_redirect	redir_from_tokens(t_token bracket, t_token word)
 	return (redir);
 }
 
+// bad, should clear `leaves` on `_push_back` error
 t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 							t_redir_list **redirections)
 {
