@@ -35,6 +35,7 @@ set(parser_source
 	parse/productions/produce_filename.c
 	parse/productions/produce_io_here.c
 	parse/productions/produce_maybe_cmd_suffix.c
+	parse/t_command/destructor.c
 	parse/t_command/properties.c
 	parse/t_command/t_command.h
 	parse/t_command/empty.c
