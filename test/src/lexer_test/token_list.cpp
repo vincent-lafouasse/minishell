@@ -10,9 +10,9 @@ extern "C"
 TEST(TokenList, PushBack)
 {
     std::vector<t_token> expected = {
-        (t_token){.type = DOUBLE_QUOTE_STRING, .literal = (char *)"hello"},
-        (t_token){.type = DOUBLE_QUOTE_STRING, .literal = (char *)" "},
-        (t_token){.type = DOUBLE_QUOTE_STRING, .literal = (char *)"world"},
+        (t_token){.type = WORD, .literal = (char *)"hello"},
+        (t_token){.type = WORD, .literal = (char *)" "},
+        (t_token){.type = WORD, .literal = (char *)"world"},
     };
 
     t_token_list *actual = NULL;

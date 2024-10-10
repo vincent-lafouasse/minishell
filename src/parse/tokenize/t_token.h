@@ -14,8 +14,6 @@ typedef enum e_token_type
     R_PAREN,
     AND_AND,
     OR_OR,
-    DOUBLE_QUOTE_STRING,
-    SINGLE_QUOTE_STRING,
     EOF_TOKEN,
 } t_token_type;
 
