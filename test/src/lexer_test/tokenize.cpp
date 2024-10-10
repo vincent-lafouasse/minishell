@@ -494,3 +494,10 @@ TEST(Tokenize, BigPipexLotsOfWhitespace)
 
     assert_lexing_ok(input, expected);
 }
+
+TEST(Tokenize, RejectsUnrecognizedOperator) {
+    const char *input = "abc & defg";
+    t_error expected = E_UNRECOGNIZED_TOKEN;
+
+    assert_lexing_fail(input, expected);
+}
