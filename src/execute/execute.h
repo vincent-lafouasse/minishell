@@ -1,7 +1,7 @@
 #ifndef EXECUTE_H
 # define EXECUTE_H
 
-#include "./env.h"
+#include "./t_env/t_env.h"
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
 
