@@ -74,6 +74,5 @@ t_error parser_advance_copy(t_parser *parser, t_token *out)
         return err;
     if (out->type != EOF_TOKEN)
         parser->current = parser->current->next;
-    // TODO: clear node either here or at the top of parse
     return (NO_ERROR);
 }
