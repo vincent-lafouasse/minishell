@@ -1,6 +1,5 @@
 #include "t_token.h"
 
-#define DUMMY_TOKEN_REPR "that's a token for sure"
 #define WORD_REPR "Word"
 #define PIPE_REPR "Pipe"
 #define L_ANGLE_BRACKET_REPR "<"
