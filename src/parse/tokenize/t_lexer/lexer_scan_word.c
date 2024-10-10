@@ -3,7 +3,6 @@
 #include "libft/ctype.h"
 #include "libft/ft_string.h"
 #include "libft/string.h"
-#include <assert.h> // bad
 #include <stdlib.h>
 
 #define SIMPLE_WORD_BREAK SHELL_BREAK_CHARS "\"'"
@@ -86,7 +85,6 @@ t_error	extract_quoted_string(t_lexer *lexer, char **str_out)
 
 	start = lexer->current;
 	stop = lexer_advance(lexer);
-	assert(stop == '"' || stop == '\'');
 	while (lexer_peek(lexer) != stop && lexer->current < lexer->src_len)
 		lexer_advance(lexer);
 	if (lexer->current >= lexer->src_len)

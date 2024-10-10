@@ -1,8 +1,10 @@
+#include "parse/tokenize/t_token_list/t_token_list.h"
 #include "reduction_internals.h"
 #include "../tokenize/t_token.h"
 #include "redirection/t_redir_list/t_redir_list.h"
 
-#include <assert.h>
+#include <stdlib.h>
+#include <assert.h> // temporarily
 
 static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
 {
@@ -31,10 +33,10 @@ static t_redirect	redir_from_tokens(t_token bracket, t_token word)
 	return (redir);
 }
 
-// bad, should clear `leaves` on `_push_back` error
 t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 							t_redir_list **redirections)
 {
+	t_token_list	*head;
 	t_token_list	*leaves;
 	t_error			err;
 
@@ -42,22 +44,30 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 	err = gather_leaves(symbol, &leaves);
 	if (err != NO_ERROR)
 		return err;
+	head = leaves;
 	while (leaves)
 	{
 		if (leaves->token.type == WORD)
 		{
 			err = wl_push_back(words, leaves->token.literal);
 			if (err != NO_ERROR)
+			{
+				tkl_clear(&leaves, free);
 				return E_OOM;
+			}
 			leaves = leaves->next;
 		}
 		else
 		{
 			err = rdl_push_back(redirections, redir_from_tokens(leaves->token, leaves->next->token));
 			if (err != NO_ERROR)
+			{
+				tkl_clear(&leaves, free);
 				return E_OOM;
+			}
 			leaves = leaves->next->next;
 		}
 	}
+	tkl_clear(&head, NULL);
 	return (NO_ERROR);
 }

@@ -3,13 +3,22 @@
 
 void *symbol_clear(t_symbol symbol)
 {
+    size_t	i;
+
     if (symbol.kind == TERMINAL)
+    {
+        free(symbol.token.literal);
         return NULL;
+    }
     if (symbol.kind != TERMINAL && symbol.production == NULL)
         return NULL;
-
-    // bad, should free
-
+    i = 0;
+    while (i < symbol.production->len)
+    {
+        symbol_clear(symbol.production->data[i]);
+        i++;
+    }
+    free(symbol.production);
     return NULL;
 }
 
