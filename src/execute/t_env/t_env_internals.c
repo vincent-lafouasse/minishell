@@ -40,7 +40,7 @@ t_env	*env_find_node(t_env *env, const char *key)
 
 	node = env;
 	key_length = ft_strlen(key);
-	while (node && ft_strncmp(node->entry.key, key, key_length + 1) == 0)
+	while (node && ft_strncmp(node->entry.key, key, key_length + 1) != 0)
 		node = node->next;
 	return node;
 }
