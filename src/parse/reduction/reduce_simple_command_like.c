@@ -4,7 +4,7 @@
 #include "redirection/t_redir_list/t_redir_list.h"
 
 #include <stdlib.h>
-#include <assert.h>
+#include <assert.h> // temporarily
 
 static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
 {
@@ -33,7 +33,6 @@ static t_redirect	redir_from_tokens(t_token bracket, t_token word)
 	return (redir);
 }
 
-// bad, should clear `leaves` on `_push_back` error
 t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 							t_redir_list **redirections)
 {
