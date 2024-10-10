@@ -29,7 +29,8 @@ void	env_push_front_link(t_env **env, t_env *link)
 	if (env == NULL)
 		return;
 	link->next = *env;
-	link->next->prev = link;
+	if (link->next)
+		link->next->prev = link;
 	*env = link;
 }
 
