@@ -12,6 +12,7 @@ typedef enum e_error
     E_OOM,
     E_UNREACHABLE,
     E_NULL_PARAM,
+    E_MALFORMED_ENVP,
     E_DUMMY,
 } t_error;
 
