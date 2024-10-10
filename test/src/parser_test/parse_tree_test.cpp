@@ -54,7 +54,10 @@ void assert_unexpected_token_during_parsing(const Tokens &tokens)
     t_error err = parse_command(tokens.self, &sym);
 
     if (err == E_UNEXPECTED_TOKEN)
+    {
         SUCCEED();
+        return ;
+    }
 
     log_token_list(tokens.self);
     if (err == NO_ERROR)
