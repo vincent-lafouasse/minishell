@@ -119,6 +119,8 @@ t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io i
 		return (t_command_result){.error = E_FORK, .must_exit = true, .exit_status = NEVER_EXITED};
 	if (pid != 0)
 		return (t_command_result){.error = NO_ERROR, .must_exit = false, .exit_status = NEVER_EXITED};
+
+
 	err = perform_all_expansions_on_words(simple->words);
 	if (err != NO_ERROR)
 		return (t_command_result){.error = err, .must_exit = true};
@@ -132,9 +134,12 @@ t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io i
 	err = apply_redirections(simple->redirections, &fds_to_close);
 	if (err != NO_ERROR)
 		return (t_command_result){.error = err, .must_exit = true}; // bad, should differentiate `apply_redirections` errors
+
 	argv = wl_into_word_array(&simple->words);
 	envp = env_make_envp(state->env);
 	execve(command_path, argv, envp);
-	exit(EXIT_FAILURE);
+
+	exit(EXIT_FAILURE); // bad, should clean up all allocations before exiting from child process
+
 	return (t_command_result){.error = E_EXECVE, .must_exit = true, .exit_status = NEVER_EXITED};
 }
