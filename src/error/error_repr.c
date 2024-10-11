@@ -9,6 +9,9 @@
 #define NULL_PARAM_REPR "Received NULL parameter"
 #define DUMMY_REPR "Dummy error"
 #define MALFORMED_ENVP_REPR "Malformed environment"
+#define COMMAND_NOT_FOUND_REPR "Command not found"
+#define FORK_REPR "Fork error"
+#define DUP2_REPR "Dup2 error"
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
@@ -30,6 +33,12 @@ const char *error_repr(t_error err)
         return NULL_PARAM_REPR;
     if (err == E_MALFORMED_ENVP)
         return MALFORMED_ENVP_REPR;
+    if (err == E_COMMAND_NOT_FOUND)
+        return COMMAND_NOT_FOUND_REPR;
+    if (err == E_FORK)
+        return FORK_REPR;
+    if (err == E_DUP2)
+        return DUP2_REPR;
     if (err == E_DUMMY)
         return DUMMY_REPR;
     return UNKNOWN_ERROR_REPR;

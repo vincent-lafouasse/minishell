@@ -13,6 +13,10 @@ typedef enum e_error
     E_UNREACHABLE,
     E_NULL_PARAM,
     E_MALFORMED_ENVP,
+    E_COMMAND_NOT_FOUND,
+    E_FORK,
+    E_DUP2,
+    E_EXECVE,
     E_DUMMY,
 } t_error;
 
