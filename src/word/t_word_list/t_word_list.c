@@ -1,4 +1,6 @@
 #include "t_word_list.h"
+#include "libft/string.h"
+#include "libft/stdlib.h"
 
 #include <stdlib.h>
 
@@ -62,4 +64,37 @@ void wl_clear(t_word_list **words, t_destructor del)
 		return;
 	while (*words)
 		wl_delone(words, del);
+}
+
+size_t wl_count(const t_word_list *words)
+{
+	size_t i;
+
+	i = 0;
+	while (words)
+	{
+		words = words->next;
+		i++;
+	}
+	return (i);
+}
+
+char **wl_into_word_array(t_word_list **words)
+{
+	size_t word_count;
+	char **out;
+	size_t i;
+
+	word_count = wl_count(*words);
+	out = ft_calloc(word_count + 1, sizeof(*out));
+	if (!out)
+		return (NULL);
+	i = 0;
+	while (*words)
+	{
+		out[i] = (*words)->contents;
+		wl_delone(words, NULL);
+		i++;
+	}
+	return (out);
 }
