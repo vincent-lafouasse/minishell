@@ -21,6 +21,6 @@ t_error				env_insert(t_env **env, const char *key, const char *value);
 t_env				*env_remove(t_env **env, const char *key);
 
 char				**env_make_path_or_empty(const t_env *env);
-char				**env_make_envp(const t_env **env);
+char				**env_make_envp(const t_env *env);
 
 void				env_destroy(t_env **env);

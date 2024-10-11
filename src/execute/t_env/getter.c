@@ -1,6 +1,8 @@
 #include "t_env.h"
 #include "t_env_internals.h"
 #include "libft/ft_string.h"
+#include "libft/string.h"
+#include "libft/stdlib.h"
 
 #include <stdlib.h>
 
@@ -33,4 +35,59 @@ char	**env_make_path_or_empty(const t_env *env)
 	return (ft_split(path_entry->value, ':'));
 }
 
-//char				**env_make_envp(const t_env **env);
+static char *join_delimited(const char *s1, char delim, const char *s2)
+{
+	size_t	len1;
+	size_t	len2;
+	char	*out;
+
+	if (!s1 || !s2)
+		return (NULL);
+	len1 = ft_strlen(s1);
+	len2 = ft_strlen(s2);
+	out = malloc(len1 + 1 + len2 + 1);
+	if (!out)
+		return (NULL);
+	ft_memcpy(out, s1, len1);
+	out[len1] = delim;
+	ft_memcpy(out + len1 + 1, s2, len2);
+	out[len1 + 1 + len2] = '\0';
+	return (out);
+}
+
+size_t env_entry_count(const t_env *env)
+{
+	size_t i;
+
+	i = 0;
+	while (env)
+	{
+		env = env->next;
+		i++;
+	}
+	return (i);
+}
+
+char	**env_make_envp(const t_env *env)
+{
+	size_t entry_count;
+	char **out;
+	char *joined_entry;
+	size_t i;
+
+	entry_count = env_entry_count(env);
+	out = ft_calloc(entry_count + 1, sizeof(*out));
+	if (!out)
+		return (NULL);
+	i = 0;
+	while (env) // TODO: does environment entry order matter?
+	{
+		joined_entry = join_delimited(env->entry.key, '=', env->entry.value);
+		if (!joined_entry)
+			__builtin_trap(); // bad, should free `out` in case of malloc error
+		out[i] = joined_entry;
+		env = env->next;
+		i++;
+	}
+	return (out);
+}

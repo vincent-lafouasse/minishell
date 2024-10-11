@@ -1,9 +1,11 @@
 #include "log.h"
 
 #include <stdio.h>
+#include <unistd.h>
 
 void log_error(t_error err)
 {
+    printf("pid: %d\n", getpid());
     if (err == NO_ERROR)
     {
         printf("No error\n");
