@@ -51,9 +51,9 @@ int open_flags_for_redir_kind(t_redir_kind kind)
 	if (kind == FROM_FILE)
 		return O_RDONLY;
 	else if (kind == INTO_FILE)
-		return O_CREAT | O_RDWR;
+		return O_CREAT | O_RDWR | O_TRUNC;
 	else if (kind == APPEND_INTO_FILE)
-		return O_APPEND | O_RDWR;
+		return O_CREAT | O_APPEND | O_RDWR;
 	else
 		return -1;
 }
