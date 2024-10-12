@@ -12,12 +12,45 @@
 
 #define SHELL_PROMPT "minishell$ "
 
+t_error run_command(char* input, t_state* state)
+{
+	t_error err;
+	t_command cmd;
+
+	// TODO: double check that bash really does behaves like this
+	if (*input == '\0')
+	{
+		free(input);
+		return NO_ERROR;
+	}
+	add_history(input);
+
+	err = parse(input, &cmd);
+	if (err != NO_ERROR)
+	{
+		free(input);
+		return err;
+	}
+
+	if (cmd.type == SIMPLE_CMD)
+	{
+		t_command_result res;
+		res = execute_simple_command(state, cmd.simple, (t_io){0, 1});
+		log_error(res.error);
+
+		wait(NULL);
+	}
+
+	//syntax_tree_to_json(cmd);
+	free(input);
+	return NO_ERROR;
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
+	t_state		state;
 	char		*input;
 	t_error		err;
-	t_command	cmd;
-	t_state		state;
 
 	(void)argc;
 	(void)argv;
@@ -37,33 +70,8 @@ int	main(int argc, char *argv[], char *envp[])
 		input = readline(SHELL_PROMPT);
 		if (!input)
 			break; /* eof */
-		// TODO: double check that bash really does behaves like this
-		if (*input == '\0')
-		{
-			free(input);
-			continue;
-		}
-		add_history(input);
-
-		err = parse(input, &cmd);
-		if (err != NO_ERROR)
-		{
-			printf("symbol status: %s\n", error_repr(err));
-			free(input);
-			continue;
-		}
-
-		if (cmd.type == SIMPLE_CMD)
-		{
-			t_command_result res;
-			res = execute_simple_command(&state, cmd.simple, (t_io){0, 1});
-			log_error(res.error);
-
-			wait(NULL);
-		}
-
-		//syntax_tree_to_json(cmd);
-		free(input);
+		err = run_command(input, &state);
+		printf("command status: %s\n", error_repr(err));
 	}
 	clear_history(); // BAD, it's only here bc i couldnt make it compile with rl_x - poss
 }
