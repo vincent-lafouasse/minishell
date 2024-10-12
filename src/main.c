@@ -40,8 +40,6 @@ t_error run_command(char* input, t_state* state)
 
 		wait(NULL);
 	}
-
-	//syntax_tree_to_json(cmd);
 	free(input);
 	return NO_ERROR;
 }
@@ -57,14 +55,7 @@ int	main(int argc, char *argv[], char *envp[])
 	err = from_envp((const char **)envp, &state.env);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
-	//log_env(state.env);
-	char **path = env_make_path_or_empty(state.env);
-	for (size_t i = 0; path[i] != NULL; i++)
-	{
-		printf("%s\n", path[i]);
-		free(path[i]);
-	}
-	free(path);
+
 	while (1)
 	{
 		input = readline(SHELL_PROMPT);
