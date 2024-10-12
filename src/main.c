@@ -9,10 +9,12 @@
 #include "execute/t_env/t_env.h"
 #include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
+#include "libft/string.h"
 
 #define SHELL_PROMPT "minishell$ "
+#define USAGE "./minishell [-c command]"
 
-t_error run_command(char* input, t_state* state)
+t_error run_command(const char* input, t_state* state)
 {
 	t_error err;
 	t_command cmd;
@@ -20,7 +22,6 @@ t_error run_command(char* input, t_state* state)
 	// TODO: double check that bash really does behaves like this
 	if (*input == '\0')
 	{
-		free(input);
 		return NO_ERROR;
 	}
 	add_history(input);
@@ -28,7 +29,6 @@ t_error run_command(char* input, t_state* state)
 	err = parse(input, &cmd);
 	if (err != NO_ERROR)
 	{
-		free(input);
 		return err;
 	}
 
@@ -40,29 +40,39 @@ t_error run_command(char* input, t_state* state)
 
 		wait(NULL);
 	}
-	free(input);
 	return NO_ERROR;
 }
 
-int	main(int argc, char *argv[], char *envp[])
+void run_interpreter(t_state* state)
 {
-	t_state		state;
 	char		*input;
-	t_error		err;
-
-	(void)argc;
-	(void)argv;
-	err = from_envp((const char **)envp, &state.env);
-	if (err != NO_ERROR)
-		return EXIT_FAILURE;
+	t_error err;
 
 	while (1)
 	{
 		input = readline(SHELL_PROMPT);
 		if (!input)
 			break; /* eof */
-		err = run_command(input, &state);
+		err = run_command(input, state);
+		free(input);
 		printf("command status: %s\n", error_repr(err));
 	}
 	clear_history(); // BAD, it's only here bc i couldnt make it compile with rl_x - poss
+}
+
+int	main(int argc, char *argv[], char *envp[])
+{
+	t_state		state;
+	t_error		err;
+
+	err = from_envp((const char **)envp, &state.env);
+	if (err != NO_ERROR)
+		return EXIT_FAILURE;
+	
+	if (argc == 1)
+		run_interpreter(&state);
+	else if (argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0)
+		run_command(argv[2], &state);
+	else
+		printf("%s\n", USAGE);
 }
