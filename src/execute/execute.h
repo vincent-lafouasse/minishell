@@ -17,6 +17,9 @@ t_io io_new(int input, int output);
 
 typedef struct s_state {
 	t_env *env;
+	t_command root;
+	int last_status;
+	char* line;
 } t_state;
 
 #define NEVER_EXITED 256

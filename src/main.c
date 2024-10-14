@@ -56,6 +56,7 @@ void run_interpreter(t_state* state)
 		input = readline(SHELL_PROMPT);
 		if (!input)
 			break; /* eof */
+		state->line = input;
 		err = run_command(input, state);
 		free(input);
 		printf("command status: %s\n", error_repr(err));
@@ -68,6 +69,7 @@ int	main(int argc, char *argv[], char *envp[])
 	t_state		state;
 	t_error		err;
 
+	state = (t_state){0};
 	err = from_envp((const char **)envp, &state.env);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
