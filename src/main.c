@@ -38,7 +38,10 @@ t_error run_command(const char* input, t_state* state)
 		res = execute_simple_command(state, cmd.simple, (t_io){0, 1});
 		log_error(res.error);
 
-		wait(NULL);
+		int status;
+		int options = 0;
+		if (res.pid != NO_WAIT)
+			waitpid(res.pid, &status, options);
 	}
 	return NO_ERROR;
 }
