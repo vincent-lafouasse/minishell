@@ -141,7 +141,7 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io io,
 	t_command_result res_second;
 
 	if (second.type == SIMPLE_CMD)
-		res_second = execute_simple_command(state, first.simple, second_io);
+		res_second = execute_simple_command(state, second.simple, second_io);
 	else
 		assert ("second must be a simple command" == NULL);
 
