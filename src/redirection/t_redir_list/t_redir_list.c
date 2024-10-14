@@ -75,3 +75,16 @@ void rdl_clear(t_redir_list **rdl, t_destructor del)
 	while (*rdl)
 		rdl_delone(rdl, del);
 }
+
+size_t rdl_len(const t_redir_list *rdl)
+{
+	size_t i;
+
+	i = 0;
+	while (rdl)
+	{
+		rdl = rdl->next;
+		i++;
+	}
+	return (i);
+}
