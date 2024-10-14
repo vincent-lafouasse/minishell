@@ -1,7 +1,8 @@
 #include "execute.h"
 #include "error/t_error.h"
 #include "execute/t_env/t_env.h"
-#include "libft/stdlib.h"
+#include "execute/t_pid_list/t_pid_list.h"
+#include "parse/t_command/t_command.h"
 #include "redirection/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
 #include "word/word.h"
@@ -10,6 +11,10 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <assert.h> // bad
+
+#define READ 0
+#define WRITE 1
 
 // ? perform expansion on all words -> malloc
 // ? expand_path on first word -> malloc,access
@@ -106,16 +111,70 @@ static void graceful_exit_from_child() // bad dummy
 	exit(EXIT_FAILURE); // bad, should clean up all allocations before exiting from child process
 }
 
+void wait_for_all_pids(t_pid_list* pids) // dummy
+{
+	t_pid_list* current = pids;
+
+	while (current)
+	{
+		int status;
+		waitpid(current->pid, &status, 0);
+		current = current->next;
+	}
+}
+
+t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io io, t_pid_list** pids)
+{
+	t_command first = pipeline->first;
+	t_command second = pipeline->second;
+
+	assert (first.type == SIMPLE_CMD);
+	assert (second.type == SIMPLE_CMD);
+
+	pid_t pipe_fd[2];
+	pipe(pipe_fd); // bad must check out
+
+	t_io first_io = (t_io){io.input, pipe_fd[WRITE]};
+	t_command_result res_first = execute_simple_command(state, first.simple, first_io);
+
+	t_io second_io = (t_io){pipe_fd[READ], io.output};
+	t_command_result res_second;
+
+	if (second.type == SIMPLE_CMD)
+		res_second = execute_simple_command(state, first.simple, second_io);
+	else
+		assert ("second must be a simple command" == NULL);
+
+
+	pidl_push_back_link(pids, res_first.pids);
+	pidl_push_back_link(pids, res_second.pids);
+
+	wait_for_all_pids(*pids);
+
+	return (t_command_result){}; // bad dummy
+}
+
 t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io)
 {
 	t_error err;
+	t_pid_list* pids = pidl_new(0);
+	if (pids == NULL)
+	{
+		free(pids);
+		return (t_command_result){.error = E_OOM, .must_exit = true, .pids = NULL};
+	}
 
 	pid_t pid = fork();
 	if (pid == -1)
-		return (t_command_result){.error = E_FORK, .must_exit = true, .pid = NO_WAIT};
+	{
+		free(pids);
+		return (t_command_result){.error = E_FORK, .must_exit = true, .pids = NULL};
+	}
 	if (pid != 0)
-		return (t_command_result){.error = NO_ERROR, .pid = pid};
-
+	{
+		pids->pid = pid;
+		return (t_command_result){.error = NO_ERROR, .pids = pids};
+	}
 
 	err = perform_all_expansions_on_words(simple->words);
 	if (err != NO_ERROR)

@@ -40,8 +40,17 @@ t_error run_command(const char* input, t_state* state)
 
 		int status;
 		int options = 0;
-		if (res.pid != NO_WAIT)
-			waitpid(res.pid, &status, options);
+		if (res.pids != NULL)
+			waitpid(res.pids->pid, &status, options);
+	}
+	else if (cmd.type == PIPELINE_CMD)
+	{
+		t_pid_list* pids = NULL;
+
+		t_command_result res;
+		res = execute_pipeline(state, cmd.pipeline, (t_io){0, 1}, &pids);
+		log_error(res.error);
+
 	}
 	return NO_ERROR;
 }
@@ -56,7 +65,6 @@ void run_interpreter(t_state* state)
 		input = readline(SHELL_PROMPT);
 		if (!input)
 			break; /* eof */
-		state->line = input;
 		err = run_command(input, state);
 		free(input);
 		printf("command status: %s\n", error_repr(err));
@@ -69,7 +77,6 @@ int	main(int argc, char *argv[], char *envp[])
 	t_state		state;
 	t_error		err;
 
-	state = (t_state){0};
 	err = from_envp((const char **)envp, &state.env);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;

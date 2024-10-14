@@ -28,13 +28,13 @@ typedef struct s_state {
 typedef struct s_command_result {
 	t_error error;
 	bool must_exit;
-	t_pid_list* pids_out;
+	t_pid_list* pids;
 } t_command_result;
 
 // internals
 
 t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io);
-t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
+t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io io, t_pid_list** pids);
 
 // public
 
