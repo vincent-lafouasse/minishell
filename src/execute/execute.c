@@ -105,7 +105,7 @@ static t_error apply_redirections(t_redir_list *redirections, int **fds_to_close
 	return (NO_ERROR);
 }
 
-[[noreturn]]
+__attribute__((noreturn))
 static void graceful_exit_from_child() // bad dummy
 {
 	exit(EXIT_FAILURE); // bad, should clean up all allocations before exiting from child process
