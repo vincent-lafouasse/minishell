@@ -21,7 +21,7 @@ jobs:
       run: python3 -m pip install --upgrade pip setuptools && python3 -m pip install norminette
 
     - name: build
-      run: CC=clang make
+      run: make
 
     - name: run tests
-      run: CC=clang make test
+      run: make test
