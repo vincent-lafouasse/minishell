@@ -5,7 +5,10 @@
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
 
+#include <unistd.h>
+
 #define DO_NOT_PIPE -1
+#define NO_WAIT 0
 
 typedef struct s_io {
 	int input;
@@ -22,12 +25,10 @@ typedef struct s_state {
 	char* line;
 } t_state;
 
-#define NEVER_EXITED 256
-
 typedef struct s_command_result {
 	t_error error;
 	bool must_exit;
-	int exit_status;
+	pid_t pid;
 } t_command_result;
 
 // internals

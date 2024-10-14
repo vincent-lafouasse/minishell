@@ -62,17 +62,13 @@ static t_error apply_redirections(t_redir_list *redirections, int **fds_to_close
 {
 	t_redirect redir;
 	int fd;
-	size_t redir_count;
-	size_t i;
 
-	redir_count = rdl_len(redirections);
 	/*
 	*fds_to_close = ft_calloc(redir_count + 1, sizeof(int));
 	if (!*fds_to_close)
 		return E_OOM;
 	*fds_to_close[redir_count] = -1;
 	*/
-	i = 0;
 	while (redirections)
 	{
 		redir = redirections->redirect;
@@ -100,46 +96,48 @@ static t_error apply_redirections(t_redir_list *redirections, int **fds_to_close
 
 	*/
 		redirections = redirections->next;
-		i++;
 	}
 	return (NO_ERROR);
 }
 
+[[noreturn]]
+static void graceful_exit_from_child() // bad dummy
+{
+	exit(EXIT_FAILURE); // bad, should clean up all allocations before exiting from child process
+}
+
 t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io)
 {
-	pid_t pid;
-	char *command_path;
 	t_error err;
-	char **envp;
-	char **argv;
-	int *fds_to_close;
 
-	pid = fork();
+	pid_t pid = fork();
 	if (pid == -1)
-		return (t_command_result){.error = E_FORK, .must_exit = true, .exit_status = NEVER_EXITED};
+		return (t_command_result){.error = E_FORK, .must_exit = true, .pid = NO_WAIT};
 	if (pid != 0)
-		return (t_command_result){.error = NO_ERROR, .must_exit = false, .exit_status = NEVER_EXITED};
+		return (t_command_result){.error = NO_ERROR, .pid = pid};
 
 
 	err = perform_all_expansions_on_words(simple->words);
 	if (err != NO_ERROR)
-		return (t_command_result){.error = err, .must_exit = true};
+		graceful_exit_from_child();
+
+	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
 	if (err != NO_ERROR)
-		return (t_command_result){.error = err, .must_exit = true};
+		graceful_exit_from_child();
 
 	err = do_piping(io);
 	if (err != NO_ERROR)
 		perror("dup2");
+
+	int *fds_to_close;
 	err = apply_redirections(simple->redirections, &fds_to_close);
 	if (err != NO_ERROR)
-		return (t_command_result){.error = err, .must_exit = true}; // bad, should differentiate `apply_redirections` errors
+		graceful_exit_from_child();
 
-	argv = wl_into_word_array(&simple->words);
-	envp = env_make_envp(state->env);
+	char** argv = wl_into_word_array(&simple->words);
+	char** envp = env_make_envp(state->env);
 	execve(command_path, argv, envp);
 
-	exit(EXIT_FAILURE); // bad, should clean up all allocations before exiting from child process
-
-	return (t_command_result){.error = E_EXECVE, .must_exit = true, .exit_status = NEVER_EXITED};
+	graceful_exit_from_child();
 }
