@@ -2,10 +2,10 @@
 # define EXECUTE_H
 
 #include "./t_env/t_env.h"
+#include "./t_pid_list/t_pid_list.h"
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
 
-#include <unistd.h>
 
 #define DO_NOT_PIPE -1
 #define NO_WAIT 0
@@ -28,12 +28,13 @@ typedef struct s_state {
 typedef struct s_command_result {
 	t_error error;
 	bool must_exit;
-	pid_t pid;
+	t_pid_list* pids_out;
 } t_command_result;
 
 // internals
 
 t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io);
+t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
 
 // public
 
