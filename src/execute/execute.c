@@ -138,11 +138,11 @@ void close_fds(t_fd_list **fds_to_close)
 	}
 }
 
-t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io ends, t_pid_list** pids)
+t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends, t_pid_list** pids)
 {
 	t_fd_list *fds_to_close = NULL;
 	t_command current;
-	t_command_result res_current;
+	t_launch_result res_current;
 	t_io current_io;
 
 	current = command_from_pipeline(pipeline);
@@ -161,7 +161,7 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io end
 		current_io = (t_io){ends.input, pipe_fd[WRITE]};
 		ends.input = pipe_fd[READ];
 
-		res_current = execute_simple_command(state, current.pipeline->first.simple,
+		res_current = launch_simple_command(state, current.pipeline->first.simple,
 											current_io, &fds_to_close);
 
 		io_close(current_io);
@@ -170,36 +170,34 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io end
 
 		current = current.pipeline->second;
 	}
-	res_current = execute_simple_command(state, current.simple, ends, NULL);
+	res_current = launch_simple_command(state, current.simple, ends, NULL);
 	io_close(ends);
 
 	pidl_push_back_link(pids, res_current.pids);
 
-	wait_for_all_pids(*pids);
-
-	return (t_command_result){.error = NO_ERROR}; // bad dummy
+	return (t_launch_result){.error = NO_ERROR}; // bad dummy
 }
 
-t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io, t_fd_list **fds_to_close)
+t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, t_fd_list **fds_to_close)
 {
 	t_error err;
 	t_pid_list* pids = pidl_new(0);
 	if (pids == NULL)
 	{
 		free(pids);
-		return (t_command_result){.error = E_OOM, .must_exit = true, .pids = NULL};
+		return (t_launch_result){.error = E_OOM, .pids = NULL};
 	}
 
 	pid_t pid = fork();
 	if (pid == -1)
 	{
 		free(pids);
-		return (t_command_result){.error = E_FORK, .must_exit = true, .pids = NULL};
+		return (t_launch_result){.error = E_FORK, .pids = NULL};
 	}
 	if (pid != 0)
 	{
 		pids->pid = pid;
-		return (t_command_result){.error = NO_ERROR, .pids = pids};
+		return (t_launch_result){.error = NO_ERROR, .pids = pids};
 	}
 
 	close_fds(fds_to_close);

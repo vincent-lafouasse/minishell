@@ -35,8 +35,8 @@ t_error run_command(const char* input, t_state* state)
 
 	if (cmd.type == SIMPLE_CMD)
 	{
-		t_command_result res;
-		res = execute_simple_command(state, cmd.simple, (t_io){DO_NOT_PIPE, DO_NOT_PIPE}, NULL);
+		t_launch_result res;
+		res = launch_simple_command(state, cmd.simple, (t_io){DO_NOT_PIPE, DO_NOT_PIPE}, NULL);
 		log_error(res.error);
 
 		int status;
@@ -48,8 +48,9 @@ t_error run_command(const char* input, t_state* state)
 	{
 		t_pid_list* pids = NULL;
 
-		t_command_result res;
-		res = execute_pipeline(state, cmd.pipeline, (t_io){DO_NOT_PIPE, DO_NOT_PIPE}, &pids);
+		t_launch_result res;
+		res = launch_pipeline(state, cmd.pipeline, (t_io){DO_NOT_PIPE, DO_NOT_PIPE}, &pids);
+		state->last_status = wait_pipeline(pids);
 		log_error(res.error);
 	}
 	return NO_ERROR;
