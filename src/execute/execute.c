@@ -210,9 +210,10 @@ t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io i
 	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
 	if (err != NO_ERROR)
-		graceful_exit_from_child(); // bad, should exit with status 127 if the
-									// command could not be found and 126 if we don't have
-									// execution permissions to the candiate executable
+		graceful_exit_from_child(); // bad, should exit with status 127 or 126
+									// if the command could not be found or if
+									// we don't have execution permissions to
+									// the candiate executable, respectively
 
 	err = do_piping(io);
 	if (err != NO_ERROR)
