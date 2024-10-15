@@ -8,6 +8,7 @@
 #include "error/t_error.h"
 #include "execute/execute.h"
 #include "execute/t_env/t_env.h"
+#include "io/t_io/t_io.h"
 #include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
 #include "libft/string.h"
@@ -36,7 +37,7 @@ t_error run_command(const char* input, t_state* state)
 	if (cmd.type == SIMPLE_CMD)
 	{
 		t_launch_result res;
-		res = launch_simple_command(state, cmd.simple, (t_io){DO_NOT_PIPE, DO_NOT_PIPE}, NULL);
+		res = launch_simple_command(state, cmd.simple, io_default(), NULL);
 		log_error(res.error);
 
 		int status;
@@ -49,7 +50,7 @@ t_error run_command(const char* input, t_state* state)
 		t_pid_list* pids = NULL;
 
 		t_launch_result res;
-		res = launch_pipeline(state, cmd.pipeline, (t_io){DO_NOT_PIPE, DO_NOT_PIPE}, &pids);
+		res = launch_pipeline(state, cmd.pipeline, io_default(), &pids);
 		state->last_status = wait_pipeline(pids);
 		log_error(res.error);
 	}
