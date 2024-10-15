@@ -89,7 +89,8 @@ int fdl_pop_front(t_fd_list** fdl)
 	return out;
 }
 
-void fdl_clear(t_fd_list** fdl) // bad dummy
+void fdl_clear(t_fd_list** fdl)
 {
-	(void)fdl;
+	while (*fdl)
+		fdl_pop_front(fdl);
 }
