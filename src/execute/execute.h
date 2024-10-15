@@ -3,6 +3,7 @@
 
 #include "./t_env/t_env.h"
 #include "./t_pid_list/t_pid_list.h"
+#include "./t_fd_list/t_fd_list.h"
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
 
@@ -33,8 +34,8 @@ typedef struct s_command_result {
 
 // internals
 
-t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io);
 t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io io, t_pid_list** pids);
+t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io, t_fd_list **fds_to_close);
 
 // public
 

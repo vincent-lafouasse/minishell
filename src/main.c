@@ -36,7 +36,7 @@ t_error run_command(const char* input, t_state* state)
 	if (cmd.type == SIMPLE_CMD)
 	{
 		t_command_result res;
-		res = execute_simple_command(state, cmd.simple, (t_io){0, 1});
+		res = execute_simple_command(state, cmd.simple, (t_io){0, 1}, NULL);
 		log_error(res.error);
 
 		int status;
