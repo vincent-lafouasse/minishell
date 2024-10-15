@@ -1,7 +1,5 @@
 #pragma once
 
-#include <unistd.h>
-
 #include "error/t_error.h"
 
 typedef struct s_fd_list {
