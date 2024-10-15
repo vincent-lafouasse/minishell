@@ -10,6 +10,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/wait.h>
 #include <assert.h> // bad
 
 #define READ 0
