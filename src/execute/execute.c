@@ -4,7 +4,7 @@
 #include "execute/t_fd_list/t_fd_list.h"
 #include "execute/t_pid_list/t_pid_list.h"
 #include "parse/t_command/t_command.h"
-#include "redirection/t_redir_list/t_redir_list.h"
+#include "io/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
 #include "word/word.h"
 
