@@ -52,21 +52,6 @@ int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
 	return (status);
 }
 
-void close_fds(t_fd_list **fds_to_close)
-{
-	int	fd;
-
-	if (!fds_to_close)
-		return ;
-
-	while (*fds_to_close)
-	{
-		fd = fdl_pop_front(fds_to_close);
-		if (fd > 0)
-			close(fd);
-	}
-}
-
 t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends, t_pid_list** pids)
 {
 	t_fd_list *fds_to_close = NULL;
@@ -129,7 +114,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 		return (t_launch_result){.error = NO_ERROR, .pids = pids};
 	}
 
-	close_fds(fds_to_close);
+	fdl_close_and_clear(fds_to_close);
 
 	err = perform_all_expansions_on_words(simple->words);
 	if (err != NO_ERROR)
