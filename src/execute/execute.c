@@ -63,17 +63,11 @@ int open_flags_for_redir_kind(t_redir_kind kind)
 		return -1;
 }
 
-static t_error apply_redirections(t_redir_list *redirections, int **fds_to_close)
+static t_error apply_redirections(t_redir_list *redirections)
 {
 	t_redirect redir;
 	int fd;
 
-	/*
-	*fds_to_close = ft_calloc(redir_count + 1, sizeof(int));
-	if (!*fds_to_close)
-		return E_OOM;
-	*fds_to_close[redir_count] = -1;
-	*/
 	while (redirections)
 	{
 		redir = redirections->redirect;
@@ -96,10 +90,6 @@ static t_error apply_redirections(t_redir_list *redirections, int **fds_to_close
 		else if (redir.kind == INTO_FILE || redir.kind == APPEND_INTO_FILE)
 			dup2(fd, STDOUT_FILENO); // bad, should report dup2 error
 
-	/*
-		*fds_to_close[i] = fd;
-
-	*/
 		redirections = redirections->next;
 	}
 	return (NO_ERROR);
@@ -191,8 +181,7 @@ t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io i
 	if (err != NO_ERROR)
 		perror("dup2");
 
-	int *fds_to_close;
-	err = apply_redirections(simple->redirections, &fds_to_close);
+	err = apply_redirections(simple->redirections);
 	if (err != NO_ERROR)
 		graceful_exit_from_child();
 
