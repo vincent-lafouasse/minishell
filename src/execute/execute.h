@@ -6,18 +6,7 @@
 #include "./t_fd_list/t_fd_list.h"
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
-
-
-#define DO_NOT_PIPE -1
-#define NO_WAIT 0
-
-typedef struct s_io {
-	int input;
-	int output;
-} t_io;
-
-t_io io_default(void);
-t_io io_new(int input, int output);
+#include "io/t_io/t_io.h"
 
 typedef struct s_state {
 	t_env *env;
