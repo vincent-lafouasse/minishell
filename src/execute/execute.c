@@ -114,6 +114,14 @@ void wait_for_all_pids(t_pid_list* pids) // dummy
 	}
 }
 
+void io_close(t_io io)
+{
+	if (io.input != DO_NOT_PIPE)
+		close(io.input);
+	if (io.output != DO_NOT_PIPE)
+		close(io.output);
+}
+
 void close_fds(t_fd_list **fds_to_close)
 {
 	int	fd;
@@ -129,41 +137,46 @@ void close_fds(t_fd_list **fds_to_close)
 	}
 }
 
-t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io io, t_pid_list** pids)
+t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline, t_io ends, t_pid_list** pids)
 {
 	t_fd_list *fds_to_close = NULL;
-	t_command first = pipeline->first;
-	t_command second = pipeline->second;
+	t_command current;
+	t_command_result res_current;
+	t_io current_io;
 
-	assert (first.type == SIMPLE_CMD);
-	assert (second.type == SIMPLE_CMD);
+	current = command_from_pipeline(pipeline);
+	while (current.type == PIPELINE_CMD)
+	{
+		pid_t pipe_fd[2];
 
-	pid_t pipe_fd[2];
-	pipe(pipe_fd); // bad must check out
+		fdl_clear(&fds_to_close);
 
-	if (fdl_push_front(&fds_to_close, pipe_fd[READ]) == E_OOM)
-		abort(); // bad
+		assert (current.pipeline->first.type == SIMPLE_CMD);
 
-	t_io first_io = (t_io){io.input, pipe_fd[WRITE]};
-	t_command_result res_first = execute_simple_command(state, first.simple, first_io, &fds_to_close);
+		pipe(pipe_fd); // bad must check out
 
-	t_io second_io = (t_io){pipe_fd[READ], io.output};
-	t_command_result res_second;
+		if (fdl_push_front(&fds_to_close, pipe_fd[READ]) == E_OOM)
+			abort(); // bad
+		current_io = (t_io){ends.input, pipe_fd[WRITE]};
+		ends.input = pipe_fd[READ];
 
-	close(pipe_fd[WRITE]);
-	if (second.type == SIMPLE_CMD)
-		res_second = execute_simple_command(state, second.simple, second_io, NULL);
-	else
-		assert ("second must be a simple command" == NULL);
-	close_fds(&fds_to_close);
+		res_current = execute_simple_command(state, current.pipeline->first.simple,
+											current_io, &fds_to_close);
 
+		io_close(current_io);
 
-	pidl_push_back_link(pids, res_first.pids);
-	pidl_push_back_link(pids, res_second.pids);
+		pidl_push_back_link(pids, res_current.pids);
+
+		current = current.pipeline->second;
+	}
+	res_current = execute_simple_command(state, current.simple, ends, NULL);
+	io_close(ends);
+
+	pidl_push_back_link(pids, res_current.pids);
 
 	wait_for_all_pids(*pids);
 
-	return (t_command_result){}; // bad dummy
+	return (t_command_result){.error = NO_ERROR}; // bad dummy
 }
 
 t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io, t_fd_list **fds_to_close)
