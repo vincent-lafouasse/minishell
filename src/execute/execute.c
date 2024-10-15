@@ -109,7 +109,7 @@ void wait_for_all_pids(t_pid_list* pids) // dummy
 	while (current)
 	{
 		int status;
-		waitpid(current->pid, &status, 0);
+		waitpid(current->pid, &status, 0); // hack, should not wait sequentially?
 		current = current->next;
 	}
 }
