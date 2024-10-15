@@ -40,5 +40,6 @@ t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io i
 // public
 
 t_command_result execute_command(t_state *state, t_command command);
+int wait_pipeline(t_pid_list* pids); // bad, should handle EINTR
 
 #endif // EXECUTE_H

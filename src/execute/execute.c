@@ -102,16 +102,17 @@ static void graceful_exit_from_child() // bad dummy
 	exit(EXIT_FAILURE); // bad, should clean up all allocations before exiting from child process
 }
 
-void wait_for_all_pids(t_pid_list* pids) // dummy
+int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
 {
 	t_pid_list* current = pids;
+	int status;
 
 	while (current)
 	{
-		int status;
 		waitpid(current->pid, &status, 0); // hack, should not wait sequentially?
 		current = current->next;
 	}
+	return (status);
 }
 
 void io_close(t_io io)
