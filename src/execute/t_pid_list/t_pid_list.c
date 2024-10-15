@@ -12,21 +12,28 @@ t_pid_list* pidl_new(pid_t pid)
 	return out;
 }
 
+t_pid_list *pidl_last(t_pid_list* pidl)
+{
+	if (pidl == NULL)
+		return NULL;
+
+	t_pid_list* last = pidl;
+	while (last->next)
+		last = last->next;
+	return (last);
+}
+
 void pidl_push_back_link(t_pid_list** pidl, t_pid_list* link)
 {
 	if (pidl == NULL)
 		return ;
 
-	if (*pidl == NULL)
-	{
-		*pidl = link;
-		return ;
-	}
+	t_pid_list* last = pidl_last(*pidl);
 
-	t_pid_list* last = *pidl;
-	while (last->next)
-		last = last->next;
-	last->next = link;
+	if (last == NULL)
+		*pidl = link;
+	else
+		last->next = link;
 }
 
 void pidl_push_front_link(t_pid_list** pidl, t_pid_list* link)
