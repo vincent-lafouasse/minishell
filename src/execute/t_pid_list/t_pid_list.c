@@ -29,6 +29,22 @@ void pidl_push_back_link(t_pid_list** pidl, t_pid_list* link)
 	last->next = link;
 }
 
+void pidl_push_front_link(t_pid_list** pidl, t_pid_list* link)
+{
+	if (pidl == NULL)
+		return ;
+
+	if (*pidl == NULL)
+	{
+		*pidl = link;
+		return ;
+	}
+
+	t_pid_list* head = *pidl;
+	link->next = head;
+	*pidl = link;
+}
+
 t_pid_list* pidl_pop_front_link(t_pid_list** pidl)
 {
 	if (pidl == NULL || *pidl == NULL)
@@ -48,6 +64,16 @@ t_error pidl_push_back(t_pid_list** pidl, pid_t pid)
 	if (new_last == NULL)
 		return E_OOM;
 	pidl_push_back_link(pidl, new_last);
+	return NO_ERROR;
+}
+
+t_error pidl_push_front(t_pid_list** pidl, pid_t pid)
+{
+	t_pid_list* new_head = pidl_new(pid);
+
+	if (new_head == NULL)
+		return E_OOM;
+	pidl_push_front_link(pidl, new_head);
 	return NO_ERROR;
 }
 
