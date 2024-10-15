@@ -2,21 +2,11 @@
 # define EXECUTE_H
 
 #include "./t_env/t_env.h"
+#include "./t_pid_list/t_pid_list.h"
+#include "./t_fd_list/t_fd_list.h"
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
-
-#include <unistd.h>
-
-#define DO_NOT_PIPE -1
-#define NO_WAIT 0
-
-typedef struct s_io {
-	int input;
-	int output;
-} t_io;
-
-t_io io_default(void);
-t_io io_new(int input, int output);
+#include "io/t_io/t_io.h"
 
 typedef struct s_state {
 	t_env *env;
@@ -25,18 +15,24 @@ typedef struct s_state {
 	char* line;
 } t_state;
 
+typedef struct s_launch_result {
+	t_error error;
+	t_pid_list* pids;
+} t_launch_result;
+
 typedef struct s_command_result {
 	t_error error;
-	bool must_exit;
-	pid_t pid;
+	int status_code;
 } t_command_result;
 
 // internals
 
-t_command_result execute_simple_command(t_state *state, t_simple *simple, t_io io);
+t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io, t_pid_list** pids);
+t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, t_fd_list **fds_to_close);
 
 // public
 
 t_command_result execute_command(t_state *state, t_command command);
+int wait_pipeline(t_pid_list* pids); // bad, should handle EINTR
 
 #endif // EXECUTE_H

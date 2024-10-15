@@ -71,10 +71,10 @@ set(word_source
 	word/t_word_list/t_word_list.c
 )
 
-set(redirection_source
-	redirection/t_redir_list/t_redir_list.h
-	redirection/t_redir_list/t_redir_list.c
-	redirection/t_redir_list/redirection_repr.c
+set(io_source
+	io/t_redir_list/t_redir_list.h
+	io/t_redir_list/t_redir_list.c
+	io/t_redir_list/redirection_repr.c
 )
 
 set(error_module
@@ -92,7 +92,7 @@ set(tested_source
 	${token_list_source}
 	${parser_source}
 	${word_source}
-	${redirection_source}
+	${io_source}
 	${error_module}
 	${log_module}
 )

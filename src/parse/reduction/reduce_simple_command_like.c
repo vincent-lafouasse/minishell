@@ -1,7 +1,7 @@
 #include "parse/tokenize/t_token_list/t_token_list.h"
 #include "reduction_internals.h"
 #include "../tokenize/t_token.h"
-#include "redirection/t_redir_list/t_redir_list.h"
+#include "io/t_redir_list/t_redir_list.h"
 
 #include <stdlib.h>
 #include <assert.h> // temporarily

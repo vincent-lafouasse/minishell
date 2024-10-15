@@ -4,7 +4,7 @@
 # include "../t_command/t_command.h"
 # include "../t_symbol/t_symbol.h"
 # include "../tokenize/t_token_list/t_token_list.h"
-# include "redirection/t_redir_list/t_redir_list.h"
+# include "io/t_redir_list/t_redir_list.h"
 # include "word/t_word_list/t_word_list.h"
 
 t_error gather_leaves(t_symbol *root, t_token_list **out);

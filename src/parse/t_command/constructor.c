@@ -1,5 +1,5 @@
 #include "libft/stdlib.h"
-#include "redirection/t_redir_list/t_redir_list.h"
+#include "io/t_redir_list/t_redir_list.h"
 #include "t_command.h"
 #include "word/t_word_list/t_word_list.h"
 #include <stddef.h>
