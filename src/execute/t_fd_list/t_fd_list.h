@@ -17,4 +17,5 @@ t_error fdl_push_back(t_fd_list** fdl, int fd);
 t_error fdl_push_front(t_fd_list** fdl, int fd);
 int fdl_pop_front(t_fd_list** fdl);
 
+void fdl_close_and_clear(t_fd_list **fdl);
 void fdl_clear(t_fd_list** fdl);
