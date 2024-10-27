@@ -2,16 +2,16 @@
 
 #include <unistd.h>
 
-void fdl_close_and_clear(t_fd_list **fds_to_close)
+void fdl_close_and_clear(t_fd_list **fdl)
 {
 	int	fd;
 
-	if (!fds_to_close)
+	if (!fdl)
 		return ;
 
-	while (*fds_to_close)
+	while (*fdl)
 	{
-		fd = fdl_pop_front(fds_to_close);
+		fd = fdl_pop_front(fdl);
 		if (fd > 0)
 			close(fd);
 	}
