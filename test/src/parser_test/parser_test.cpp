@@ -16,8 +16,21 @@ extern "C"
 #include "log/log.h"
 };
 
+const char* command_type_repr(t_command_type ty) {
+	switch (ty) {
+		case SIMPLE_CMD:
+			return "Simple";
+		case PIPELINE_CMD:
+			return "Pipeline";
+		case CONDITIONAL_CMD:
+			return "Conditional";
+		case SUBSHELL_CMD:
+			return "Subshell";
+	}
+}
+
 void assert_command_eq(t_command actual, t_command expected) {
-	ASSERT_EQ(actual.type, expected.type);
+	ASSERT_EQ(actual.type, expected.type) << "Expected " << command_type_repr(expected.type) << " was " << command_type_repr(actual.type);
 	if (actual.type == SIMPLE_CMD) {
 		ASSERT_EQ(Words(actual.simple), Words(expected.simple));
 		ASSERT_EQ(Redirections(actual.simple), Redirections(expected.simple));
