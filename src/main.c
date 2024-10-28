@@ -12,6 +12,7 @@
 #include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
 #include "libft/string.h"
+#include "parse/t_command/t_command.h"
 
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"
@@ -53,6 +54,11 @@ t_error run_command(const char* input, t_state* state)
 		res = launch_pipeline(state, cmd.pipeline, io_default(), &pids);
 		state->last_status = wait_pipeline(pids);
 		log_error(res.error);
+	}
+	else if (cmd.type == CONDITIONAL_CMD)
+	{
+		t_command_result res = execute_conditional(state, cmd.conditional);
+		state->last_status = res.status_code;
 	}
 	return NO_ERROR;
 }
