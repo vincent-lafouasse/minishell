@@ -61,7 +61,7 @@ size_t n_connectors(const t_conditional* cond) {
 	return n;
 }
 
-void log_cmd_shallow(t_command cmd) {
+void log_cmd_shallow(t_command cmd) { // bad purely debug
 	switch (cmd.type) {
 		case SIMPLE_CMD:
 			printf("simple");
@@ -78,7 +78,7 @@ void log_cmd_shallow(t_command cmd) {
 	}
 }
 
-void log_cond_op(t_conditional_operator op) {
+void log_cond_op(t_conditional_operator op) { // bad, purely debug
 	switch (op) {
 		case AND_OP:
 			printf(" AND ");
