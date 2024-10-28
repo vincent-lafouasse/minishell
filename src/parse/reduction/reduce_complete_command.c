@@ -113,12 +113,14 @@ t_error	reconstruct_conditional_command(t_conditional_cmd_data data,
 	t_conditional	*root;
 	t_conditional	*new_root;
 	t_command		lhs;
+	size_t			i;
 
 	root = conditional_new(data.operators[0], data.commands[0],
 			data.commands[1]);
 	if (!root)
 		return (E_OOM);
-	for (size_t i = 1; i < data.n; i++)
+	i = 0;
+	while (i < data.n)
 	{
 		lhs = command_from_conditional(root);
 		new_root = conditional_new(data.operators[i], lhs, data.commands[i
@@ -129,6 +131,7 @@ t_error	reconstruct_conditional_command(t_conditional_cmd_data data,
 			return (E_OOM);
 		}
 		root = new_root;
+		++i;
 	}
 	*out = root;
 	return (NO_ERROR);
