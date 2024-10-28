@@ -54,6 +54,5 @@ t_error parse(const char *input, t_command *out)
         return err;
     }
     symbol_clear(parse_tree);
-    syntax_tree_to_json(*out);
     return (NO_ERROR);
 }
