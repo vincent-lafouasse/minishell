@@ -16,21 +16,21 @@ extern "C"
 #include "log/log.h"
 };
 
-void assert_command_eq(t_command a, t_command b) {
-	ASSERT_EQ(a.type, b.type);
-	if (a.type == SIMPLE_CMD) {
-		ASSERT_EQ(Words(a.simple), Words(b.simple));
-		ASSERT_EQ(Redirections(a.simple), Redirections(b.simple));
-	} else if (a.type == SUBSHELL_CMD) {
-		ASSERT_EQ(Redirections(a.subshell), Redirections(b.subshell));
-		assert_command_eq(a.subshell->cmd, b.subshell->cmd);
-	} else if (a.type == CONDITIONAL_CMD) {
-		ASSERT_EQ(a.conditional->op, b.conditional->op);
-		assert_command_eq(a.conditional->first, b.conditional->first);
-		assert_command_eq(a.conditional->second, b.conditional->second);
-	} else if (a.type == PIPELINE_CMD) {
-		assert_command_eq(a.pipeline->first, b.pipeline->first);
-		assert_command_eq(a.pipeline->second, b.pipeline->second);
+void assert_command_eq(t_command actual, t_command expected) {
+	ASSERT_EQ(actual.type, expected.type);
+	if (actual.type == SIMPLE_CMD) {
+		ASSERT_EQ(Words(actual.simple), Words(expected.simple));
+		ASSERT_EQ(Redirections(actual.simple), Redirections(expected.simple));
+	} else if (actual.type == SUBSHELL_CMD) {
+		ASSERT_EQ(Redirections(actual.subshell), Redirections(expected.subshell));
+		assert_command_eq(actual.subshell->cmd, expected.subshell->cmd);
+	} else if (actual.type == CONDITIONAL_CMD) {
+		ASSERT_EQ(actual.conditional->op, expected.conditional->op);
+		assert_command_eq(actual.conditional->first, expected.conditional->first);
+		assert_command_eq(actual.conditional->second, expected.conditional->second);
+	} else if (actual.type == PIPELINE_CMD) {
+		assert_command_eq(actual.pipeline->first, expected.pipeline->first);
+		assert_command_eq(actual.pipeline->second, expected.pipeline->second);
 	} else FAIL() << "unreachable statement";
 }
 
