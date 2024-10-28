@@ -4,6 +4,9 @@
 #include "../tokenize/t_token.h"
 #include "error/t_error.h"
 
+#include <stdlib.h>
+#include "libft/stdlib.h"
+
 #include <stdbool.h>
 
 #include <assert.h> // temporarily
@@ -44,6 +47,37 @@ static t_error	reduce_complete_cmd_rest(t_symbol *cmd_rest, t_command *out)
 		return (err);
 
 	return reduce_complete_cmd_rest(&next_cmd_rest, &out->conditional->second);
+}
+
+size_t n_connectors(const t_conditional* cond) {
+	size_t n = 1;
+
+	while (cond->second.type == CONDITIONAL_CMD)
+		n++;
+
+	return n;
+}
+
+t_error revert_conditional_associativity(t_conditional* cond) {
+	size_t n = n_connectors(cond);
+	t_command* commands = ft_calloc(n + 1, sizeof(*commands));
+	t_conditional_operator* operators = ft_calloc(n, sizeof(*operators));
+	if (commands == NULL || operators == NULL) {
+		free(commands);
+		free(operators);
+		return E_OOM;
+	}
+
+	size_t i = 0;
+	while (cond->second.type == CONDITIONAL_CMD) {
+		commands[i] = cond->first;
+		operators[i] = cond->op;
+		i++;
+		cond = cond->second.conditional;
+	}
+	commands[i] = cond->second;
+
+	return NO_ERROR;
 }
 
 t_error	reduce_complete_command(t_symbol *root, t_command *out)
