@@ -89,7 +89,8 @@ void log_cond_op(t_conditional_operator op) { // bad, purely debug
 	}
 }
 
-t_error revert_conditional_associativity(t_conditional* cond) {
+t_error revert_conditional_associativity(t_conditional** out) {
+	t_conditional* cond = *out;
 	size_t n = n_connectors(cond);
 	t_command* commands = ft_calloc(n + 1, sizeof(*commands));
 	t_conditional_operator* operators = ft_calloc(n, sizeof(*operators));
@@ -104,18 +105,30 @@ t_error revert_conditional_associativity(t_conditional* cond) {
 		commands[i] = cond->first;
 		operators[i] = cond->op;
 		i++;
-		cond = cond->second.conditional;
+		t_conditional* next = cond->second.conditional;
+		free(cond);
+		cond = next;
 	}
 	commands[i] = cond->first;
 	operators[i] = cond->op;
 	commands[i + 1] = cond->second;
+	free(cond);
 
+	#if LOG
 	for (size_t i = 0; i < n; i++) {
 		log_cmd_shallow(commands[i]);
 		log_cond_op(operators[i]);
 	}
 	log_cmd_shallow(commands[n]);
+	#endif
 
+	t_conditional* root = conditional_new(operators[0], commands[0], commands[1]); // bad check oom
+	for (size_t i = 1; i < n; i++) {
+		t_command lhs = command_from_conditional(root);
+		t_conditional* new_root = conditional_new(operators[i], lhs, commands[i + 1]);
+	}
+
+	*out = root;
 	return NO_ERROR;
 }
 
@@ -140,7 +153,7 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 	if (err != NO_ERROR)
 		return (err);
 
-	revert_conditional_associativity(out->conditional);
+	revert_conditional_associativity(&out->conditional);
 	*out = command_from_conditional(out->conditional);
 	return (NO_ERROR);
 }
