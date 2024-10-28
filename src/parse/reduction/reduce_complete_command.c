@@ -5,6 +5,7 @@
 #include "error/t_error.h"
 
 #include <stdlib.h>
+#include <stdio.h> // temporarily
 #include "libft/stdlib.h"
 
 #include <stdbool.h>
@@ -52,10 +53,40 @@ static t_error	reduce_complete_cmd_rest(t_symbol *cmd_rest, t_command *out)
 size_t n_connectors(const t_conditional* cond) {
 	size_t n = 1;
 
-	while (cond->second.type == CONDITIONAL_CMD)
+	 while (cond->second.type == CONDITIONAL_CMD) {
+		cond = cond->second.conditional;
 		n++;
+	}
 
 	return n;
+}
+
+void log_cmd_shallow(t_command cmd) {
+	switch (cmd.type) {
+		case SIMPLE_CMD:
+			printf("simple");
+			break;
+		case CONDITIONAL_CMD:
+			printf("cond");
+			break;
+		case PIPELINE_CMD:
+			printf("pipe");
+			break;
+		case SUBSHELL_CMD:
+			printf("subshell");
+			break;
+	}
+}
+
+void log_cond_op(t_conditional_operator op) {
+	switch (op) {
+		case AND_OP:
+			printf(" AND ");
+			break;
+		case OR_OP:
+			printf(" OR ");
+			break;
+	}
 }
 
 t_error revert_conditional_associativity(t_conditional* cond) {
@@ -75,7 +106,15 @@ t_error revert_conditional_associativity(t_conditional* cond) {
 		i++;
 		cond = cond->second.conditional;
 	}
-	commands[i] = cond->second;
+	commands[i] = cond->first;
+	operators[i] = cond->op;
+	commands[i + 1] = cond->second;
+
+	for (size_t i = 0; i < n; i++) {
+		log_cmd_shallow(commands[i]);
+		log_cond_op(operators[i]);
+	}
+	log_cmd_shallow(commands[n]);
 
 	return NO_ERROR;
 }
@@ -101,6 +140,7 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 	if (err != NO_ERROR)
 		return (err);
 
+	revert_conditional_associativity(out->conditional);
 	*out = command_from_conditional(out->conditional);
 	return (NO_ERROR);
 }
