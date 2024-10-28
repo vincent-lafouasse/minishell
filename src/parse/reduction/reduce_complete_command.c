@@ -61,34 +61,6 @@ size_t n_connectors(const t_conditional* cond) {
 	return n;
 }
 
-void log_cmd_shallow(t_command cmd) { // bad purely debug
-	switch (cmd.type) {
-		case SIMPLE_CMD:
-			printf("simple");
-			break;
-		case CONDITIONAL_CMD:
-			printf("cond");
-			break;
-		case PIPELINE_CMD:
-			printf("pipe");
-			break;
-		case SUBSHELL_CMD:
-			printf("subshell");
-			break;
-	}
-}
-
-void log_cond_op(t_conditional_operator op) { // bad, purely debug
-	switch (op) {
-		case AND_OP:
-			printf(" AND ");
-			break;
-		case OR_OP:
-			printf(" OR ");
-			break;
-	}
-}
-
 t_error revert_conditional_associativity(t_conditional** out) {
 	t_conditional* cond = *out;
 	size_t n = n_connectors(cond);
@@ -114,18 +86,11 @@ t_error revert_conditional_associativity(t_conditional** out) {
 	commands[i + 1] = cond->second;
 	free(cond);
 
-	#if LOG
-	for (size_t i = 0; i < n; i++) {
-		log_cmd_shallow(commands[i]);
-		log_cond_op(operators[i]);
-	}
-	log_cmd_shallow(commands[n]);
-	#endif
-
 	t_conditional* root = conditional_new(operators[0], commands[0], commands[1]); // bad check oom
 	for (size_t i = 1; i < n; i++) {
 		t_command lhs = command_from_conditional(root);
-		t_conditional* new_root = conditional_new(operators[i], lhs, commands[i + 1]);
+		t_conditional* new_root = conditional_new(operators[i], lhs, commands[i + 1]); // bad check oom
+		root = new_root;
 	}
 
 	*out = root;

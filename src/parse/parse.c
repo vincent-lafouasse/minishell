@@ -7,6 +7,8 @@
 #include "t_symbol/t_symbol.h"
 #include "reduction/reduction.h"
 
+#include "log/log.h"
+
 #include <stdlib.h>
 
 t_error parse_command(const t_token_list *tokens, t_symbol *out)
@@ -52,5 +54,6 @@ t_error parse(const char *input, t_command *out)
         return err;
     }
     symbol_clear(parse_tree);
+    syntax_tree_to_json(*out);
     return (NO_ERROR);
 }
