@@ -545,12 +545,12 @@ TEST(ParserIntegration, ManySimplesOrConditional) {
 	const char *input = "false || false || true";
 	t_command expected = command_new_conditional(
 		OR_OP,
-		command_new_simple(Words({"false"}).to_list(), nullptr),
 		command_new_conditional(
 			OR_OP,
 			command_new_simple(Words({"false"}).to_list(), nullptr),
-			command_new_simple(Words({"true"}).to_list(), nullptr)
-		)
+			command_new_simple(Words({"false"}).to_list(), nullptr)
+		),
+		command_new_simple(Words({"true"}).to_list(), nullptr)
 	);
 
 	t_command actual;
@@ -564,12 +564,12 @@ TEST(ParserIntegration, ManySimplesAndConditional) {
 	const char *input = "true && true && false";
 	t_command expected = command_new_conditional(
 		AND_OP,
-		command_new_simple(Words({"true"}).to_list(), nullptr),
 		command_new_conditional(
 			AND_OP,
 			command_new_simple(Words({"true"}).to_list(), nullptr),
-			command_new_simple(Words({"false"}).to_list(), nullptr)
-		)
+			command_new_simple(Words({"true"}).to_list(), nullptr)
+		),
+		command_new_simple(Words({"false"}).to_list(), nullptr)
 	);
 
 	t_command actual;
@@ -582,13 +582,13 @@ TEST(ParserIntegration, ManySimplesAndConditional) {
 TEST(ParserIntegration, ManySimplesAndOrConditional) {
 	const char *input = "true && true || false";
 	t_command expected = command_new_conditional(
-		AND_OP,
-		command_new_simple(Words({"true"}).to_list(), nullptr),
+		OR_OP,
 		command_new_conditional(
-			OR_OP,
+			AND_OP,
 			command_new_simple(Words({"true"}).to_list(), nullptr),
-			command_new_simple(Words({"false"}).to_list(), nullptr)
-		)
+			command_new_simple(Words({"true"}).to_list(), nullptr)
+		),
+		command_new_simple(Words({"false"}).to_list(), nullptr)
 	);
 
 	t_command actual;
@@ -709,13 +709,13 @@ TEST(ParserIntegration, AllCommandTypes) {
 	);
 
 	t_command expected = command_new_conditional(
-		OR_OP,
-		subshell_bat_cat,
+		AND_OP,
 		command_new_conditional(
-			AND_OP,
-			command_new_pipeline(subshell_sh_dash, subshell_ulimit),
-			command_new_pipeline(idk, stuff)
-		)
+			OR_OP,
+			subshell_bat_cat,
+			command_new_pipeline(subshell_sh_dash, subshell_ulimit)
+		),
+		command_new_pipeline(idk, stuff)
 	);
 
 	t_command actual;
