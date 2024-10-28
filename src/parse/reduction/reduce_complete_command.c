@@ -107,23 +107,17 @@ t_conditional_cmd_data	gather_data_and_free(t_conditional *cond)
 	return (data);
 }
 
-t_error	revert_conditional_associativity(t_conditional **out)
+t_error	reconstruct_conditional_command(t_conditional_cmd_data data,
+		t_conditional **out)
 {
-	t_conditional			*root;
-	t_conditional			*new_root;
-	t_command				lhs;
-	t_conditional_cmd_data	data;
+	t_conditional	*root;
+	t_conditional	*new_root;
+	t_command		lhs;
 
-	data = gather_data_and_free(*out);
-	*out = NULL;
-	if (data.n == 0)
-		return (E_OOM);
 	root = conditional_new(data.operators[0], data.commands[0],
 			data.commands[1]);
 	if (!root)
-	{
 		return (E_OOM);
-	}
 	for (size_t i = 1; i < data.n; i++)
 	{
 		lhs = command_from_conditional(root);
@@ -138,6 +132,17 @@ t_error	revert_conditional_associativity(t_conditional **out)
 	}
 	*out = root;
 	return (NO_ERROR);
+}
+
+t_error	revert_conditional_associativity(t_conditional **out)
+{
+	t_conditional_cmd_data	data;
+
+	data = gather_data_and_free(*out);
+	*out = NULL;
+	if (data.n == 0)
+		return (E_OOM);
+	return (reconstruct_conditional_command(data, out));
 }
 
 t_error	reduce_complete_command(t_symbol *root, t_command *out)
