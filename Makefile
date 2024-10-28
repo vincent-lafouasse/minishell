@@ -79,6 +79,7 @@ run_memcheck: VALGRIND_FLAGS += --leak-check=full
 run_memcheck: VALGRIND_FLAGS += --show-leak-kinds=all
 run_memcheck: VALGRIND_FLAGS += --track-origins=yes
 run_memcheck: VALGRIND_FLAGS += --suppressions=$(SUPPRESSIONS_FILE)
+run_memcheck: VALGRIND_FLAGS += --trace-children=yes
 run_memcheck: build
 	valgrind $(VALGRIND_FLAGS) ./$(NAME)
 
