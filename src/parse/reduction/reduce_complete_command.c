@@ -81,57 +81,59 @@ t_conditional_cmd_data	cond_data_allocate(size_t n)
 
 t_conditional_cmd_data	gather_data_and_free(t_conditional *cond)
 {
-	size_t					n;
 	t_conditional_cmd_data	data;
+	t_conditional			*next;
+	size_t					n;
+	size_t					i;
 
 	n = n_connectors(cond);
 	data = cond_data_allocate(n);
 	if (data.n == 0)
 		return (data);
-	return (data);
-}
-
-t_error	revert_conditional_associativity(t_conditional **out)
-{
-	t_conditional			*cond;
-	size_t					n;
-	t_command				*commands;
-	t_conditional_operator	*operators;
-	size_t					i;
-	t_conditional			*next;
-	t_command				lhs;
-
-	cond = *out;
-	n = n_connectors(cond);
-	commands = ft_calloc(n + 1, sizeof(*commands));
-	operators = ft_calloc(n, sizeof(*operators));
-	if (commands == NULL || operators == NULL)
-	{
-		free(commands);
-		free(operators);
-		return (E_OOM);
-	}
 	i = 0;
 	while (cond->second.type == CONDITIONAL_CMD)
 	{
-		commands[i] = cond->first;
-		operators[i] = cond->op;
+		data.commands[i] = cond->first;
+		data.operators[i] = cond->op;
 		i++;
 		next = cond->second.conditional;
 		free(cond);
 		cond = next;
 	}
-	commands[i] = cond->first;
-	operators[i] = cond->op;
-	commands[i + 1] = cond->second;
+	data.commands[i] = cond->first;
+	data.operators[i] = cond->op;
+	data.commands[i + 1] = cond->second;
 	free(cond);
-	t_conditional *root = conditional_new(operators[0], commands[0],
-			commands[1]); // bad check oom
-	for (size_t i = 1; i < n; i++)
+	return (data);
+}
+
+t_error	revert_conditional_associativity(t_conditional **out)
+{
+	t_conditional			*root;
+	t_conditional			*new_root;
+	t_command				lhs;
+	t_conditional_cmd_data	data;
+
+	data = gather_data_and_free(*out);
+	*out = NULL;
+	if (data.n == 0)
+		return (E_OOM);
+	root = conditional_new(data.operators[0], data.commands[0],
+			data.commands[1]);
+	if (!root)
+	{
+		return (E_OOM);
+	}
+	for (size_t i = 1; i < data.n; i++)
 	{
 		lhs = command_from_conditional(root);
-		t_conditional *new_root = conditional_new(operators[i], lhs, commands[i
-				+ 1]); // bad check oom
+		new_root = conditional_new(data.operators[i], lhs, data.commands[i
+				+ 1]);
+		if (!new_root)
+		{
+			*out = root;
+			return (E_OOM);
+		}
 		root = new_root;
 	}
 	*out = root;
