@@ -89,7 +89,7 @@ t_conditional_cmd_data	gather_data_and_free(t_conditional *cond)
 	n = n_connectors(cond);
 	data = cond_data_allocate(n);
 	if (data.n == 0)
-		return (data);
+		return ((t_conditional_cmd_data){0});
 	i = 0;
 	while (cond->second.type == CONDITIONAL_CMD)
 	{
