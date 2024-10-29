@@ -1,25 +1,24 @@
+#include "libft/stdlib.h"
 #include "reduction_internals.h"
 #include <assert.h> // temporarily
-#include "libft/stdlib.h"
 #include <stdlib.h>
 
-typedef struct s_conditional_cmd_data
+typedef struct s_cond_data
 {
-	t_command					*commands;
-	t_conditional_operator		*operators;
-	size_t						n;
-}								t_conditional_cmd_data;
+	t_command				*commands;
+	t_conditional_operator	*operators;
+	size_t					n;
+}							t_cond_data;
 
-static size_t	n_connectors(const t_conditional *cond);
-static t_conditional_cmd_data	cond_data_allocate(size_t n);
-static t_conditional_cmd_data	gather_data_and_free(t_conditional *cond);
-static t_error	reconstruct_conditional_command(t_conditional_cmd_data data,
-		t_conditional **out);
-
+static t_cond_data			gather_data_and_free(t_conditional *cond);
+static t_error				reconstruct_conditional_command(t_cond_data data,
+								t_conditional **out);
+static t_cond_data			cond_data_allocate(size_t n);
+static size_t				n_connectors(const t_conditional *cond);
 
 t_error	invert_conditional_associativity(t_conditional **out)
 {
-	t_conditional_cmd_data	data;
+	t_cond_data	data;
 
 	data = gather_data_and_free(*out);
 	*out = NULL;
@@ -28,17 +27,17 @@ t_error	invert_conditional_associativity(t_conditional **out)
 	return (reconstruct_conditional_command(data, out));
 }
 
-static t_conditional_cmd_data	gather_data_and_free(t_conditional *cond)
+static t_cond_data	gather_data_and_free(t_conditional *cond)
 {
-	t_conditional_cmd_data	data;
-	t_conditional			*next;
-	size_t					n;
-	size_t					i;
+	t_cond_data		data;
+	t_conditional	*next;
+	size_t			n;
+	size_t			i;
 
 	n = n_connectors(cond);
 	data = cond_data_allocate(n);
 	if (data.n == 0)
-		return ((t_conditional_cmd_data){0});
+		return ((t_cond_data){0});
 	i = 0;
 	while (cond->second.type == CONDITIONAL_CMD)
 	{
@@ -56,7 +55,7 @@ static t_conditional_cmd_data	gather_data_and_free(t_conditional *cond)
 	return (data);
 }
 
-static t_error	reconstruct_conditional_command(t_conditional_cmd_data data,
+static t_error	reconstruct_conditional_command(t_cond_data data,
 		t_conditional **out)
 {
 	t_conditional	*root;
@@ -86,7 +85,7 @@ static t_error	reconstruct_conditional_command(t_conditional_cmd_data data,
 	return (NO_ERROR);
 }
 
-static t_conditional_cmd_data	cond_data_allocate(size_t n)
+static t_cond_data	cond_data_allocate(size_t n)
 {
 	t_command				*commands;
 	t_conditional_operator	*operators;
@@ -97,10 +96,10 @@ static t_conditional_cmd_data	cond_data_allocate(size_t n)
 	{
 		free(commands);
 		free(operators);
-		return ((t_conditional_cmd_data){0});
+		return ((t_cond_data){0});
 	}
-	return ((t_conditional_cmd_data){.commands = commands,
-		.operators = operators, .n = n});
+	return ((t_cond_data){.commands = commands, .operators = operators,
+		.n = n});
 }
 
 static size_t	n_connectors(const t_conditional *cond)
