@@ -120,14 +120,6 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	if (err != NO_ERROR)
 		graceful_exit_from_child();
 
-	char *command_path;
-	err = path_expanded_word(state->env, simple->words->contents, &command_path);
-	if (err != NO_ERROR)
-		graceful_exit_from_child(); // bad, should exit with status 127 or 126
-									// if the command could not be found or if
-									// we don't have execution permissions to
-									// the candiate executable, respectively
-
 	err = do_piping(io);
 	if (err != NO_ERROR)
 		perror("dup2");
@@ -135,6 +127,14 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	err = apply_redirections(simple->redirections);
 	if (err != NO_ERROR)
 		graceful_exit_from_child();
+
+	char *command_path;
+	err = path_expanded_word(state->env, simple->words->contents, &command_path);
+	if (err != NO_ERROR)
+		graceful_exit_from_child(); // bad, should exit with status 127 or 126
+									// if the command could not be found or if
+									// we don't have execution permissions to
+									// the candiate executable, respectively
 
 	char** argv = wl_into_word_array(&simple->words);
 	char** envp = env_make_envp(state->env);
