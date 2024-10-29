@@ -4,35 +4,36 @@
 #include <assert.h>
 #include <sys/wait.h>
 
-t_command_result execute_conditional(t_state *state, t_conditional *cond) {
-	t_command_result cmd_res = (t_command_result){.error = NO_ERROR};
-	t_command command = command_from_conditional(cond);
+t_command_result execute_cond_or_simple(t_state* state, t_command cmd) { // bad temporary, should consider all command types
+	assert(cmd.type == SIMPLE_CMD || cmd.type == CONDITIONAL_CMD);
 
-	while (command.type == CONDITIONAL_CMD) {
-		assert (command.conditional->first.type == SIMPLE_CMD);
-		t_simple* simple = command.conditional->first.simple;
+	t_command_result cmd_res = (t_command_result){.error = NO_ERROR};
+
+	if (cmd.type == SIMPLE_CMD) {
+		t_simple* simple = cmd.simple;
 
 		t_launch_result launch_res = launch_simple_command(state, simple, io_default(), NULL); // BAD need to check error member
-		assert (launch_res.pids != NULL);
-
 		int options = 0;
 		waitpid(launch_res.pids->pid, &cmd_res.status_code, options);
 
-		t_conditional_operator op = command.conditional->op;
-
-		int status = cmd_res.status_code;
-		if (status != 0 && op == AND_OP)
-			return cmd_res;
-		if (status == 0 && op == OR_OP)
-			return cmd_res;
-
-		command = command.conditional->second;
+		return cmd_res;
+	} else {
+		return execute_conditional(state, cmd.conditional);
 	}
-	assert (command.type == SIMPLE_CMD);
-	t_launch_result launch_res = launch_simple_command(state, command.simple, io_default(), NULL); // BAD need to check error member
-	int options = 0;
-	waitpid(launch_res.pids->pid, &cmd_res.status_code, options);
-
-	return cmd_res;
 }
 
+t_command_result execute_conditional(t_state *state, t_conditional *cond) {
+	t_conditional_operator op = cond->op;
+	t_command first = cond->first;
+	t_command second = cond->second;
+
+	t_command_result first_res = execute_cond_or_simple(state, first); // bad, only takes simples for now
+
+	int status = first_res.status_code;
+	if (status != 0 && op == AND_OP) // false &&
+		return first_res;
+	if (status == 0 && op == OR_OP) //  true ||
+		return first_res;
+
+	return execute_cond_or_simple(state, second); // bad, only takes simples for now, all commands tbd
+}
