@@ -80,7 +80,7 @@ void run_interpreter(t_state* state)
 	clear_history(); // BAD, it's only here bc i couldnt make it compile with rl_x - poss
 }
 
-int	main(int argc, char *argv[], char *envp[])
+int	main(int argc, char *argv[], char *envp[]) // bad main should return last status
 {
 	t_state		state;
 	t_error		err;
