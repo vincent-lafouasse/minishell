@@ -10,13 +10,25 @@
     
 </head>
 <body>
-    <div class="chart" id="tree-simple"></div>
+    <div class="chart" id="tree-a"></div>
+    <div class="chart" id="tree-b"></div>
     <script src="../treant-js/vendor/raphael.js"></script>
     <script src="../treant-js/Treant.js"></script>
     
-    <script src="basic-example.js"></script>
     <script>
-        new Treant( parse_tree );
+        document.addEventListener("keydown", (event) => {
+            if (!["KeyA", "KeyB"].includes(event.code))
+                return;
+
+            let elementId = event.code == "KeyA" ? "#tree-a" : "#tree-b";
+            let tree = prompt(`Input JSON data for ${elementId}`);
+            requestAndDisplayTreeFromUser(elementId, JSON.parse(tree));
+        });
+
+        function requestAndDisplayTreeFromUser(elementId, tree) {
+            tree.chart.container = elementId;
+            new Treant(tree);
+        }
     </script>
 </body>
 </html>

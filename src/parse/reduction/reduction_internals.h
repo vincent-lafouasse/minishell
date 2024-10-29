@@ -17,4 +17,6 @@ t_error	reduce_simple_command(t_symbol *simple_cmd, t_command *out);
 t_error	reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 							t_redir_list **redirections);
 
+t_error	invert_conditional_associativity(t_conditional **out);
+
 #endif /* REDUCTION_INTERNALS_H */
