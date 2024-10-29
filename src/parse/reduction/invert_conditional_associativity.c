@@ -19,12 +19,16 @@ static size_t				n_connectors(const t_conditional *cond);
 t_error	invert_conditional_associativity(t_conditional **out)
 {
 	t_cond_data	data;
+	t_error err;
 
 	data = gather_data_and_free(*out);
 	// *out = NULL; ?
 	if (data.n == 0)
 		return (E_OOM);
-	return (reconstruct_conditional_command(data, out));
+	err = reconstruct_conditional_command(data, out);
+	free(data.commands);
+	free(data.operators);
+	return (err);
 }
 
 static t_cond_data	gather_data_and_free(t_conditional *cond)
