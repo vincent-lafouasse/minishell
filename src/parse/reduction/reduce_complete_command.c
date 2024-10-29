@@ -60,7 +60,7 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 			&out->conditional->second);
 	if (err != NO_ERROR)
 		return (err);
-	invert_conditional_associativity(&out->conditional);
+	err = invert_conditional_associativity(&out->conditional);
 	*out = command_from_conditional(out->conditional);
-	return (NO_ERROR);
+	return (err);
 }
