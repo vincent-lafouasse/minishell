@@ -60,6 +60,10 @@ t_error run_command(const char* input, t_state* state)
 		t_command_result res = execute_conditional(state, cmd.conditional);
 		state->last_status = res.status_code;
 	}
+	else if (cmd.type == SUBSHELL_CMD) {
+		t_command_result res = execute_subshell(state, cmd.subshell);
+		log_error(res.error);
+	}
 	return NO_ERROR;
 }
 
