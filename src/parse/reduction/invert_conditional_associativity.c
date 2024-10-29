@@ -22,7 +22,6 @@ t_error	invert_conditional_associativity(t_conditional **out)
 	t_error err;
 
 	data = gather_data_and_free(*out);
-	// *out = NULL; ?
 	if (data.n == 0)
 		return (E_OOM);
 	err = reconstruct_conditional_command(data, out);
