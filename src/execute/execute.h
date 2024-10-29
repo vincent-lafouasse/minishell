@@ -34,6 +34,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 
 t_command_result execute_command(t_state *state, t_command command); // not implemented
 t_command_result execute_conditional(t_state *state, t_conditional *cond);
+t_command_result execute_subshell(t_state *state, t_subshell *subshell);
 int wait_pipeline(t_pid_list* pids); // bad, should handle EINTR
 
 #endif // EXECUTE_H
