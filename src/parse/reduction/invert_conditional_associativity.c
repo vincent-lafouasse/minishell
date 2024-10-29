@@ -11,7 +11,8 @@ typedef struct s_cond_data
 }							t_cond_data;
 
 static t_cond_data			gather_data_and_free(t_conditional *cond);
-static t_error				reconstruct_conditional_command(t_cond_data data, t_conditional **out);
+static t_error				reconstruct_conditional_command(t_cond_data data,
+								t_conditional **out);
 static t_cond_data			cond_data_allocate(size_t n);
 static size_t				n_connectors(const t_conditional *cond);
 
@@ -28,20 +29,24 @@ t_error	invert_conditional_associativity(t_conditional **out)
 
 static t_cond_data	gather_data_and_free(t_conditional *cond)
 {
-	size_t n = n_connectors(cond);
-	t_cond_data data = cond_data_allocate(n);
+	size_t			n;
+	t_cond_data		data;
+	size_t			i;
+	t_conditional	*next;
+
+	n = n_connectors(cond);
+	data = cond_data_allocate(n);
 	if (data.n == 0)
 		return ((t_cond_data){0});
-
-	size_t i = 0;
+	i = 0;
 	while (cond->second.type == CONDITIONAL_CMD)
 	{
 		data.commands[i] = cond->first;
 		data.operators[i] = cond->op;
-		i++;
-		t_conditional* next = cond->second.conditional;
+		next = cond->second.conditional;
 		free(cond);
 		cond = next;
+		i++;
 	}
 	data.commands[i] = cond->first;
 	data.operators[i] = cond->op;
@@ -53,16 +58,20 @@ static t_cond_data	gather_data_and_free(t_conditional *cond)
 static t_error	reconstruct_conditional_command(t_cond_data data,
 		t_conditional **out)
 {
-	t_conditional* root = conditional_new(data.operators[0], data.commands[0],
+	t_conditional	*root;
+	size_t			i;
+	t_command		lhs;
+	t_conditional	*new_root;
+
+	root = conditional_new(data.operators[0], data.commands[0],
 			data.commands[1]);
 	if (!root)
 		return (E_OOM);
-
-	size_t i = 0;
+	i = 1;
 	while (i < data.n)
 	{
-		t_command lhs = command_from_conditional(root);
-		t_conditional* new_root = conditional_new(data.operators[i], lhs, data.commands[i
+		lhs = command_from_conditional(root);
+		new_root = conditional_new(data.operators[i], lhs, data.commands[i
 				+ 1]);
 		if (!new_root)
 		{
