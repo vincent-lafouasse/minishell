@@ -79,7 +79,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends,
 
 		io_close(current_io);
 
-		pidl_push_back_link(pids, launch_result.pids);
+		pidl_push_back_link(pids, launch_result.pids); // bad might oom
 
 		fdl_clear(&fds_to_close);
 		current = current.pipeline->second;
