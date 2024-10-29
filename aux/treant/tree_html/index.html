@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width">
+    <title> Basic example </title>
+    <link rel="stylesheet" href="../treant-js/Treant.css">
+    <link rel="stylesheet" href="basic-example.css">
+    
+</head>
+<body>
+    <div class="chart" id="tree-a"></div>
+    <div class="chart" id="tree-b"></div>
+    <script src="../treant-js/vendor/raphael.js"></script>
+    <script src="../treant-js/Treant.js"></script>
+    
+    <script>
+        document.addEventListener("keydown", (event) => {
+            if (!["KeyA", "KeyB"].includes(event.code))
+                return;
+
+            let elementId = event.code == "KeyA" ? "#tree-a" : "#tree-b";
+            let tree = prompt(`Input JSON data for ${elementId}`);
+            requestAndDisplayTreeFromUser(elementId, JSON.parse(tree));
+        });
+
+        function requestAndDisplayTreeFromUser(elementId, tree) {
+            tree.chart.container = elementId;
+            new Treant(tree);
+        }
+    </script>
+</body>
+</html>

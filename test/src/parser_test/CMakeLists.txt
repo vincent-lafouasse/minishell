@@ -10,6 +10,7 @@ set(parser_source
 	parse/reduction/reduction.c
 	parse/reduction/reduce_command.c
 	parse/reduction/reduce_subshell.c
+	parse/reduction/invert_conditional_associativity.c
 	parse/reduction/reduction_internals.h
 	parse/reduction/reduction.h
 	parse/productions/produce_simple_command.c
@@ -82,10 +83,13 @@ set(error_module
 	error/error_repr.c
 )
 set(log_module
-	#log/log_words.c
+	log/log_words.c
+	log/syntax_tree_to_json.c
 	log/log_token.c
 	log/log_error.c
 	log/log.h
+	log/log_env.c
+	log/parse_tree_to_json.c
 )
 
 set(tested_source

@@ -7,6 +7,8 @@
 #include "t_symbol/t_symbol.h"
 #include "reduction/reduction.h"
 
+#include "log/log.h"
+
 #include <stdlib.h>
 
 t_error parse_command(const t_token_list *tokens, t_symbol *out)

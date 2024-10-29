@@ -55,40 +55,39 @@ int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
 
 t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends, t_pid_list** pids)
 {
-	t_fd_list *fds_to_close = NULL;
 	t_command current;
-	t_launch_result res_current;
-	t_io current_io;
 
 	current = command_from_pipeline(pipeline);
 	while (current.type == PIPELINE_CMD)
 	{
 		pid_t pipe_fd[2];
 
-		fdl_clear(&fds_to_close);
-
 		assert (current.pipeline->first.type == SIMPLE_CMD);
 
 		pipe(pipe_fd); // bad must check out
 
+
+		t_fd_list *fds_to_close = NULL;
 		if (fdl_push_front(&fds_to_close, pipe_fd[READ]) == E_OOM)
 			abort(); // bad
-		current_io = (t_io){ends.input, pipe_fd[WRITE]};
+
+		t_io current_io = (t_io){ends.input, pipe_fd[WRITE]};
 		ends.input = pipe_fd[READ];
 
-		res_current = launch_simple_command(state, current.pipeline->first.simple,
-											current_io, &fds_to_close);
+		t_launch_result launch_result = launch_simple_command(state, current.pipeline->first.simple,
+													  current_io, &fds_to_close);
 
 		io_close(current_io);
 
-		pidl_push_back_link(pids, res_current.pids);
+		pidl_push_back_link(pids, launch_result.pids);
 
+		fdl_clear(&fds_to_close);
 		current = current.pipeline->second;
 	}
-	res_current = launch_simple_command(state, current.simple, ends, NULL);
+	t_launch_result last = launch_simple_command(state, current.simple, ends, NULL);
 	io_close(ends);
 
-	pidl_push_back_link(pids, res_current.pids);
+	pidl_push_back_link(pids, last.pids);
 
 	return (t_launch_result){.error = NO_ERROR}; // bad dummy
 }
@@ -121,14 +120,6 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	if (err != NO_ERROR)
 		graceful_exit_from_child();
 
-	char *command_path;
-	err = path_expanded_word(state->env, simple->words->contents, &command_path);
-	if (err != NO_ERROR)
-		graceful_exit_from_child(); // bad, should exit with status 127 or 126
-									// if the command could not be found or if
-									// we don't have execution permissions to
-									// the candiate executable, respectively
-
 	err = do_piping(io);
 	if (err != NO_ERROR)
 		perror("dup2");
@@ -136,6 +127,14 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	err = apply_redirections(simple->redirections);
 	if (err != NO_ERROR)
 		graceful_exit_from_child();
+
+	char *command_path;
+	err = path_expanded_word(state->env, simple->words->contents, &command_path);
+	if (err != NO_ERROR)
+		graceful_exit_from_child(); // bad, should exit with status 127 or 126
+									// if the command could not be found or if
+									// we don't have execution permissions to
+									// the candiate executable, respectively
 
 	char** argv = wl_into_word_array(&simple->words);
 	char** envp = env_make_envp(state->env);
