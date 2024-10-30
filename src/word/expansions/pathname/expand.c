@@ -70,6 +70,7 @@ static t_error find_command_in_path(const char *path, const char *filename, t_co
 static t_error find_command_in_path_list(char **path, const char *word, char **out)
 {
 	size_t i;
+	t_error err;
 	char *command_filename;
 	t_command_properties candidate;
 
