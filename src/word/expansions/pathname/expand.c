@@ -41,7 +41,6 @@ static char *join_delimited(const char *s1, char delim, const char *s2)
 
 typedef struct s_command_properties {
 	char	*full_path;
-	bool	is_readable;
 	bool	is_executable;
 } t_command_properties;
 
@@ -49,22 +48,19 @@ static t_error find_command_in_path(const char *path, const char *filename, t_co
 {
 	const char *candidate;
 	t_file_properties p;
-	int r_access;
 	int x_access;
 
 	candidate = join_delimited(path[i], '/', word);
 	if (!candidate)
 		return (E_OOM);
-	r_access = access(candidate, R_OK);
 	x_access = access(candidate, X_OK);
-	if (r_access < 0 || x_access < 0)
+	if (x_access < 0)
 	{
 		free(candidate);
 		candidate = NULL;
 		if (errno != ENOENT)
 			return (E_ACCESS);
 	}
-	p.is_readable = readable == 0;
 	p.is_executable = executable == 0;
 	p.full_filename = candidate;
 	*out = p;
@@ -88,16 +84,7 @@ static t_error find_command_in_path_list(char **path, const char *word, char **o
 			return err;
 		}
 
-		if (candidate.full_filename == NULL) // candidate does not exist
-			continue;
-		if (candidate.is_readable && !candidate.is_executable && command_filename == NULL)
-		{
-			// candidate is readable, but is not executable; save it for in case we
-			// don't end up finding any executable commands
-			command_filename = candidate.full_filename;
-			continue;
-		}
-		if (candidate.is_executable)
+		if (candidate.full_path != NULL && candidate.is_executable)
 		{
 			command_filename = candidate.full_filename;
 			break;
