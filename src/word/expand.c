@@ -45,7 +45,7 @@ static char *join_delimited(const char *s1, char delim, const char *s2)
 	return (out);
 }
 
-static t_error resolve_path(char **path, const char *word, char **out)
+static t_error find_command_in_path_list(char **path, const char *word, char **out)
 {
 	size_t i;
 	char *candidate;
@@ -78,7 +78,7 @@ t_error path_expanded_word(const t_env *env, const char *word, char **out)
 	path = env_make_path_or_empty(env);
 	if (!path)
 		return (E_OOM);
-	err = resolve_path(path, word, out);
+	err = find_command_in_path_list(path, word, out);
 	ft_split_destroy(path);
 	return (err);
 }
