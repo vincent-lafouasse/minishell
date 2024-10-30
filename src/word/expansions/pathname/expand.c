@@ -46,8 +46,8 @@ typedef struct s_command_properties {
 
 static t_error find_command_in_path(const char *path, const char *filename, t_command_properties *out)
 {
-	const char *candidate;
 	t_file_properties p;
+	char *candidate;
 	int x_access;
 
 	candidate = join_delimited(path[i], '/', word);
