@@ -70,6 +70,22 @@ static t_error find_command_in_path_list(char **path, const char *word, char **o
 	return (E_COMMAND_NOT_FOUND);
 }
 
+static bool is_absolute_pathname(const char *word)
+{
+	return (ft_strchr(word, '/') != (char *)NULL);
+}
+
+static t_error copy_word(const char *word, char **out)
+{
+	char *dup;
+
+	dup = ft_strdup(word);
+	if (!dup)
+		return (E_OOM);
+	*out = dup;
+	return (NO_ERROR);
+}
+
 t_error path_expanded_word(const t_env *env, const char *word, char **out)
 {
 	char **path;
@@ -78,7 +94,10 @@ t_error path_expanded_word(const t_env *env, const char *word, char **out)
 	path = env_make_path_or_empty(env);
 	if (!path)
 		return (E_OOM);
-	err = find_command_in_path_list(path, word, out);
+	if (is_absolute_pathname(word))
+		err = copy_word(word, out);
+	else
+		err = find_command_in_path_list(path, word, out);
 	ft_split_destroy(path);
 	return (err);
 }
