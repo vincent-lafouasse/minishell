@@ -91,7 +91,7 @@ t_error path_expanded_word(const t_env *env, const char *word, char **out)
 	char **path;
 	t_error err;
 
-	path = env_make_path_or_empty(env);
+	path = env_make_path_or_empty(env); // bad, empty path entries should map to "." and `ft_split` ignores them
 	if (!path)
 		return (E_OOM);
 	if (is_absolute_pathname(word))
