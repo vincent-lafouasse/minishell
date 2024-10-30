@@ -56,8 +56,8 @@ static t_error find_command_in_path(const char *path, const char *filename, t_co
 	candidate = join_delimited(path[i], '/', word);
 	if (!candidate)
 		return (E_OOM);
-	r_access = access(path, R_OK);
-	x_access = access(path, X_OK);
+	r_access = access(candidate, R_OK);
+	x_access = access(candidate, X_OK);
 	if (r_access < 0 || x_access < 0)
 	{
 		free(candidate);
