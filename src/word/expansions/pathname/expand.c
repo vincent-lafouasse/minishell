@@ -61,6 +61,7 @@ static t_error find_command_in_path(const char *path, const char *filename, t_co
 		if (errno != ENOENT)
 			return (E_ACCESS);
 	}
+	p = (t_command_properties){0};
 	p.is_executable = x_access == 0;
 	p.full_path = candidate;
 	*out = p;
