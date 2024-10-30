@@ -20,7 +20,7 @@ static void ft_split_destroy(char *data[])
 	free(data);
 }
 
-char *join_delimited(const char *s1, char delim, const char *s2)
+static char *join_delimited(const char *s1, char delim, const char *s2)
 {
 	size_t	len1;
 	size_t	len2;
