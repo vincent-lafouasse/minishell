@@ -3,6 +3,7 @@
 #include "libft/ft_string.h"
 #include "libft/string.h"
 
+#include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
 
