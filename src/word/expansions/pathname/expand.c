@@ -79,10 +79,7 @@ static t_error find_command_in_path_list(char **path, const char *word, char **o
 	{
 		err = find_command_in_path(path[i], word, &candidate);
 		if (err != NO_ERROR)
-		{
-			free(command_filename);
 			return err;
-		}
 
 		if (candidate.full_path != NULL && candidate.is_executable)
 		{
