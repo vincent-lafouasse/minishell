@@ -17,6 +17,7 @@ typedef enum e_error
     E_FORK,
     E_DUP2,
     E_EXECVE,
+    E_ACCESS,
     E_DUMMY,
 } t_error;
 
