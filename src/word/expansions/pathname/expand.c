@@ -46,11 +46,11 @@ typedef struct s_command_properties {
 
 static t_error find_command_in_path(const char *path, const char *filename, t_command_properties *out)
 {
-	t_file_properties p;
 	char *candidate;
+	t_command_properties p;
 	int x_access;
 
-	candidate = join_delimited(path[i], '/', word);
+	candidate = join_delimited(path, '/', filename);
 	if (!candidate)
 		return (E_OOM);
 	x_access = access(candidate, X_OK);
@@ -61,8 +61,8 @@ static t_error find_command_in_path(const char *path, const char *filename, t_co
 		if (errno != ENOENT)
 			return (E_ACCESS);
 	}
-	p.is_executable = executable == 0;
-	p.full_filename = candidate;
+	p.is_executable = x_access == 0;
+	p.full_path = candidate;
 	*out = p;
 	return (NO_ERROR);
 }
@@ -81,14 +81,12 @@ static t_error find_command_in_path_list(char **path, const char *word, char **o
 		err = find_command_in_path(path[i], word, &candidate);
 		if (err != NO_ERROR)
 			return err;
-
 		if (candidate.full_path != NULL && candidate.is_executable)
 		{
-			command_filename = candidate.full_filename;
+			command_filename = candidate.full_path;
 			break;
 		}
-
-		free(candidate.full_filename);
+		free(candidate.full_path);
 		i++;
 	}
 	*out = command_filename;
