@@ -6,6 +6,16 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
+typedef struct s_file_properties {
+	bool exists;
+	bool is_a_directory;
+	bool is_readable;
+	bool is_executable;
+} t_file_properties;
+
 t_error perform_all_expansions_on_words(t_word_list *word)
 {
 	(void)word;
@@ -45,11 +55,30 @@ static char *join_delimited(const char *s1, char delim, const char *s2)
 	return (out);
 }
 
+static t_file_properties get_file_properties(const char *path)
+{
+	struct stat stat_info;
+	t_file_properties p;
+
+	p = (t_file_properties){.exists = false, 0};
+	if (stat(path, &stat_info) < 0)
+		return (p);
+	p.exists = true;
+	if (!S_ISDIR(stat_info.st_mode))
+	{
+		p.is_executable = access(path, X_OK) == 0;
+		p.is_readable = access(path, R_OK) == 0;
+	}
+	else
+		p.is_a_directory = true;
+	return (p);
+}
+
 static t_error find_command_in_path_list(char **path, const char *word, char **out)
 {
 	size_t i;
 	char *candidate;
-	int accessible;
+	t_file_properties properties;
 
 	i = 0;
 	*out = NULL;
@@ -58,8 +87,8 @@ static t_error find_command_in_path_list(char **path, const char *word, char **o
 		candidate = join_delimited(path[i], '/', word);
 		if (candidate == NULL)
 			return E_OOM;
-		accessible = access(candidate, X_OK); // TODO: compare with bash's error handling
-		if (accessible == 0)
+		properties = get_file_properties(candidate);
+		if (properties.exists && properties.is_executable)
 		{
 			*out = candidate;
 			return (NO_ERROR);
