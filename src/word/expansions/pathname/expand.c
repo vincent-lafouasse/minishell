@@ -49,21 +49,12 @@ static t_error find_command_in_path(const char *path, const char *filename, t_co
 {
 	char *candidate;
 	t_command_properties p;
-	int x_access;
 
 	candidate = join_delimited(path, '/', filename);
 	if (!candidate)
 		return (E_OOM);
-	x_access = access(candidate, X_OK);
-	if (x_access < 0)
-	{
-		free(candidate);
-		candidate = NULL;
-		if (errno != ENOENT)
-			return (E_ACCESS);
-	}
 	p = (t_command_properties){0};
-	p.is_executable = x_access == 0;
+	p.is_executable = access(candidate, X_OK) == 0;
 	p.full_path = candidate;
 	*out = p;
 	return (NO_ERROR);
