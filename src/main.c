@@ -17,7 +17,7 @@
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"
 
-t_error run_command(const char* input, t_state* state)
+t_error run_and_parse_command(const char* input, t_state* state)
 {
 	t_error err;
 	t_command cmd;
@@ -77,7 +77,7 @@ void run_interpreter(t_state* state)
 		input = readline(SHELL_PROMPT);
 		if (!input)
 			break; /* eof */
-		err = run_command(input, state);
+		err = run_and_parse_command(input, state);
 		free(input);
 		printf("command status: %s\n", error_repr(err));
 	}
@@ -96,7 +96,7 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	if (argc == 1)
 		run_interpreter(&state);
 	else if (argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0)
-		run_command(argv[2], &state);
+		run_and_parse_command(argv[2], &state);
 	else
 		printf("%s\n", USAGE);
 }
