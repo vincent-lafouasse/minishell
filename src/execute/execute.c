@@ -1,7 +1,6 @@
 #include "execute.h"
 #include "error/t_error.h"
 #include "execute/t_env/t_env.h"
-#include "execute/t_fd_list/t_fd_list.h"
 #include "execute/t_pid_list/t_pid_list.h"
 #include "parse/t_command/t_command.h"
 #include "io/t_redir_list/t_redir_list.h"
@@ -69,22 +68,16 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 
 		pipe(pipe_fd); // bad must check out
 
-
-		t_fd_list *fds_to_close = NULL;
-		if (fdl_push_front(&fds_to_close, pipe_fd[READ]) == E_OOM)
-			abort(); // bad
-
 		t_io current_io = io_new(ends.input, pipe_fd[WRITE]);
 		ends.input = pipe_fd[READ];
 
 		t_launch_result launch_result = launch_simple_command(state, current.pipeline->first.simple,
-													  current_io, &fds_to_close);
+													  current_io, pipe_fd[READ]);
 
 		io_close(current_io);
 
 		pidl_push_back_link(&pids_to_wait, launch_result.pids); // bad might oom
 
-		fdl_clear(&fds_to_close);
 		current = current.pipeline->second;
 	}
 	t_launch_result last = launch_simple_command(state, current.simple, ends, NULL);
@@ -94,7 +87,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	return (t_launch_result){.error = NO_ERROR, .pids = pids_to_wait};
 }
 
-t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, t_fd_list **fds_to_close)
+t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
 {
 	t_error err;
 	t_pid_list* pids = pidl_new(0);
@@ -116,7 +109,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 		return (t_launch_result){.error = NO_ERROR, .pids = pids};
 	}
 
-	fdl_close_and_clear(fds_to_close);
+	close(fd_to_close);
 
 	err = perform_all_expansions_on_words(simple->words);
 	if (err != NO_ERROR)
