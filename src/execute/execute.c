@@ -74,7 +74,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		if (fdl_push_front(&fds_to_close, pipe_fd[READ]) == E_OOM)
 			abort(); // bad
 
-		t_io current_io = (t_io){ends.input, pipe_fd[WRITE]};
+		t_io current_io = io_new(ends.input, pipe_fd[WRITE]);
 		ends.input = pipe_fd[READ];
 
 		t_launch_result launch_result = launch_simple_command(state, current.pipeline->first.simple,
