@@ -12,6 +12,7 @@
 #define COMMAND_NOT_FOUND_REPR "Command not found"
 #define FORK_REPR "Fork error"
 #define DUP2_REPR "Dup2 error"
+#define ACCESS_REPR "Access error"
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
@@ -41,5 +42,7 @@ const char *error_repr(t_error err)
         return DUP2_REPR;
     if (err == E_DUMMY)
         return DUMMY_REPR;
+    if (err == E_ACCESS)
+        return ACCESS_REPR;
     return UNKNOWN_ERROR_REPR;
 }
