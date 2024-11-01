@@ -62,13 +62,6 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	t_error err;
 	t_command cmd;
 
-	// TODO: double check that bash really does behaves like this
-	if (*input == '\0')
-	{
-		return NO_ERROR;
-	}
-	add_history(input);
-
 	err = parse(input, &cmd);
 	if (err != NO_ERROR)
 	{
@@ -88,11 +81,16 @@ void run_interpreter(t_state* state)
 		input = readline(SHELL_PROMPT);
 		if (!input)
 			break; /* eof */
+
+		// TODO: double check that bash really does behaves like this
+		if (*input != '\0')
+			add_history(input);
+
 		err = run_and_parse_command(input, state);
 		free(input);
 		printf("command status: %s\n", error_repr(err));
 	}
-	clear_history(); // BAD, it's only here bc i couldnt make it compile with rl_x - poss
+	rl_clear_history();
 }
 
 int	main(int argc, char *argv[], char *envp[]) // bad main should return last status
