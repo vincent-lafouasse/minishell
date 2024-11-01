@@ -27,7 +27,7 @@ typedef struct s_command_result {
 
 // internals
 
-t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io, t_pid_list** pids);
+t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
 t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, t_fd_list **fds_to_close);
 
 // public
