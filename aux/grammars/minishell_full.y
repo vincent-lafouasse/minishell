@@ -14,10 +14,20 @@
    ------------------------------------------------------- */
 %start program
 %%
-program          : pipeline
+program          : complete_command
                  ;
-pipeline         :              simple_command
-                 | pipeline '|' simple_command
+complete_command : pipeline
+                 | complete_command AND_IF pipeline
+                 | complete_command OR_IF  pipeline
+                 ;
+pipeline         :              command
+                 | pipeline '|' command
+                 ;
+command          : simple_command
+                 | subshell
+                 | subshell redirect_list
+                 ;
+subshell         : '(' complete_command ')'
                  ;
 simple_command   : cmd_prefix WORD cmd_suffix
                  | cmd_prefix WORD
