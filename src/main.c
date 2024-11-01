@@ -36,13 +36,11 @@ t_error run_command(t_state *state, t_command cmd, int *status_out)
 	}
 	else if (cmd.type == PIPELINE_CMD)
 	{
-		t_pid_list* pids = NULL;
-
 		t_launch_result launch_res;
-		launch_res = launch_pipeline(state, cmd.pipeline, io_default(), &pids);
+		launch_res = launch_pipeline(state, cmd.pipeline, io_default());
 		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
-		int status = wait_pipeline(pids);
+		int status = wait_pipeline(launch_res.pids);
 		res = (t_command_result){.error = NO_ERROR, .status_code = status};
 	}
 	else if (cmd.type == CONDITIONAL_CMD)
