@@ -35,31 +35,17 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, t
 		return (t_launch_result){.error = NO_ERROR, .pids = pids};
 	}
 
-	t_command inner = subshell->cmd;
-	assert (inner.type == SIMPLE_CMD);
-
 	err = do_piping(io);
 	if (err != NO_ERROR)
 		perror("dup2");
 
-	t_launch_result launch_res;
-	if (inner.type == SIMPLE_CMD)
-		launch_res = launch_simple_command(state, inner.simple, io, fds_to_close);
-	else if (inner.type == PIPELINE_CMD)
-		launch_res = launch_pipeline(state, inner.simple, io, fds_to_close);
-	else {
-		launch_res = (t_launch_result){};
-	}
-	
-
-	return launch_res;
+	t_command_result inner_res = execute_command(state, subshell->cmd);
+	exit(inner_res.status_code);
 }
 
 t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 {
 	warn_non_empty_redirs(subshell);
-	t_command inner = subshell->cmd;
-	assert (inner.type == SIMPLE_CMD);
 
 	t_launch_result launch_result = launch_subshell(state, subshell, io_default(), NULL);
 	if (launch_result.error != NO_ERROR) {
