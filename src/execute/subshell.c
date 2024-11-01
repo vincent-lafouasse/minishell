@@ -39,7 +39,7 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, t
 	if (err != NO_ERROR)
 		perror("dup2");
 
-	t_command_result inner_res = execute_command(state, subshell->cmd);
+	t_command_result inner_res = execute_command(state, subshell->cmd); // bad should take in `fds_to_close`
 	exit(inner_res.status_code);
 }
 
