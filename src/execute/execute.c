@@ -7,6 +7,7 @@
 #include "io/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
 #include "word/word.h"
+#include "log/log.h" // bad, remove in prod
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -141,4 +142,42 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	execve(command_path, argv, envp);
 
 	graceful_exit_from_child();
+}
+
+t_command_result execute_command(t_state *state, t_command command) {
+
+	t_command_result res;
+
+	if (command.type == SIMPLE_CMD)
+	{
+		t_launch_result launch_res;
+		launch_res = launch_simple_command(state, command.simple, io_default(), NULL);
+		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
+
+		int status;
+		int options = 0;
+		assert(launch_res.pids != NULL);
+		waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
+		res = (t_command_result){.error = NO_ERROR, .status_code = status}; // bad, might err
+	}
+	else if (command.type == PIPELINE_CMD)
+	{
+		t_pid_list* pids = NULL;
+
+		t_launch_result launch_res;
+		launch_res = launch_pipeline(state, command.pipeline, io_default(), &pids);
+		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
+
+		int status = wait_pipeline(pids);
+		res = (t_command_result){.error = NO_ERROR, .status_code = status};
+	}
+	else if (command.type == CONDITIONAL_CMD)
+		res = execute_conditional(state, command.conditional);
+	else if (command.type == SUBSHELL_CMD)
+		res = execute_subshell(state, command.subshell);
+
+	if (res.error != NO_ERROR)
+		log_error(res.error);
+
+	return res;
 }
