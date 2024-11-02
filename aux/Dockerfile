@@ -1,7 +1,7 @@
 # usage:
-# move Dockerfile to root of minishell
-# `docker build -t minishell_image .` once
-# `docker run --rm -it minishell_image bash` whenever
+# `docker build -t $NAME .` once
+# `docker run --rm -it $NAME bash` whenever
+# name it as you please
 
 FROM alpine:latest
 
