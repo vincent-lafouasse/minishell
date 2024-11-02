@@ -14,6 +14,8 @@
 #include <sys/wait.h>
 #include <assert.h> // bad
 
+#define CLOSE_NOTHING -1
+
 #define READ 0
 #define WRITE 1
 
@@ -80,7 +82,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 
 		current = current.pipeline->second;
 	}
-	t_launch_result last = launch_simple_command(state, current.simple, ends, -1);
+	t_launch_result last = launch_simple_command(state, current.simple, ends, CLOSE_NOTHING);
 	io_close(ends);
 
 	pidl_push_back_link(&pids_to_wait, last.pids); // bad may oom
@@ -109,7 +111,8 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 		return (t_launch_result){.error = NO_ERROR, .pids = pids};
 	}
 
-	close(fd_to_close);
+	if (fd_to_close != CLOSE_NOTHING)
+		close(fd_to_close);
 
 	err = perform_all_expansions_on_words(simple->words);
 	if (err != NO_ERROR)
