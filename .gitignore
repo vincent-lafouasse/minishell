@@ -4,7 +4,6 @@ build/
 Testing
 target
 .vscode
-Dockerfile
 
 minishell
 local*
