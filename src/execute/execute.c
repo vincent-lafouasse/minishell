@@ -80,7 +80,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 
 		current = current.pipeline->second;
 	}
-	t_launch_result last = launch_simple_command(state, current.simple, ends, NULL);
+	t_launch_result last = launch_simple_command(state, current.simple, ends, -1);
 	io_close(ends);
 
 	pidl_push_back_link(&pids_to_wait, last.pids); // bad may oom
