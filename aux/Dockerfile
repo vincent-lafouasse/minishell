@@ -11,6 +11,6 @@ RUN apk update && apk upgrade \
     && apk add build-base git make cmake \
     && apk add clang lldb \
     && apk add gcc gdb \
-    && apk add valgrind \
+    && apk add valgrind strace \
     && apk add readline-dev \
     && git clone https://github.com/vincent-lafouasse/minishell.git
