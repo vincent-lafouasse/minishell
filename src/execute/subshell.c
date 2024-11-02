@@ -14,7 +14,6 @@ static void warn_non_empty_redirs(const t_subshell* s) {
 }
 
 t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {
-	warn_non_empty_redirs(subshell);
 	t_error err;
 	t_pid_list* pids = pidl_new(0);
 	if (pids == NULL)
@@ -39,6 +38,8 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, i
 	if (err != NO_ERROR)
 		perror("dup2");
 
+	warn_non_empty_redirs(subshell);
+
 	close(fd_to_close); // bad (?) may be passed to `execute_command`
 
 	t_command_result inner_res = execute_command(state, subshell->cmd);
@@ -47,8 +48,6 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, i
 
 t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 {
-	warn_non_empty_redirs(subshell);
-
 	t_launch_result launch_result = launch_subshell(state, subshell, io_default(), NULL);
 	if (launch_result.error != NO_ERROR) {
 		return (t_command_result){.error = launch_result.error};
