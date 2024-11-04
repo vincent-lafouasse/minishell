@@ -10,7 +10,7 @@ const t_env_entry	*env_get(const t_env *env, const char *key)
 {
 	t_env *node;
 
-	node = env_find_node(env, key);
+	node = env_find_node((t_env*)env, key);
 	if (!node)
 		return NULL;
 	return (&node->entry);
