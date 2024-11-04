@@ -43,8 +43,8 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, i
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close); // bad (?) may be passed to `execute_command` // bad may err
 
-	t_command_result inner_res = execute_command(state, subshell->cmd);
-	exit(inner_res.status_code);
+	t_command_result inner_res = execute_command(state, subshell->cmd); // bad?, log err ?
+	exit(inner_res.status_code); // bad. dont know what status to return yet
 }
 
 t_command_result execute_subshell(t_state *state, t_subshell *subshell)
