@@ -74,7 +74,7 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 	root = conditional_new(data.operators[0], data.commands[0],
 			data.commands[1]);
 	if (!root)
-		return (E_OOM);
+		return (destroy_cond_data(data, 0), E_OOM);
 	i = 1;
 	while (i < data.n)
 	{
@@ -84,7 +84,7 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 		if (!new_root)
 		{
 			*out = root;
-			return (E_OOM);
+			return (destroy_cond_data(data, i), E_OOM);
 		}
 		root = new_root;
 		++i;
