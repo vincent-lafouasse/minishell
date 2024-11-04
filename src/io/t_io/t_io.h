@@ -4,7 +4,6 @@
 # include "error/t_error.h"
 
 #define DO_NOT_PIPE -1
-#define NO_WAIT 0
 
 typedef struct s_io {
 	int input;

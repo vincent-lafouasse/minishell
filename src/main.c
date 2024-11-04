@@ -18,43 +18,6 @@
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"
 
-t_error run_command(t_state *state, t_command cmd, int *status_out)
-{
-	t_command_result res;
-
-	if (cmd.type == SIMPLE_CMD)
-	{
-		t_launch_result launch_res;
-		launch_res = launch_simple_command(state, cmd.simple, io_default(), NULL);
-		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
-
-		int status;
-		int options = 0;
-		if (launch_res.pids != NULL)
-			waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
-		res = (t_command_result){.error = NO_ERROR, .status_code = status};
-	}
-	else if (cmd.type == PIPELINE_CMD)
-	{
-		t_launch_result launch_res;
-		launch_res = launch_pipeline(state, cmd.pipeline, io_default());
-		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
-
-		int status = wait_pipeline(launch_res.pids);
-		res = (t_command_result){.error = NO_ERROR, .status_code = status};
-	}
-	else if (cmd.type == CONDITIONAL_CMD)
-		res = execute_conditional(state, cmd.conditional);
-	else if (cmd.type == SUBSHELL_CMD)
-		res = execute_subshell(state, cmd.subshell);
-
-	if (res.error != NO_ERROR)
-		log_error(res.error);
-
-	*status_out = res.status_code;
-	return (NO_ERROR);
-}
-
 t_error run_and_parse_command(const char* input, t_state* state)
 {
 	t_error err;
@@ -66,7 +29,14 @@ t_error run_and_parse_command(const char* input, t_state* state)
 		return err;
 	}
 
-	return run_command(state, cmd, &state->last_status);
+	t_command_result res = execute_command(state, cmd); // bad, should probablue check err value maybe
+	/*
+	switch (res.error) {
+		// status_code = whatever
+	}
+	*/
+	state->last_status = res.status_code;
+	return res.error;
 }
 
 void run_interpreter(t_state* state)
