@@ -19,8 +19,6 @@ static void					destroy_cond_data(t_cond_data* data, size_t start) {
 	for (size_t i = start; i < data->n; i++) {
 		command_destroy(data->commands[i]);
 	}
-	free(data->commands);
-	free(data->operators);
 }
 
 t_error	invert_conditional_associativity(t_conditional **out)
