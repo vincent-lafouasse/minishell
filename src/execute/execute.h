@@ -7,6 +7,8 @@
 #include "parse/t_command/t_command.h"
 #include "io/t_io/t_io.h"
 
+#define CLOSE_NOTHING -1
+
 typedef struct s_state {
 	t_env *env;
 	t_command root;
@@ -28,6 +30,7 @@ typedef struct s_command_result {
 
 t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
 t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close);
+t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close);
 
 // public
 

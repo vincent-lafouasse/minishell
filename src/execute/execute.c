@@ -14,8 +14,6 @@
 #include <sys/wait.h>
 #include <assert.h> // bad
 
-#define CLOSE_NOTHING -1
-
 #define READ 0
 #define WRITE 1
 
@@ -56,6 +54,17 @@ int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
 	return (status);
 }
 
+// either simple or subshell or maybe builtin
+t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
+	assert(command.type == SIMPLE_CMD || command.type == SUBSHELL_CMD);
+
+	if (command.type == SIMPLE_CMD)
+		return launch_simple_command(state, command.simple, io, fd_to_close);
+	else // subshell
+		return launch_subshell(state, command.subshell, io, fd_to_close);
+
+}
+
 t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 {
 	t_command current;
@@ -66,14 +75,12 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	{
 		pid_t pipe_fd[2];
 
-		assert (current.pipeline->first.type == SIMPLE_CMD);
-
 		pipe(pipe_fd); // bad must check out
 
 		t_io current_io = io_new(ends.input, pipe_fd[WRITE]);
 		ends.input = pipe_fd[READ];
 
-		t_launch_result launch_result = launch_simple_command(state, current.pipeline->first.simple,
+		t_launch_result launch_result = launch_pipeline_inner(state, current.pipeline->first,
 													  current_io, pipe_fd[READ]);
 
 		io_close(current_io);
@@ -82,7 +89,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 
 		current = current.pipeline->second;
 	}
-	t_launch_result last = launch_simple_command(state, current.simple, ends, CLOSE_NOTHING);
+	t_launch_result last = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING);
 	io_close(ends);
 
 	pidl_push_back_link(&pids_to_wait, last.pids); // bad may oom
@@ -148,7 +155,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 	if (command.type == SIMPLE_CMD)
 	{
 		t_launch_result launch_res;
-		launch_res = launch_simple_command(state, command.simple, io_default(), NULL);
+		launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
 		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
 		int status;
@@ -170,9 +177,11 @@ t_command_result execute_command(t_state *state, t_command command) {
 		res = execute_conditional(state, command.conditional);
 	else if (command.type == SUBSHELL_CMD)
 		res = execute_subshell(state, command.subshell);
+	else
+		assert(!"unknown command type");
 
 	if (res.error != NO_ERROR)
-		log_error(res.error);
+		printf("err : %d\n",res.error);
 
 	return res;
 }

@@ -40,7 +40,8 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, i
 
 	warn_non_empty_redirs(subshell);
 
-	close(fd_to_close); // bad (?) may be passed to `execute_command`
+	if (fd_to_close != CLOSE_NOTHING)
+		close(fd_to_close); // bad (?) may be passed to `execute_command` // bad may err
 
 	t_command_result inner_res = execute_command(state, subshell->cmd);
 	exit(inner_res.status_code);
@@ -48,7 +49,7 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, i
 
 t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 {
-	t_launch_result launch_result = launch_subshell(state, subshell, io_default(), NULL);
+	t_launch_result launch_result = launch_subshell(state, subshell, io_default(), CLOSE_NOTHING);
 	if (launch_result.error != NO_ERROR) {
 		return (t_command_result){.error = launch_result.error};
 	}
