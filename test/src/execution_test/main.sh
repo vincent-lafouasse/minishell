@@ -1,4 +1,5 @@
 root_dir=~/code/42/cc/minishell
+minishell="${root_dir}/minishell"
 src_dir="${root_dir}/test/src/execution_test"
 
 setup () {
@@ -8,6 +9,11 @@ setup () {
 		echo Error: couldnt build minishell
 		exit 1
 	fi
+}
+
+
+test () {
+	input="$1"
 }
 
 main () {
