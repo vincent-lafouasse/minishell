@@ -35,3 +35,5 @@ add_test(NAME LexerTest
          COMMAND lexer_test)
 add_test(NAME ParserTest
          COMMAND parser_test)
+add_test(NAME ExecutionTest
+         COMMAND bash ${CMAKE_CURRENT_SOURCE_DIR}/src/execution_test/main.sh)
