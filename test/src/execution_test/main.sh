@@ -18,6 +18,7 @@ test () {
 
 main () {
 	setup
+	test "echo hello"
 }
 
 main
