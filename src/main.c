@@ -14,6 +14,7 @@
 #include "parse/parse.h"
 #include "libft/string.h"
 #include "parse/t_command/t_command.h"
+#include "signal/signal.h"
 
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"
@@ -46,9 +47,11 @@ void run_interpreter(t_state* state)
 
 	while (1)
 	{
+		install_interactive_handlers();
 		input = readline(SHELL_PROMPT);
 		if (!input)
 			break; /* eof */
+		//install_execution_handlers();
 
 		// TODO: double check that bash really does behaves like this
 		if (*input != '\0')
