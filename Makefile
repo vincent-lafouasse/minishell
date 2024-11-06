@@ -95,7 +95,7 @@ update: fclean
 	bear  --output build/compile_commands.json -- make build
 
 # aliases
-.PHONY: b c u r rm t vt
+.PHONY: b c u r rm t vt xt
 b: build
 c: clean
 u: update
@@ -103,5 +103,6 @@ r: run
 rm: run_memcheck
 t: test
 vt: vtest
+xt: exec_test
 
 -include $(DEPS)
