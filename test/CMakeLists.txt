@@ -40,4 +40,4 @@ set(exec_test_root ${CMAKE_CURRENT_SOURCE_DIR}/src/execution_test)
 set(bats ${exec_test_root}/bats/bin/bats)
 set(exec_test_main ${exec_test_root}/main.bats)
 add_test(NAME ExecutionTest
-         COMMAND ${bats} ${exec_test_main})
+         COMMAND ${bats} --formatter pretty ${exec_test_main})
