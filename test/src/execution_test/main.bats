@@ -18,7 +18,7 @@ setup() {
 @test "hello world" {
     command="echo hello world"
     bash_output="$(bash -c "${command[@]}")"
-    run -$? bash -c "$minishell -c $command"
+    run -$? bash -c "$minishell -c \"$command\""
     assert_output "$bash_output"
 }
 
