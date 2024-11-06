@@ -1,1 +1,3 @@
 aux/treant/** linguist-vendored
+test/src/execution_test/bats/** linguist-vendored
+test/src/execution_test/bats-extension/** linguist-vendored
