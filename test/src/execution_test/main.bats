@@ -10,3 +10,9 @@ setup() {
 @test "can build minishell" {
     make -C "$root_dir"
 }
+
+@test "hello world" {
+    input="echo hello world"
+    run "${minishell}" -c "$input"
+    assert_output "$(bash -c "$input")"
+}
