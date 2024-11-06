@@ -22,13 +22,13 @@ teardown() {
 @test "hello world" {
     input="echo hello world"
     bash_output="$(bash -c "$input")"
-    run -$? "$minishell" -c "$input"
+    run -$? bash -c "$minishell -c $input"
     assert_output "$bash_output"
 }
 
 @test "command not found" {
     input="i_sure_hope_this_command_doesnt_exist"
     bash_output="$(bash -c "$input")"
-    run -$? "$minishell" -c "$input" # run -127
+    run -$? bash -c "$minishell -c $input" # run -127
     assert_output --partial 'command not found'
 }
