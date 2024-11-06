@@ -58,7 +58,7 @@ void run_interpreter(t_state* state)
 		free(input);
 		printf("command status: %s\n", error_repr(err));
 	}
-	rl_clear_history();
+	clear_history();
 }
 
 int	main(int argc, char *argv[], char *envp[]) // bad main should return last status
