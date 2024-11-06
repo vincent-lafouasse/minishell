@@ -11,10 +11,6 @@ setup() {
     mkdir -p "$build_dir"
 }
 
-teardown() {
-    rm -rf "$build_dir"
-}
-
 @test "can build minishell" {
     make -C "$root_dir"
 }
