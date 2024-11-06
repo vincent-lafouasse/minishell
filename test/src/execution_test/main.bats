@@ -7,6 +7,12 @@ setup() {
     DIR="$(cd "$(dirname "$BATS_TEST_FILENAME")" >/dev/null 2>&1 && pwd)"
     root_dir="${DIR}/../../.."
     minishell="${root_dir}/minishell"
+    build_dir="${root_dir}/build"
+    mkdir -p "$build_dir"
+}
+
+teardown() {
+    rm -rf "$build_dir"
 }
 
 @test "can build minishell" {
