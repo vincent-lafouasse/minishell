@@ -6,6 +6,7 @@
 #include "io/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
 #include "word/expansions/expand.h"
+#include "signal/signal.h"
 #include "log/log.h" // bad, remove in prod
 
 
@@ -140,6 +141,11 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 									// if the command could not be found or if
 									// we don't have execution permissions to
 									// the candiate executable, respectively
+
+	// temporarily? where exactly in the code should signal handlers be reset?
+	// what happens if we've caught one up until this point? exit(128 + signal)?
+	// what about inside of built-in functions?
+	reset_signal_handlers();
 
 	char** argv = wl_into_word_array(&simple->words);
 	char** envp = env_make_envp(state->env);
