@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PATTERNS=(bad dummy hack todo temporarily '#include <assert.h>')
+PATTERNS=(bad xxx dummy hack todo temporarily '#include <assert.h>')
 
 for pattern in "${PATTERNS[@]}"; do
 	grep --recursive --ignore-case "${pattern}" ./src/
