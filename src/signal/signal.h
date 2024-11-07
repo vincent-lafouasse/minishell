@@ -11,6 +11,6 @@ void reset_signal_handlers(void);
 // internal
 
 void install_noop_rl_event_hook(void);
-void reject_readline_current_line(void);
+void save_interrupt_and_reject_line(int signal);
 
 #endif // SIGNAL_H

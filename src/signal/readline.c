@@ -14,7 +14,13 @@ void install_noop_rl_event_hook(void)
 	rl_event_hook = do_nothing;
 }
 
-void reject_readline_current_line(void)
+static void reject_readline_current_line(void)
 {
 	rl_done = 1;
+}
+
+void save_interrupt_and_reject_line(int signal)
+{
+	last_signal = signal;
+	reject_readline_current_line();
 }
