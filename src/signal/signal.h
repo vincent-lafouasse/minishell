@@ -7,7 +7,6 @@ extern sig_atomic_t last_signal;
 
 void install_interactive_handlers(void);
 void reset_signal_handlers(void);
-void save_signal(int signal);
 
 // internal
 

@@ -4,14 +4,9 @@
 
 sig_atomic_t last_signal = 0;
 
-void save_signal(int signal)
-{
-	last_signal = signal;
-}
-
 static void catch_sigint(int signal)
 {
-	save_signal(signal);
+	last_signal = signal;
 	reject_readline_current_line();
 }
 
