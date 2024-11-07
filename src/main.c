@@ -40,6 +40,15 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	return res.error;
 }
 
+void truncate_to_one_line_if_necessary(char *input)
+{
+	char *line_break;
+
+	line_break = ft_strchr(input, '\n');
+	if (line_break)
+		*line_break = '\0';
+}
+
 char *read_a_line(void)
 {
 	char *input;
@@ -61,6 +70,7 @@ char *read_a_line(void)
 	if (*input != '\0')
 		add_history(input);
 
+	truncate_to_one_line_if_necessary(input);
 	last_signal = old_last_signal;
 	return (input);
 }
