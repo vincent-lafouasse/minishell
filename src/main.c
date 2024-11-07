@@ -93,6 +93,7 @@ void run_interpreter(t_state* state)
 		printf("command status: %s\n", error_repr(err));
 	}
 	rl_clear_history();
+	// TODO: call `exit` builtin on Ctrl-D
 }
 
 int	main(int argc, char *argv[], char *envp[]) // bad main should return last status
