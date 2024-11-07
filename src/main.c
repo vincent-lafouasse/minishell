@@ -40,6 +40,31 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	return res.error;
 }
 
+char *read_a_line(void)
+{
+	char *input;
+	int old_last_signal; // XXX is this necessary?
+
+	old_last_signal = last_signal;
+	while (1)
+	{
+		last_signal = 0;
+		input = readline(SHELL_PROMPT);
+		if (input == NULL)
+			return (NULL);
+		if (last_signal != SIGINT)
+			break;
+		free(input); /* we've caught a C-c signal; repeat */
+	}
+
+	// TODO: double check that bash really does behaves like this
+	if (*input != '\0')
+		add_history(input);
+
+	last_signal = old_last_signal;
+	return (input);
+}
+
 void run_interpreter(t_state* state)
 {
 	char		*input;
@@ -48,14 +73,10 @@ void run_interpreter(t_state* state)
 	while (1)
 	{
 		install_interactive_handlers();
-		input = readline(SHELL_PROMPT);
+		input = read_a_line();
 		if (!input)
-			break; /* eof */
+			break; /* eof or read error */
 		//install_execution_handlers();
-
-		// TODO: double check that bash really does behaves like this
-		if (*input != '\0')
-			add_history(input);
 
 		err = run_and_parse_command(input, state);
 		free(input);
