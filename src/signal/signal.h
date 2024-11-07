@@ -5,6 +5,13 @@
 
 extern sig_atomic_t last_signal;
 
-void install_interactive_handlers();
+void install_interactive_handlers(void);
+void reset_signal_handlers(void);
+void save_signal(int signal);
+
+// internal
+
+void install_noop_rl_event_hook(void);
+void reject_readline_current_line(void);
 
 #endif // SIGNAL_H
