@@ -68,9 +68,8 @@ vtest: CTEST_OPT += -V
 vtest: test
 
 .PHONY: exec_test
-exec_test:
-	cmake -DCMAKE_BUILD_TYPE=DEBUG -S test -B build/test
-	GTEST_COLOR=1 ctest --test-dir build/test -R ExecutionTest -V
+exec_test: build
+	pytest --verbose test/src/execution_test/main.py
 
 
 .PHONY: test_libft
