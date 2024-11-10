@@ -36,8 +36,8 @@ class SimpleCommand(unittest.TestCase):
     def test_ls(self):
         command = "ls -la"
         input = None
-        runner = CommandRunner(command, input)
 
+        runner = CommandRunner(command, input)
         res_bash = runner.run(BASH)
         res_minishell = runner.run(MINISHELL)
         self.assertEqual(res_bash.returncode, res_minishell.returncode)
