@@ -40,6 +40,17 @@ class SimpleCommand(unittest.TestCase):
         self.assertEqual(res_bash.stdout, res_minishell.stdout)
         self.assertEqual(res_bash.stderr, res_minishell.stderr)
 
+    def test_cat_stdin(self):
+        command = "cat -e"
+        input = "i'm writing in stdin"
+
+        runner = CommandRunner(command, input)
+        res_bash = runner.run(CommandRunner.BASH)
+        res_minishell = runner.run(CommandRunner.MINISHELL)
+        self.assertEqual(res_bash.returncode, res_minishell.returncode)
+        self.assertEqual(res_bash.stdout, res_minishell.stdout)
+        self.assertEqual(res_bash.stderr, res_minishell.stderr)
+
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(verbosity=2)
