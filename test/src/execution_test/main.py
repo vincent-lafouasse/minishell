@@ -15,6 +15,7 @@ class CommandRunner:
         return res
 
 
-cmd = CommandRunner("ls -la")
+input = "ls -a"
+cmd = CommandRunner(input)
 res = cmd.run()
 print(res)
