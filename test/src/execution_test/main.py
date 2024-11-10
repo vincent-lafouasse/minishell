@@ -41,7 +41,7 @@ class TestDemonstration:
         assert res_bash.stdout == res_minishell.stdout
         assert res_bash.stderr == res_minishell.stderr
 
-    def test_cat_stdin(self):
+    def test_receive_stdin(self):
         command = "cat -e"
         input = "i'm writing in stdin"
         env = os.environ
@@ -53,7 +53,7 @@ class TestDemonstration:
         assert res_bash.stdout == res_minishell.stdout
         assert res_bash.stderr == res_minishell.stderr
 
-    def test_echo_env(self):
+    def test_mutate_env(self):
         command = "echo $COOL_NUMBER"
         input = None
         env = os.environ
