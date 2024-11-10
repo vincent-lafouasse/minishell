@@ -41,6 +41,8 @@ class SimpleCommand(unittest.TestCase):
         res_bash = runner.run(BASH)
         res_minishell = runner.run(MINISHELL)
         self.assertEqual(res_bash.returncode, res_minishell.returncode)
+        self.assertEqual(res_bash.stdout, res_minishell.stdout)
+        self.assertEqual(res_bash.stderr, res_minishell.stderr)
 
 
 if __name__ == "__main__":
