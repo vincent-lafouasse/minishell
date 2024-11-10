@@ -120,28 +120,50 @@ static t_error	read_in_here_document(const char *raw_delimiter, char **document_
 	return (err);
 }
 
+static t_error	read_here_documents_in_rdl(t_redir_list *rdl)
+{
+	t_here_doc *current_doc;
+	t_error err;
+	char *document;
+
+	while (rdl)
+	{
+		if (rdl->redirect.kind == HERE_DOCUMENT)
+		{
+			current_doc = &rdl->redirect.doc;
+			err = read_in_here_document(current_doc->here_doc_eof, &document);
+			if (err != NO_ERROR)
+				return err;
+			current_doc->contents = document;
+		}
+		rdl = rdl->next;
+	}
+	return (NO_ERROR);
+}
+
 #include <assert.h>
 
 t_error	gather_here_documents(t_command cmd)
 {
-	char *contents;
 	t_simple *simple;
-	t_here_doc doc;
 	t_error err;
+	t_here_doc doc;
 
 	assert(cmd.type == SIMPLE_CMD);
 
 	simple = cmd.simple;
 
-	assert(simple->redirections != NULL);
-	assert(simple->redirections->next == NULL);
-	assert(simple->redirections->redirect.kind == HERE_DOCUMENT);
+	err = read_here_documents_in_rdl(simple->redirections);
 
-	doc = simple->redirections->redirect.doc;
-	err = read_in_here_document(doc.here_doc_eof, &contents);
-	if (err != NO_ERROR)
-		return err;
-	doc.contents = contents;
-	printf("here document contents: %s\n", doc.contents);
+	if (err == NO_ERROR)
+	{
+		for (t_redir_list *curr = simple->redirections; curr != NULL; curr = curr->next)
+		{
+			if (curr->redirect.kind != HERE_DOCUMENT)
+				continue;
+			doc = curr->redirect.doc;
+			printf("here document contents: %s\n", doc.contents);
+		}
+	}
 	return err;
 }
