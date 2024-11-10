@@ -20,9 +20,11 @@ class CommandRunner:
         return res
 
 
-command = "grep f"
+command = "cat | cat | cat | tac"
 input = "one\ntwo\nthree\nfour\nfive\nsix\n"
 cmd = CommandRunner(command)
 cmd.with_input(input)
 res = cmd.run()
 print(res)
+print("output:")
+print(res.stdout)
