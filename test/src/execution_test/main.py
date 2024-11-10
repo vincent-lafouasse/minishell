@@ -1,10 +1,22 @@
 import subprocess
 import os
 
+MINISHELL = 0
+BASH = 1
+
+
+def unreachable():
+    pass
+
 
 class CommandRunner:
-    def __init__(self, command: str):
-        self.command = command
+    def __init__(self, command: str, shell):
+        if shell == MINISHELL:
+            self.command = f'~/code/42/cc/minishell/minishell -c "{command}"'
+        elif shell == BASH:
+            self.command = command
+        else:
+            unreachable()
         self.env = os.environ
         self.input = None
 
@@ -23,9 +35,11 @@ class CommandRunner:
 command = "echo $HOME"
 input = None
 
-cmd = CommandRunner(command)
+# command = "grep f"; input = "one\ntwo\nthree\nfour\nfive\nsix\n"
+
+cmd = CommandRunner(command, MINISHELL)
 cmd.input = input
-cmd.env["HOME"] = "420"
+# cmd.env["HOME"] = "420"
 res = cmd.run()
 
 print(res)
