@@ -1,13 +1,12 @@
 import subprocess
+import os
 
 
 class CommandRunner:
     def __init__(self, command: str):
         self.command = command
+        self.env = os.environ
         self.input = None
-
-    def with_input(self, input: str):
-        self.input = input
 
     def run(self) -> subprocess.CompletedProcess:
         res = subprocess.run(
@@ -16,15 +15,19 @@ class CommandRunner:
             capture_output=True,
             shell=True,
             text=True,
+            env=self.env,
         )
         return res
 
 
-command = "cat | cat | cat | tac"
-input = "one\ntwo\nthree\nfour\nfive\nsix\n"
+command = "echo $HOME"
+input = None
+
 cmd = CommandRunner(command)
-cmd.with_input(input)
+cmd.input = input
+cmd.env["HOME"] = "420"
 res = cmd.run()
+
 print(res)
 print("output:")
 print(res.stdout)
