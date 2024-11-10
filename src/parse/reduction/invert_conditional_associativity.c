@@ -7,14 +7,19 @@ typedef struct s_cond_data
 {
 	t_command				*commands;
 	t_conditional_operator	*operators;
-	size_t					n;
+	size_t					connector_count;
 }							t_cond_data;
 
 static t_cond_data			gather_data_and_free(t_conditional *cond);
 static t_error				reconstruct_conditional_command(t_cond_data data,
 								t_conditional **out);
-static t_cond_data			cond_data_allocate(size_t n);
+static t_cond_data			cond_data_allocate(size_t connector_count);
 static size_t				n_connectors(const t_conditional *cond);
+static void					destroy_cond_data(t_cond_data data, size_t start) {
+	for (size_t i = start; i < data.connector_count; i++) {
+		command_destroy(data.commands[i]);
+	}
+}
 
 t_error	invert_conditional_associativity(t_conditional **out)
 {
@@ -22,7 +27,7 @@ t_error	invert_conditional_associativity(t_conditional **out)
 	t_error err;
 
 	data = gather_data_and_free(*out);
-	if (data.n == 0)
+	if (data.connector_count == 0)
 		return (E_OOM);
 	err = reconstruct_conditional_command(data, out);
 	free(data.commands);
@@ -39,7 +44,7 @@ static t_cond_data	gather_data_and_free(t_conditional *cond)
 
 	n = n_connectors(cond);
 	data = cond_data_allocate(n);
-	if (data.n == 0)
+	if (data.connector_count == 0)
 		return ((t_cond_data){0});
 	i = 0;
 	while (cond->second.type == CONDITIONAL_CMD)
@@ -69,9 +74,9 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 	root = conditional_new(data.operators[0], data.commands[0],
 			data.commands[1]);
 	if (!root)
-		return (E_OOM);
+		return (destroy_cond_data(data, 0), E_OOM);
 	i = 1;
-	while (i < data.n)
+	while (i < data.connector_count)
 	{
 		lhs = command_from_conditional(root);
 		new_root = conditional_new(data.operators[i], lhs, data.commands[i
@@ -79,7 +84,7 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 		if (!new_root)
 		{
 			*out = root;
-			return (E_OOM);
+			return (destroy_cond_data(data, i), E_OOM);
 		}
 		root = new_root;
 		++i;
@@ -88,13 +93,13 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 	return (NO_ERROR);
 }
 
-static t_cond_data	cond_data_allocate(size_t n)
+static t_cond_data	cond_data_allocate(size_t connector_count)
 {
 	t_command				*commands;
 	t_conditional_operator	*operators;
 
-	commands = ft_calloc(n + 1, sizeof(*commands));
-	operators = ft_calloc(n, sizeof(*operators));
+	commands = ft_calloc(connector_count + 1, sizeof(*commands));
+	operators = ft_calloc(connector_count, sizeof(*operators));
 	if (commands == NULL || operators == NULL)
 	{
 		free(commands);
@@ -102,7 +107,7 @@ static t_cond_data	cond_data_allocate(size_t n)
 		return ((t_cond_data){0});
 	}
 	return ((t_cond_data){.commands = commands, .operators = operators,
-		.n = n});
+		.connector_count = connector_count});
 }
 
 static size_t	n_connectors(const t_conditional *cond)
