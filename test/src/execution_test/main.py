@@ -1,3 +1,3 @@
 import subprocess
 
-subprocess.run("ls -la")
+subprocess.run("ls -la", shell=True)
