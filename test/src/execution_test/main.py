@@ -28,7 +28,7 @@ class CommandRunner:
         return res
 
 
-class Demonstration(unittest.TestCase):
+class TestDemonstration:
     def test_ls(self):
         command = "ls -la"
         input = None
@@ -37,9 +37,9 @@ class Demonstration(unittest.TestCase):
         runner = CommandRunner(command, input, env)
         res_bash = runner.run(CommandRunner.BASH)
         res_minishell = runner.run(CommandRunner.MINISHELL)
-        self.assertEqual(res_bash.returncode, res_minishell.returncode)
-        self.assertEqual(res_bash.stdout, res_minishell.stdout)
-        self.assertEqual(res_bash.stderr, res_minishell.stderr)
+        assert res_bash.returncode == res_minishell.returncode
+        assert res_bash.stdout == res_minishell.stdout
+        assert res_bash.stderr == res_minishell.stderr
 
     def test_cat_stdin(self):
         command = "cat -e"
@@ -49,9 +49,9 @@ class Demonstration(unittest.TestCase):
         runner = CommandRunner(command, input, env)
         res_bash = runner.run(CommandRunner.BASH)
         res_minishell = runner.run(CommandRunner.MINISHELL)
-        self.assertEqual(res_bash.returncode, res_minishell.returncode)
-        self.assertEqual(res_bash.stdout, res_minishell.stdout)
-        self.assertEqual(res_bash.stderr, res_minishell.stderr)
+        assert res_bash.returncode == res_minishell.returncode
+        assert res_bash.stdout == res_minishell.stdout
+        assert res_bash.stderr == res_minishell.stderr
 
     def test_echo_env(self):
         command = "echo $COOL_NUMBER"
@@ -62,21 +62,22 @@ class Demonstration(unittest.TestCase):
         runner = CommandRunner(command, input, env)
         res_bash = runner.run(CommandRunner.BASH)
         res_minishell = runner.run(CommandRunner.MINISHELL)
-        self.assertEqual(res_bash.returncode, res_minishell.returncode)
-        self.assertEqual(res_bash.stdout, res_minishell.stdout)
-        self.assertEqual(res_bash.stderr, res_minishell.stderr)
+        assert res_bash.returncode == res_minishell.returncode
+        assert res_bash.stdout == res_minishell.stdout
+        assert res_bash.stderr == res_minishell.stderr
 
     def test_heredoc(self):
-        command = "cat"
-        input = "one\ntwo"
+        # should not pass ???????
+        command = "cat << EOF"
+        input = "one\ntwo\nEOF\n"
         env = os.environ
 
         runner = CommandRunner(command, input, env)
         res_bash = runner.run(CommandRunner.BASH)
         res_minishell = runner.run(CommandRunner.MINISHELL)
-        self.assertEqual(res_bash.returncode, res_minishell.returncode)
-        self.assertEqual(res_bash.stdout, res_minishell.stdout)
-        self.assertEqual(res_bash.stderr, res_minishell.stderr)
+        assert res_bash.returncode == res_minishell.returncode
+        assert res_bash.stdout == res_minishell.stdout
+        assert res_bash.stderr == res_minishell.stderr
 
 
 if __name__ == "__main__":
