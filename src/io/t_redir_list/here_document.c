@@ -135,35 +135,39 @@ static t_error	read_here_documents_in_rdl(t_redir_list *rdl)
 			if (err != NO_ERROR)
 				return err;
 			current_doc->contents = document;
+			printf("here document (%s) contents: %s\n", current_doc->here_doc_eof, document);
 		}
 		rdl = rdl->next;
 	}
 	return (NO_ERROR);
 }
 
-#include <assert.h>
-
 t_error	gather_here_documents(t_command cmd)
 {
-	t_simple *simple;
 	t_error err;
-	t_here_doc doc;
 
-	assert(cmd.type == SIMPLE_CMD);
-
-	simple = cmd.simple;
-
-	err = read_here_documents_in_rdl(simple->redirections);
-
-	if (err == NO_ERROR)
+	if (cmd.type == SIMPLE_CMD)
+		return read_here_documents_in_rdl(cmd.simple->redirections);
+	else if (cmd.type == SUBSHELL_CMD)
 	{
-		for (t_redir_list *curr = simple->redirections; curr != NULL; curr = curr->next)
-		{
-			if (curr->redirect.kind != HERE_DOCUMENT)
-				continue;
-			doc = curr->redirect.doc;
-			printf("here document contents: %s\n", doc.contents);
-		}
+		err = gather_here_documents(cmd.subshell->cmd);
+		if (err != NO_ERROR)
+			return err;
+		return read_here_documents_in_rdl(cmd.subshell->redirections);
 	}
-	return err;
+	else if (cmd.type == PIPELINE_CMD)
+	{
+		err = gather_here_documents(cmd.pipeline->first);
+		if (err != NO_ERROR)
+			return err;
+		return gather_here_documents(cmd.pipeline->second);
+	}
+	else if (cmd.type == CONDITIONAL_CMD)
+	{
+		err = gather_here_documents(cmd.conditional->first);
+		if (err != NO_ERROR)
+			return err;
+		return gather_here_documents(cmd.conditional->second);
+	}
+	return (NO_ERROR);
 }
