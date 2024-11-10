@@ -28,7 +28,7 @@ class CommandRunner:
         return res
 
 
-class SimpleCommand(unittest.TestCase):
+class Demonstration(unittest.TestCase):
     def test_ls(self):
         command = "ls -la"
         input = None
