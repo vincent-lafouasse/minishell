@@ -7,9 +7,9 @@ class CommandRunner:
     MINISHELL = 0
     BASH = 1
 
-    def __init__(self, command: str, input: str):
+    def __init__(self, command: str, input: str, env):
         self.command = command
-        self.env = os.environ
+        self.env = env
         self.input = input
 
     def run(self, shell) -> subprocess.CompletedProcess:
@@ -32,8 +32,9 @@ class SimpleCommand(unittest.TestCase):
     def test_ls(self):
         command = "ls -la"
         input = None
+        env = os.environ
 
-        runner = CommandRunner(command, input)
+        runner = CommandRunner(command, input, env)
         res_bash = runner.run(CommandRunner.BASH)
         res_minishell = runner.run(CommandRunner.MINISHELL)
         self.assertEqual(res_bash.returncode, res_minishell.returncode)
@@ -43,8 +44,22 @@ class SimpleCommand(unittest.TestCase):
     def test_cat_stdin(self):
         command = "cat -e"
         input = "i'm writing in stdin"
+        env = os.environ
 
-        runner = CommandRunner(command, input)
+        runner = CommandRunner(command, input, env)
+        res_bash = runner.run(CommandRunner.BASH)
+        res_minishell = runner.run(CommandRunner.MINISHELL)
+        self.assertEqual(res_bash.returncode, res_minishell.returncode)
+        self.assertEqual(res_bash.stdout, res_minishell.stdout)
+        self.assertEqual(res_bash.stderr, res_minishell.stderr)
+
+    def test_echo_env(self):
+        command = "echo $COOL_NUMBER"
+        input = "i'm writing in stdin"
+        env = os.environ
+        env["COOL_NUMBER"] = "420"
+
+        runner = CommandRunner(command, input, env)
         res_bash = runner.run(CommandRunner.BASH)
         res_minishell = runner.run(CommandRunner.MINISHELL)
         self.assertEqual(res_bash.returncode, res_minishell.returncode)
