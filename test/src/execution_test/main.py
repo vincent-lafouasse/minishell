@@ -55,7 +55,7 @@ class SimpleCommand(unittest.TestCase):
 
     def test_echo_env(self):
         command = "echo $COOL_NUMBER"
-        input = "i'm writing in stdin"
+        input = None
         env = os.environ
         env["COOL_NUMBER"] = "420"
 
