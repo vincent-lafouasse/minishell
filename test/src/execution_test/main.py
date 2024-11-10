@@ -66,6 +66,18 @@ class Demonstration(unittest.TestCase):
         self.assertEqual(res_bash.stdout, res_minishell.stdout)
         self.assertEqual(res_bash.stderr, res_minishell.stderr)
 
+    def test_heredoc(self):
+        command = "cat"
+        input = "one\ntwo"
+        env = os.environ
+
+        runner = CommandRunner(command, input, env)
+        res_bash = runner.run(CommandRunner.BASH)
+        res_minishell = runner.run(CommandRunner.MINISHELL)
+        self.assertEqual(res_bash.returncode, res_minishell.returncode)
+        self.assertEqual(res_bash.stdout, res_minishell.stdout)
+        self.assertEqual(res_bash.stderr, res_minishell.stderr)
+
 
 if __name__ == "__main__":
     unittest.main(verbosity=2)
