@@ -31,7 +31,7 @@ t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)
 {
 	t_error err;
 
-	assert (pipeline->kind == PIPELINE);
+	assert (pipeline->kind == SYM_PIPELINE);
 
 	if (pipeline->production->data[1].production->len == 0)
 		return reduce_command(&pipeline->production->data[0], out);

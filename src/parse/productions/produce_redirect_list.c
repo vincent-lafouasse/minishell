@@ -4,7 +4,7 @@ t_symbol	produce_redirect_list(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(REDIRECT_LIST, 2);
+	symbol = symbol_new_non_terminal(SYM_REDIRECT_LIST, 2);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;

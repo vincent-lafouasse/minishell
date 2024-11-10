@@ -11,7 +11,7 @@ static t_error recurse(t_symbol* root, t_token_list** leaves_p)
 	t_token copy;
 
 	i = 0;
-	if (root->kind == TERMINAL)
+	if (root->kind == SYM_TERMINAL)
 	{
 		err = token_duplicate(root->token, &copy);
 		if (err != NO_ERROR)

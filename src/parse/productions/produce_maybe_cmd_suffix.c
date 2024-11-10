@@ -4,7 +4,7 @@ t_symbol	produce_maybe_cmd_suffix(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(MAYBE_CMD_SUFFIX, 1);
+	symbol = symbol_new_non_terminal(SYM_MAYBE_CMD_SUFFIX, 1);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;

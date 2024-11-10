@@ -4,7 +4,7 @@ t_symbol	produce_pipeline_rest(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(PIPELINE_REST, 3);
+	symbol = symbol_new_non_terminal(SYM_PIPELINE_REST, 3);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;

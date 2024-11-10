@@ -4,7 +4,7 @@ t_symbol	produce_complete_command(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(COMPLETE_COMMAND, 2);
+	symbol = symbol_new_non_terminal(SYM_COMPLETE_CMD, 2);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;

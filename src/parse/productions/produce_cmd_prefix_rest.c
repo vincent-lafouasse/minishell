@@ -4,7 +4,7 @@ t_symbol	produce_cmd_prefix_rest(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(CMD_PREFIX_REST, 2);
+	symbol = symbol_new_non_terminal(SYM_CMD_PREFIX_REST, 2);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;

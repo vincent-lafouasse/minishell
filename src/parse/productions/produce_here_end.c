@@ -4,7 +4,7 @@ t_symbol	produce_here_end(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(HERE_END, 1);
+	symbol = symbol_new_non_terminal(SYM_HERE_END, 1);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;

@@ -4,7 +4,7 @@ t_symbol	produce_subshell_precedes(t_parser *state)
 {
 	t_symbol	symbol;
 
-	symbol = symbol_new_non_terminal(SUBSHELL_PRECEDES, 1);
+	symbol = symbol_new_non_terminal(SYM_SUBSHELL_PRECEDES, 1);
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;

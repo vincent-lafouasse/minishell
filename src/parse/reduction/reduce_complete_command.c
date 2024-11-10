@@ -26,7 +26,7 @@ static t_error	reduce_complete_cmd_rest(t_symbol *cmd_rest, t_command *out)
 	t_conditional_operator	operator;
 	t_error					err;
 
-	assert(cmd_rest->kind == COMPLETE_COMMAND_REST);
+	assert(cmd_rest->kind == SYM_COMPLETE_CMD_REST);
 	productions = cmd_rest->production;
 	next_cmd_rest = productions->data[2];
 	if (next_cmd_rest.production->len == 0)
@@ -46,7 +46,7 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 {
 	t_error	err;
 
-	assert(root->kind == COMPLETE_COMMAND);
+	assert(root->kind == SYM_COMPLETE_CMD);
 	if (root->production->data[1].production->len == 0)
 		return (reduce_pipeline(&root->production->data[0], out));
 	out->conditional = conditional_new(0, (t_command){0}, (t_command){0});

@@ -8,8 +8,8 @@ t_error	reduce_subshell(t_symbol *subshell, t_symbol *trailing_redirs, t_command
 {
 	t_error		err;
 
-	assert (subshell->kind == SUBSHELL);
-	assert (trailing_redirs->kind == SUBSHELL_PRECEDES);
+	assert (subshell->kind == SYM_SUBSHELL);
+	assert (trailing_redirs->kind == SYM_SUBSHELL_PRECEDES);
 
 	out->subshell = subshell_new((t_command){0}, NULL);
 	if (!out->subshell)

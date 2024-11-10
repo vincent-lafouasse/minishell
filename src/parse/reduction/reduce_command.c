@@ -11,8 +11,8 @@ t_error	reduce_command(t_symbol *root, t_command *out)
 {
 	t_error err;
 
-	assert (root->kind == COMMAND);
-	if (root->production->data[0].kind == SIMPLE_COMMAND)
+	assert (root->kind == SYM_COMMAND);
+	if (root->production->data[0].kind == SYM_SIMPLE_CMD)
 		err = reduce_simple_command(&root->production->data[0], out);
 	else
 		err = reduce_subshell(&root->production->data[0], \
