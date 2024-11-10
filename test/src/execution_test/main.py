@@ -14,7 +14,7 @@ class CommandRunner:
 
     def run(self, shell) -> subprocess.CompletedProcess:
         if shell == self.MINISHELL:
-            command = f'~/code/42/cc/minishell/minishell -c "{self.command}"'
+            command = f"~/code/42/cc/minishell/minishell -c '{self.command}'"
         elif shell == self.BASH:
             command = self.command
         res = subprocess.run(
