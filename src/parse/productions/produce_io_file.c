@@ -8,7 +8,7 @@ t_symbol	produce_io_file(t_parser *state)
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;
-		return symbol;
+		return (symbol);
 	}
 	if (parser_matches_one_of(state, (t_token_type[]){DR_ANGLE_BRACKET}, 1))
 	{

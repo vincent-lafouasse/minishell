@@ -8,7 +8,7 @@ t_symbol	produce_program(t_parser *state)
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;
-		return symbol;
+		return (symbol);
 	}
 	parser_produce_push(state, produce_complete_command, symbol.production);
 	return (symbol);

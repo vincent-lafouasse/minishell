@@ -8,7 +8,7 @@ t_symbol	produce_cmd_prefix(t_parser *state)
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;
-		return symbol;
+		return (symbol);
 	}
 	if (parser_produce_push(state, produce_io_redirect, symbol.production))
 		parser_produce_push(state, produce_cmd_prefix_rest, symbol.production);

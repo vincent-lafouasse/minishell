@@ -8,9 +8,10 @@ t_symbol	produce_complete_command(t_parser *state)
 	if (symbol.production == NULL)
 	{
 		state->err = E_OOM;
-		return symbol;
+		return (symbol);
 	}
 	if (parser_produce_push(state, produce_pipeline, symbol.production))
-		parser_produce_push(state, produce_complete_command_rest, symbol.production);
+		parser_produce_push(state, produce_complete_command_rest,
+			symbol.production);
 	return (symbol);
 }
