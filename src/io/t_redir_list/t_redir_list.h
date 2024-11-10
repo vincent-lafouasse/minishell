@@ -33,6 +33,9 @@ typedef struct s_redir_list
 	t_redirect redirect;
 } t_redir_list;
 
+typedef struct s_command t_command;
+t_error	gather_here_documents(t_command cmd);
+
 t_error apply_redirections(t_redir_list *redirections);
 
 void redirect_clear(t_redirect *redir, t_destructor del);

@@ -15,6 +15,7 @@
 #include "libft/string.h"
 #include "parse/t_command/t_command.h"
 #include "signal/signal.h"
+#include "io/t_redir_list/t_redir_list.h"
 
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"
@@ -28,6 +29,13 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	if (err != NO_ERROR)
 	{
 		return err;
+	}
+
+	err = gather_here_documents(cmd);
+	if (err != NO_ERROR)
+	{
+		command_destroy(cmd);
+		return (err);
 	}
 
 	t_command_result res = execute_command(state, cmd); // bad, should probablue check err value maybe
