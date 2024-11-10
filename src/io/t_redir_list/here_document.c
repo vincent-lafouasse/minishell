@@ -70,9 +70,15 @@ static t_error	read_here_document_internal(const char *delimiter, char **documen
 {
 	char *line;
 
+	last_signal = 0; // TODO: ensure that SIGINTs before this point were addressed
 	while (1)
 	{
 		line = readline(HERE_DOCUMENT_PROMPT);
+		if (last_signal == SIGINT)
+		{
+			free(line);
+			return (E_INTERRUPTED);
+		}
 		if (!line)
 		{
 			warn_for_unexpected_eof();

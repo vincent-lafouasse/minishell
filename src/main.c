@@ -96,6 +96,8 @@ void run_interpreter(t_state* state)
 			break; /* eof or read error */
 		//install_execution_handlers();
 
+		// NOTE: E_INTERRUPTED is non fatal, and is used to signify that we
+		// should just continue interpreting commands
 		err = run_and_parse_command(input, state); // bad, error should be handled
 		free(input);
 		printf("command status: %s\n", error_repr(err));
