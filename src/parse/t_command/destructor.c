@@ -43,12 +43,12 @@ void	command_destroy(t_command command)
 {
 	if (!command_is_initialized(command))
 		return ;
-	if (command.type == SIMPLE_CMD)
+	if (command.type == CMD_SIMPLE)
 		return simple_destroy(command.simple);
-	else if (command.type == SUBSHELL_CMD)
+	else if (command.type == CMD_SUBSHELL)
 		return subshell_destroy(command.subshell);
-	else if (command.type == PIPELINE_CMD)
+	else if (command.type == CMD_PIPELINE)
 		return pipeline_destroy(command.pipeline);
-	else if (command.type == CONDITIONAL_CMD)
+	else if (command.type == CMD_CONDITIONAL)
 		return conditional_destroy(command.conditional);
 }

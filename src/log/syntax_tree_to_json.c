@@ -140,13 +140,13 @@ static void print_conditional(t_conditional *conditional)
 static void print_cmd(t_command other)
 {
     assert(command_is_initialized(other));
-    if (other.type == SIMPLE_CMD)
+    if (other.type == CMD_SIMPLE)
         return print_simple(other.simple);
-    if (other.type == SUBSHELL_CMD)
+    if (other.type == CMD_SUBSHELL)
         return print_subshell(other.subshell);
-    if (other.type == PIPELINE_CMD)
+    if (other.type == CMD_PIPELINE)
         return print_pipeline(other.pipeline);
-    if (other.type == CONDITIONAL_CMD)
+    if (other.type == CMD_CONDITIONAL)
         return print_conditional(other.conditional);
 }
 
