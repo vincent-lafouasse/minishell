@@ -1,3 +1,4 @@
+import unittest
 import subprocess
 import os
 
@@ -10,19 +11,18 @@ def unreachable():
 
 
 class CommandRunner:
-    def __init__(self, command: str, shell):
-        if shell == MINISHELL:
-            self.command = f'~/code/42/cc/minishell/minishell -c "{command}"'
-        elif shell == BASH:
-            self.command = command
-        else:
-            unreachable()
+    def __init__(self, command: str, input: str):
+        self.command = command
         self.env = os.environ
-        self.input = None
+        self.input = input
 
-    def run(self) -> subprocess.CompletedProcess:
+    def run(self, shell) -> subprocess.CompletedProcess:
+        if shell == MINISHELL:
+            command = f'~/code/42/cc/minishell/minishell -c "{self.command}"'
+        elif shell == BASH:
+            command = self.command
         res = subprocess.run(
-            self.command,
+            command,
             input=self.input,
             capture_output=True,
             shell=True,
@@ -32,16 +32,16 @@ class CommandRunner:
         return res
 
 
-command = "echo $HOME"
-input = None
+class SimpleCommand(unittest.TestCase):
+    def test_ls(self):
+        command = "ls -la"
+        input = None
+        runner = CommandRunner(command, input)
 
-# command = "grep f"; input = "one\ntwo\nthree\nfour\nfive\nsix\n"
+        res_bash = runner.run(BASH)
+        res_minishell = runner.run(MINISHELL)
+        self.assertEqual(res_bash.returncode, res_minishell.returncode)
 
-cmd = CommandRunner(command, MINISHELL)
-cmd.input = input
-# cmd.env["HOME"] = "420"
-res = cmd.run()
 
-print(res)
-print("output:")
-print(res.stdout)
+if __name__ == "__main__":
+    unittest.main()
