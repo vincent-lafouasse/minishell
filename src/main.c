@@ -88,7 +88,7 @@ void run_interpreter(t_state* state)
 			break; /* eof or read error */
 		//install_execution_handlers();
 
-		err = run_and_parse_command(input, state);
+		err = run_and_parse_command(input, state); // bad, error should be handled
 		free(input);
 		printf("command status: %s\n", error_repr(err));
 	}
