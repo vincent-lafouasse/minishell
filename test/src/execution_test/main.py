@@ -3,10 +3,18 @@ import subprocess
 
 class CommandRunner:
     def __init__(self, command: str):
-        pass
+        self.command = command
 
     def run(self) -> subprocess.CompletedProcess:
-        pass
+        res = subprocess.run(
+            self.command,
+            capture_output=True,
+            shell=True,
+            text=True,
+        )
+        return res
 
 
-subprocess.run("ls -la", shell=True)
+cmd = CommandRunner("ls -la")
+res = cmd.run()
+print(res)
