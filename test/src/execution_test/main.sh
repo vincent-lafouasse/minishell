@@ -34,8 +34,8 @@ compare_outputs() {
 }
 
 test_command() {
-    command="$1"
-    test_name="$2"
+    test_name="$1"
+    command="$2"
     setup_test "$test_name"
 
     bash_output="${BUILD}/${test_name}/bash"
@@ -58,10 +58,10 @@ test_command() {
 }
 
 main() {
-    test_command 'echo hello world' 'HelloWorld'
-    test_command 'cat INFILE_DIR/Makefile' 'CanTakeInfile'
-    test_command 'echo 420 > OUTFILE_DIR/out' 'SeparateOutfiles'
-    test_command 'export COOL_NUMBER=420; echo $COOL_NUMBER' 'EnvStuff'
+    test_command 'HelloWorld' 'echo hello world'
+    test_command 'CanTakeInfile' 'cat INFILE_DIR/Makefile'
+    test_command 'SeparateOutfiles' 'echo 420 > OUTFILE_DIR/out'
+    test_command 'EnvStuff' 'export COOL_NUMBER=420; echo $COOL_NUMBER'
 }
 
 main
