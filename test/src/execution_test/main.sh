@@ -15,6 +15,7 @@ setup() {
 test_command() {
     command="$1"
     test_name="$2"
+
     infile_dir="${EXEC_TEST_ROOT}/${test_name}"
     build="${BUILD}/${test_name}"
     bash_output="${build}/bash"
