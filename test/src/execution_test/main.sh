@@ -42,8 +42,8 @@ test_command() {
 }
 
 main() {
-    test_command "echo hello world" "HelloWorld"
-    test_command "cat INFILE_DIR/Makefile" "CanTakeInfile"
+    test_command 'echo hello world' 'HelloWorld'
+    test_command 'cat INFILE_DIR/Makefile' 'CanTakeInfile'
 }
 
 main
