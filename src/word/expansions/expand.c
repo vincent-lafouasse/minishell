@@ -39,8 +39,7 @@ t_error perform_all_expansions_on_words(t_word_list *word)
 
 enum e_quote_context {NOT_IN_QUOTE, IN_SINGLE_QUOTE, IN_DOUBLE_QUOTE};
 
-// if expanded contains space, return E_AMBIGOUS
-t_error expand_filename(char* filename, t_state* state)
+t_error expand_single_word(char* filename, t_state* state)
 {
 	enum e_quote_context quote_ctx = NOT_IN_QUOTE;
 
