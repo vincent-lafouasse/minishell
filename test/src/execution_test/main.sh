@@ -15,9 +15,21 @@ setup() {
 test_command() {
     command="$1"
     test_name="$2"
+    infile_dir="${EXEC_TEST_ROOT}/${test_name}"
     build="${BUILD}/${test_name}"
-    mkdir -p "${build}/bash"
-    mkdir -p "${build}/minishell"
+    bash_output="${build}/bash"
+    minishell_output="${build}/minishell"
+    mkdir -p "${bash_output}"
+    mkdir -p "${minishell_output}"
+
+    $MINISHELL -c "$command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
+    minishell_status=$?
+
+    $MINISHELL -c "$command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
+    bash_status=$?
+
+    echo bash status "$bash_status"
+    echo mini status "$minishell_status"
 }
 
 main() {
