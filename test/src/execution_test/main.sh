@@ -7,6 +7,8 @@ MINISHELL="${MINISHELL_ROOT}/minishell"
 
 BUILD="${MINISHELL_ROOT}/build/exec_test"
 
+INFILE_DIR="${EXEC_TEST_ROOT}/infiles"
+
 setup() {
     make -C "$MINISHELL_ROOT"
     mkdir -p "$BUILD"
