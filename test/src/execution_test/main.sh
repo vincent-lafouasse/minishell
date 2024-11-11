@@ -1,3 +1,5 @@
+set -o xtrace
+
 EXEC_TEST_ROOT="$(
     cd -- "$(dirname "$0")" >/dev/null 2>&1
     pwd -P
@@ -27,14 +29,17 @@ test_command() {
     setup_test "$test_name"
 
     infile_dir="${EXEC_TEST_ROOT}/${test_name}"
-    command="${command//INFILE_DIR/${infile_dir}}"
     bash_output="${BUILD}/${test_name}/bash"
     minishell_output="${BUILD}/${test_name}/minishell"
 
-    $MINISHELL -c "$command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
+    command="${command//INFILE_DIR/${infile_dir}}"
+    minishell_command="${command//OUTFILE_DIR/${minishell_output}}"
+    bash_command="${command//OUTFILE_DIR/${bash_output}}"
+
+    $MINISHELL -c "$minishell_command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
     minishell_status=$?
 
-    bash -c "$command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
+    bash -c "$bash_command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
     bash_status=$?
 
     echo bash status "$bash_status"
@@ -44,6 +49,7 @@ test_command() {
 main() {
     test_command 'echo hello world' 'HelloWorld'
     test_command 'cat INFILE_DIR/Makefile' 'CanTakeInfile'
+    test_command 'echo 420 > OUTFILE_DIR/out' 'SeparateOutfiles'
 }
 
 main
