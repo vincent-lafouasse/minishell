@@ -38,11 +38,10 @@ test_command() {
     test_name="$2"
     setup_test "$test_name"
 
-    infile_dir="${EXEC_TEST_ROOT}/${test_name}"
     bash_output="${BUILD}/${test_name}/bash"
     minishell_output="${BUILD}/${test_name}/minishell"
 
-    command="${command//INFILE_DIR/${infile_dir}}"
+    command="${command//INFILE_DIR/${INFILE_DIR}}"
     minishell_command="${command//OUTFILE_DIR/${minishell_output}}"
     bash_command="${command//OUTFILE_DIR/${bash_output}}"
 
