@@ -21,6 +21,16 @@ setup_test() {
     mkdir -p "${minishell_output}"
 }
 
+compare_outputs() {
+    test_name=$1
+    bash_output="${BUILD}/${test_name}/bash"
+    minishell_output="${BUILD}/${test_name}/minishell"
+
+    for file in "$bash_output"/*; do
+        DIFF="$(diff "$file")"
+    done
+}
+
 test_command() {
     command="$1"
     test_name="$2"
