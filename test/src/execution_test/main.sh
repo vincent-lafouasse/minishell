@@ -1,7 +1,7 @@
 set -o xtrace
 
 EXEC_TEST_ROOT="$(
-    cd -- "$(dirname "$0")" >/dev/null 2>&1
+    cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit
     pwd -P
 )"
 MINISHELL_ROOT="${EXEC_TEST_ROOT}/../../.."
@@ -44,6 +44,8 @@ test_command() {
 
     echo bash status "$bash_status"
     echo mini status "$minishell_status"
+
+    diff --brief "$minishell_output" "$bash_output"
 }
 
 main() {
