@@ -1,5 +1,3 @@
-set -o xtrace
-
 EXEC_TEST_ROOT="$(
     cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit
     pwd -P
@@ -52,6 +50,7 @@ main() {
     test_command 'echo hello world' 'HelloWorld'
     test_command 'cat INFILE_DIR/Makefile' 'CanTakeInfile'
     test_command 'echo 420 > OUTFILE_DIR/out' 'SeparateOutfiles'
+    test_command 'export COOL_NUMBER=420; echo $COOL_NUMBER' 'EnvStuff'
 }
 
 main
