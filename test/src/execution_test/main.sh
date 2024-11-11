@@ -58,10 +58,10 @@ test_command() {
 }
 
 main() {
-    test_command 'HelloWorld' 'echo hello world'
-    test_command 'CanTakeInfile' 'cat INFILE_DIR/Makefile'
+    test_command 'HelloWorld'       'echo hello world'
+    test_command 'CanTakeInfile'    'cat INFILE_DIR/Makefile'
     test_command 'SeparateOutfiles' 'echo 420 > OUTFILE_DIR/out'
-    test_command 'EnvStuff' 'export COOL_NUMBER=420; echo $COOL_NUMBER'
+    test_command 'EnvStuff'         'export COOL_NUMBER=420; echo $COOL_NUMBER'
 }
 
 main
