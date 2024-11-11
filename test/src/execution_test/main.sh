@@ -27,6 +27,7 @@ test_command() {
     setup_test "$test_name"
 
     infile_dir="${EXEC_TEST_ROOT}/${test_name}"
+    command="${command//INFILE_DIR/${infile_dir}}"
     bash_output="${BUILD}/${test_name}/bash"
     minishell_output="${BUILD}/${test_name}/minishell"
 
@@ -42,6 +43,7 @@ test_command() {
 
 main() {
     test_command "echo hello world" "HelloWorld"
+    test_command "cat INFILE_DIR/Makefile" "CanTakeInfile"
 }
 
 main
