@@ -34,7 +34,7 @@ test_command() {
     $MINISHELL -c "$command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
     minishell_status=$?
 
-    $MINISHELL -c "$command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
+    bash -c "$command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
     bash_status=$?
 
     echo bash status "$bash_status"
