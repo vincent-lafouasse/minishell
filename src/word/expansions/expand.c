@@ -3,6 +3,12 @@
 
 #include "libft/ctype.h"
 
+t_error perform_all_expansions_on_words(t_word_list *word)
+{
+	(void)word;
+	return (NO_ERROR); // bad, dummy `perform_all_expansions_on_words` implementation
+}
+
 static bool is_identifier(const char* start, size_t len) {
 	size_t i = 0;
 	
@@ -29,12 +35,6 @@ static bool identifier_len(const char *str) {
 		len++;
 	}
 	return (len);
-}
-
-t_error perform_all_expansions_on_words(t_word_list *word)
-{
-	(void)word;
-	return (NO_ERROR); // bad, dummy `perform_all_expansions_on_words` implementation
 }
 
 enum e_quote_context {NOT_IN_QUOTE, IN_SINGLE_QUOTE, IN_DOUBLE_QUOTE};
