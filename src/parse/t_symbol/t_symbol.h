@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   t_symbol.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:55:48 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 13:57:10 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include "../tokenize/t_token.h"
@@ -5,13 +17,10 @@
 #include <stddef.h>
 
 typedef struct s_symbol_array	t_symbol_array;
-enum e_symbol_kind : int;
+enum							e_symbol_kind :	int;
 
 typedef struct s_symbol
 {
-	// either T or NT,
-	// if non terminal: contains right_hand_side and no token
-	// if terminal: no right_hand_side and has token
 	enum e_symbol_kind			kind;
 	union
 	{
