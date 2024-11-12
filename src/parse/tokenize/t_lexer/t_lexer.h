@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:46:14 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 20:06:08 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:12:33 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ typedef struct s_lexer
 	size_t			start;
 }					t_lexer;
 
-t_lexer				lexer_init(const char *source);
-t_error				lexer_scan_next_token(t_lexer *lexer, t_token *out);
-void				lexer_skip_whitespace(t_lexer *lexer);
+t_lexer	lexer_init(const char *source);
+t_error	lexer_scan_next_token(t_lexer *lexer, t_token *out);
+void	lexer_skip_whitespace(t_lexer *lexer);
 
 #endif

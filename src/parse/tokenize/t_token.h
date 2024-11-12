@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:52:31 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 20:06:14 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:13:20 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ typedef enum e_token_type
 	AND_AND,
 	OR_OR,
 	EOF_TOKEN,
-}					t_token_type;
+}	t_token_type;
 
 typedef struct s_token
 {
@@ -36,8 +36,8 @@ typedef struct s_token
 	char			*literal;
 }					t_token;
 
-t_error				token_duplicate(t_token token, t_token *out);
+t_error		token_duplicate(t_token token, t_token *out);
 
-const char			*token_repr(t_token token);
+const char	*token_repr(t_token token);
 
 #endif

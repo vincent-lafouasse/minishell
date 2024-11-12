@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 19:51:30 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:53:00 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:07:38 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ typedef struct s_cond_data
 	size_t					connector_count;
 }							t_cond_data;
 
-t_cond_data					cond_data_allocate(size_t connector_count);
-void						destroy_cond_data(t_cond_data data, size_t start);
+t_cond_data	cond_data_allocate(size_t connector_count);
+void		destroy_cond_data(t_cond_data data, size_t start);
 
 #endif
