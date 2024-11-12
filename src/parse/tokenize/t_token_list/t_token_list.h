@@ -6,15 +6,15 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:51:07 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 20:01:17 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:06:11 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_TOKEN_LIST_H
 # define T_TOKEN_LIST_H
 
-#include "../t_token.h"
-#include "error/t_error.h"
+# include "../t_token.h"
+# include "error/t_error.h"
 
 typedef void			(*t_destructor)(void *);
 

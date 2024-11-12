@@ -6,15 +6,15 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:19:01 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:59:16 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:05:34 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PRODUCTIONS_H
 # define PRODUCTIONS_H
 
-#include "../t_parser/t_parser.h"
-#include "../t_symbol/t_symbol.h"
+# include "../t_parser/t_parser.h"
+# include "../t_symbol/t_symbol.h"
 
 t_symbol	produce_redirect_list_rest(t_parser *state);
 t_symbol	produce_subshell_precedes(t_parser *state);

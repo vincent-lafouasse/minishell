@@ -6,16 +6,16 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:46:14 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 20:01:04 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:06:08 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_LEXER_H
 # define T_LEXER_H
 
-#include "../t_token_list/t_token_list.h"
-#include "error/t_error.h"
-#include <stddef.h>
+# include "../t_token_list/t_token_list.h"
+# include "error/t_error.h"
+# include <stddef.h>
 
 typedef struct s_lexer
 {

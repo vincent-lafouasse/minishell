@@ -6,14 +6,14 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:52:31 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 20:01:39 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:06:14 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_TOKEN_H
 # define T_TOKEN_H
 
-#include "error/t_error.h"
+# include "error/t_error.h"
 
 typedef enum e_token_type
 {

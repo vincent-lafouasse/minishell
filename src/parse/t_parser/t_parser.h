@@ -6,18 +6,18 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:14:41 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 20:00:22 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:05:59 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_PARSER_H
 # define T_PARSER_H
 
-#include "../t_symbol/t_symbol.h"
-#include "../tokenize/t_token_list/t_token_list.h"
-#include "error/t_error.h"
-#include <stdbool.h>
-#include <stddef.h>
+# include "../t_symbol/t_symbol.h"
+# include "../tokenize/t_token_list/t_token_list.h"
+# include "error/t_error.h"
+# include <stdbool.h>
+# include <stddef.h>
 
 typedef struct s_parser	t_parser;
 struct					s_parser

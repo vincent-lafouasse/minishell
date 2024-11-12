@@ -6,16 +6,16 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:57:58 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:59:44 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:05:55 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_COMMAND_H
 # define T_COMMAND_H
 
-#include "io/t_redir_list/t_redir_list.h"
-#include "word/t_word_list/t_word_list.h"
-#include <stdbool.h>
+# include "io/t_redir_list/t_redir_list.h"
+# include "word/t_word_list/t_word_list.h"
+# include <stdbool.h>
 
 typedef enum e_conditional_operator
 {

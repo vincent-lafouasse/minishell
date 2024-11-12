@@ -6,16 +6,16 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:55:48 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 20:01:54 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:05:05 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef T_SYMBOL_H
 # define T_SYMBOL_H
 
-#include "../tokenize/t_token.h"
-#include <stdbool.h>
-#include <stddef.h>
+# include "../tokenize/t_token.h"
+# include <stdbool.h>
+# include <stddef.h>
 
 typedef struct s_symbol_array	t_symbol_array;
 enum							e_symbol_kind :	int;
