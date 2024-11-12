@@ -10,15 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "parse/tokenize/t_token_list/t_token_list.h"
-#include "reduction_internals.h"
 #include "../tokenize/t_token.h"
 #include "io/t_redir_list/t_redir_list.h"
-
-#include <stdlib.h>
+#include "parse/tokenize/t_token_list/t_token_list.h"
+#include "reduction_internals.h"
 #include <assert.h> // temporarily
+#include <stdlib.h>
 
-static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
+static t_redir_kind	redir_kind_from_angle_bracket(t_token_type bracket)
 {
 	if (bracket == L_ANGLE_BRACKET)
 		return (FROM_FILE);
@@ -45,8 +44,8 @@ static t_redirect	redir_from_tokens(t_token bracket, t_token word)
 	return (redir);
 }
 
-t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
-							t_redir_list **redirections)
+t_error	reduce_simple_command_like(t_symbol *symbol, t_word_list **words,
+		t_redir_list **redirections)
 {
 	t_token_list	*head;
 	t_token_list	*leaves;
@@ -55,7 +54,7 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 	leaves = NULL;
 	err = gather_leaves(symbol, &leaves);
 	if (err != NO_ERROR)
-		return err;
+		return (err);
 	head = leaves;
 	while (leaves)
 	{
@@ -65,17 +64,18 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 			if (err != NO_ERROR)
 			{
 				tkl_clear(&leaves, free);
-				return E_OOM;
+				return (E_OOM);
 			}
 			leaves = leaves->next;
 		}
 		else
 		{
-			err = rdl_push_back(redirections, redir_from_tokens(leaves->token, leaves->next->token));
+			err = rdl_push_back(redirections, redir_from_tokens(leaves->token,
+						leaves->next->token));
 			if (err != NO_ERROR)
 			{
 				tkl_clear(&leaves, free);
-				return E_OOM;
+				return (E_OOM);
 			}
 			leaves = leaves->next->next;
 		}

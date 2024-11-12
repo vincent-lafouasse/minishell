@@ -27,8 +27,10 @@ static t_error				reconstruct_conditional_command(t_cond_data data,
 								t_conditional **out);
 static t_cond_data			cond_data_allocate(size_t connector_count);
 static size_t				n_connectors(const t_conditional *cond);
-static void					destroy_cond_data(t_cond_data data, size_t start) {
-	for (size_t i = start; i < data.connector_count; i++) {
+static void	destroy_cond_data(t_cond_data data, size_t start)
+{
+	for (size_t i = start; i < data.connector_count; i++)
+	{
 		command_destroy(data.commands[i]);
 	}
 }
@@ -36,7 +38,7 @@ static void					destroy_cond_data(t_cond_data data, size_t start) {
 t_error	invert_conditional_associativity(t_conditional **out)
 {
 	t_cond_data	data;
-	t_error err;
+	t_error		err;
 
 	data = gather_data_and_free(*out);
 	if (data.connector_count == 0)
