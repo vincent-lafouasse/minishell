@@ -6,11 +6,12 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:46:02 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 13:48:04 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:00:49 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef LEXER_INTERNALS_H
+# define LEXER_INTERNALS_H
 
 #include "t_lexer.h"
 
@@ -25,3 +26,5 @@ char	lexer_advance(t_lexer *lexer);
 char	lexer_peek(t_lexer *lexer);
 
 t_error	fill_token(t_token token, t_token *out);
+
+#endif

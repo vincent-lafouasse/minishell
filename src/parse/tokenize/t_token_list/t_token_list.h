@@ -6,11 +6,12 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:51:07 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 13:51:08 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:01:17 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_TOKEN_LIST_H
+# define T_TOKEN_LIST_H
 
 #include "../t_token.h"
 #include "error/t_error.h"
@@ -32,3 +33,5 @@ void					tkl_delone(t_token_list **tokens_p,
 							t_destructor literal_destructor);
 void					tkl_clear(t_token_list **tokens_p,
 							t_destructor literal_destructor);
+
+#endif

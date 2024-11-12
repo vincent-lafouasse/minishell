@@ -6,11 +6,12 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:14:41 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 14:14:43 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:00:22 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_PARSER_H
+# define T_PARSER_H
 
 #include "../t_symbol/t_symbol.h"
 #include "../tokenize/t_token_list/t_token_list.h"
@@ -37,3 +38,5 @@ bool					parser_produce_push(t_parser *parser, t_production prod,
 							t_symbol_array *out);
 const t_token			*parser_peek(const t_parser *parser);
 t_error					parser_advance_copy(t_parser *parser, t_token *out);
+
+#endif

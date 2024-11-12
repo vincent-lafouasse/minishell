@@ -6,11 +6,12 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:52:31 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 13:52:32 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 20:01:39 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_TOKEN_H
+# define T_TOKEN_H
 
 #include "error/t_error.h"
 
@@ -38,3 +39,5 @@ typedef struct s_token
 t_error				token_duplicate(t_token token, t_token *out);
 
 const char			*token_repr(t_token token);
+
+#endif
