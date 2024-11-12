@@ -16,6 +16,7 @@ setup() {
 
 setup_test() {
     test_name="$1"
+
     build="${BUILD}/${test_name}"
     bash_output="${build}/bash"
     minishell_output="${build}/minishell"
@@ -23,8 +24,10 @@ setup_test() {
     mkdir -p "${minishell_output}"
 }
 
+# wip
 compare_outputs() {
     test_name=$1
+
     bash_output="${BUILD}/${test_name}/bash"
     minishell_output="${BUILD}/${test_name}/minishell"
 
@@ -36,6 +39,7 @@ compare_outputs() {
 test_command() {
     test_name="$1"
     command="$2"
+
     setup_test "$test_name"
 
     bash_output="${BUILD}/${test_name}/bash"
