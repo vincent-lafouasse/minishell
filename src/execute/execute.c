@@ -57,9 +57,9 @@ int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
 
 // either simple or subshell or maybe builtin
 t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
-	assert(command.type == SIMPLE_CMD || command.type == SUBSHELL_CMD);
+	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
 
-	if (command.type == SIMPLE_CMD)
+	if (command.type == CMD_SIMPLE)
 		return launch_simple_command(state, command.simple, io, fd_to_close);
 	else // subshell
 		return launch_subshell(state, command.subshell, io, fd_to_close);
@@ -72,7 +72,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	t_pid_list* pids_to_wait = NULL;
 
 	current = command_from_pipeline(pipeline);
-	while (current.type == PIPELINE_CMD)
+	while (current.type == CMD_PIPELINE)
 	{
 		pid_t pipe_fd[2];
 
@@ -158,7 +158,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 
 	t_command_result res;
 
-	if (command.type == SIMPLE_CMD)
+	if (command.type == CMD_SIMPLE)
 	{
 		t_launch_result launch_res;
 		launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
@@ -170,7 +170,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 		waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
 		res = (t_command_result){.error = NO_ERROR, .status_code = status}; // bad, might err
 	}
-	else if (command.type == PIPELINE_CMD)
+	else if (command.type == CMD_PIPELINE)
 	{
 		t_launch_result launch_res;
 		launch_res = launch_pipeline(state, command.pipeline, io_default());
@@ -179,9 +179,9 @@ t_command_result execute_command(t_state *state, t_command command) {
 		int status = wait_pipeline(launch_res.pids);
 		res = (t_command_result){.error = NO_ERROR, .status_code = status};
 	}
-	else if (command.type == CONDITIONAL_CMD)
+	else if (command.type == CMD_CONDITIONAL)
 		res = execute_conditional(state, command.conditional);
-	else if (command.type == SUBSHELL_CMD)
+	else if (command.type == CMD_SUBSHELL)
 		res = execute_subshell(state, command.subshell);
 	else
 		assert(!"unknown command type");

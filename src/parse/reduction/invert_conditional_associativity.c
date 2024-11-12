@@ -47,7 +47,7 @@ static t_cond_data	gather_data_and_free(t_conditional *cond)
 	if (data.connector_count == 0)
 		return ((t_cond_data){0});
 	i = 0;
-	while (cond->second.type == CONDITIONAL_CMD)
+	while (cond->second.type == CMD_CONDITIONAL)
 	{
 		data.commands[i] = cond->first;
 		data.operators[i] = cond->op;
@@ -115,7 +115,7 @@ static size_t	n_connectors(const t_conditional *cond)
 	size_t	n;
 
 	n = 1;
-	while (cond->second.type == CONDITIONAL_CMD)
+	while (cond->second.type == CMD_CONDITIONAL)
 	{
 		cond = cond->second.conditional;
 		n++;

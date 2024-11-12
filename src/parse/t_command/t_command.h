@@ -10,10 +10,10 @@ typedef enum e_conditional_operator {
 } t_conditional_operator;
 
 typedef enum e_command_type {
-	PIPELINE_CMD,
-	CONDITIONAL_CMD,
-	SUBSHELL_CMD,
-	SIMPLE_CMD,
+	CMD_PIPELINE,
+	CMD_CONDITIONAL,
+	CMD_SUBSHELL,
+	CMD_SIMPLE,
 } t_command_type;
 
 typedef struct s_pipeline t_pipeline;
