@@ -11,6 +11,8 @@ set(parser_source
 	parse/reduction/reduce_command.c
 	parse/reduction/reduce_subshell.c
 	parse/reduction/invert_conditional_associativity.c
+	parse/reduction/associativity_inversal_internals.h
+	parse/reduction/conditional_command_data.c
 	parse/reduction/reduction_internals.h
 	parse/reduction/reduction.h
 	parse/productions/produce_simple_command.c
