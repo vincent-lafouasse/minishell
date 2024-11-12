@@ -65,6 +65,7 @@ set(parser_source
 	parse/tokenize/tokenize.c
 	parse/parse.c
 	parse/t_parser/t_parser.c
+	parse/t_parser/parser_push.c
 	parse/t_parser/t_parser.h
 	parse/t_symbol/t_symbol.c
 	parse/t_symbol/t_symbol.h
