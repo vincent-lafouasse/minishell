@@ -50,10 +50,10 @@ compare_with_bash() {
     local bash_command="${command//OUTFILE_DIR/${bash_output}}"
 
     $MINISHELL -c "$minishell_command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
-    echo $? > "${minishell_output}/status"
+    echo $? >"${minishell_output}/status"
 
     bash -c "$bash_command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
-    echo $? > "${bash_output}/status"
+    echo $? >"${bash_output}/status"
 
     if ! diff --brief "$minishell_output" "$bash_output"; then
         HAD_ERROR=1
