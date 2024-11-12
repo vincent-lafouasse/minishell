@@ -36,7 +36,7 @@ compare_outputs() {
     done
 }
 
-test_command() {
+compare_with_bash() {
     test_name="$1"
     command="$2"
 
@@ -62,10 +62,10 @@ test_command() {
 }
 
 main() {
-    test_command 'HelloWorld'       'echo hello world'
-    test_command 'CanTakeInfile'    'cat INFILE_DIR/Makefile'
-    test_command 'SeparateOutfiles' 'echo 420 > OUTFILE_DIR/out'
-    test_command 'EnvStuff'         'export COOL_NUMBER=420; echo $COOL_NUMBER'
+    compare_with_bash 'HelloWorld'       'echo hello world'
+    compare_with_bash 'CanTakeInfile'    'cat INFILE_DIR/Makefile'
+    compare_with_bash 'SeparateOutfiles' 'echo 420 > OUTFILE_DIR/out'
+    compare_with_bash 'EnvStuff'         'export COOL_NUMBER=420; echo $COOL_NUMBER'
 }
 
 main
