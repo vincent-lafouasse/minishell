@@ -55,14 +55,20 @@ compare_with_bash() {
     bash -c "$bash_command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
     echo $? > "${bash_output}/status"
 
-    diff --brief "$minishell_output" "$bash_output"
+    if ! diff --brief "$minishell_output" "$bash_output"; then
+        HAD_ERROR=1
+    fi
 }
 
 main() {
+    HAD_ERROR=0
+
     compare_with_bash 'HelloWorld'       'echo hello world'
     compare_with_bash 'CanTakeInfile'    'cat INFILE_DIR/Makefile'
     compare_with_bash 'SeparateOutfiles' 'echo 420 > OUTFILE_DIR/out'
     compare_with_bash 'EnvStuff'         'export COOL_NUMBER=420; echo $COOL_NUMBER'
+
+    exit "$HAD_ERROR"
 }
 
 main
