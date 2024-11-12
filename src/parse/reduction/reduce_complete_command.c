@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:25:41 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:47:58 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 19:48:22 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,8 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 	out->conditional = conditional_new(0, (t_command){0}, (t_command){0});
 	if (!out->conditional)
 		return (E_OOM);
-	out->conditional->op = operator_from_token_type(root->production->data[1].production->data[0].token.type);
+	out->conditional->op = operator_from_token_type(
+			root->production->data[1].production->data[0].token.type);
 	err = reduce_pipeline(&root->production->data[0], &out->conditional->first);
 	if (err != NO_ERROR)
 		return (err);

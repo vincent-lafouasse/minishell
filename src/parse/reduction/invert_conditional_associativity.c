@@ -6,13 +6,12 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:25:38 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 14:25:38 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 19:49:22 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft/stdlib.h"
 #include "reduction_internals.h"
-#include <assert.h> // temporarily
 #include <stdlib.h>
 
 typedef struct s_cond_data
@@ -27,13 +26,7 @@ static t_error				reconstruct_conditional_command(t_cond_data data,
 								t_conditional **out);
 static t_cond_data			cond_data_allocate(size_t connector_count);
 static size_t				n_connectors(const t_conditional *cond);
-static void	destroy_cond_data(t_cond_data data, size_t start)
-{
-	for (size_t i = start; i < data.connector_count; i++)
-	{
-		command_destroy(data.commands[i]);
-	}
-}
+static void					destroy_cond_data(t_cond_data data, size_t start);
 
 t_error	invert_conditional_associativity(t_conditional **out)
 {
@@ -135,4 +128,12 @@ static size_t	n_connectors(const t_conditional *cond)
 		n++;
 	}
 	return (n);
+}
+
+static void	destroy_cond_data(t_cond_data data, size_t start)
+{
+	for (size_t i = start; i < data.connector_count; i++)
+	{
+		command_destroy(data.commands[i]);
+	}
 }
