@@ -1,5 +1,17 @@
-#include "t_command.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   empty.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:57:55 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 13:57:55 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft/stdlib.h"
+#include "t_command.h"
 
 t_command	command_new_empty(t_command_type type)
 {
@@ -15,5 +27,5 @@ t_command	command_new_empty(t_command_type type)
 		alloc = ft_calloc(1, sizeof(t_simple));
 	else
 		alloc = NULL;
-	return (t_command){.type = type, .any = alloc};
+	return ((t_command){.type = type, .any = alloc});
 }

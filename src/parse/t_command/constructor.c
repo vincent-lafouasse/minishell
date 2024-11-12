@@ -1,5 +1,17 @@
-#include "libft/stdlib.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   constructor.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:57:49 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 13:57:52 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "io/t_redir_list/t_redir_list.h"
+#include "libft/stdlib.h"
 #include "t_command.h"
 #include "word/t_word_list/t_word_list.h"
 #include <stddef.h>
@@ -25,8 +37,8 @@ t_command	command_new_pipeline(t_command first, t_command second)
 	return (command_from_pipeline(pipeline_new(first, second)));
 }
 
-t_conditional	*conditional_new(t_conditional_operator op,
-		t_command first, t_command second)
+t_conditional	*conditional_new(t_conditional_operator op, t_command first,
+		t_command second)
 {
 	t_conditional	*conditional;
 
@@ -42,8 +54,8 @@ t_command	command_from_conditional(t_conditional *conditional)
 	return ((t_command){.type = CMD_CONDITIONAL, .conditional = conditional});
 }
 
-t_command	command_new_conditional(t_conditional_operator op,
-		t_command first, t_command second)
+t_command	command_new_conditional(t_conditional_operator op, t_command first,
+		t_command second)
 {
 	return (command_from_conditional(conditional_new(op, first, second)));
 }
