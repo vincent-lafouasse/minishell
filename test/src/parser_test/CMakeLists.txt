@@ -40,7 +40,10 @@ set(parser_source
 	parse/t_command/properties.c
 	parse/t_command/t_command.h
 	parse/t_command/empty.c
-	parse/t_command/constructor.c
+	parse/t_command/subshell_constructor.c
+	parse/t_command/pipeline_constructor.c
+	parse/t_command/simple_command_constructor.c
+	parse/t_command/conditional_command_constructor.c
 	parse/tokenize/tokenize.h
 	parse/tokenize/token_repr.c
 	parse/tokenize/t_lexer/lexer_scan_metachar_operator.c
