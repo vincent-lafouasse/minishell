@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:25:38 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:49:22 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 19:50:01 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,8 +132,12 @@ static size_t	n_connectors(const t_conditional *cond)
 
 static void	destroy_cond_data(t_cond_data data, size_t start)
 {
-	for (size_t i = start; i < data.connector_count; i++)
+	size_t	i;
+
+	i = start;
+	while (i < data.connector_count)
 	{
 		command_destroy(data.commands[i]);
+		i++;
 	}
 }
