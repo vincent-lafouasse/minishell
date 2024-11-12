@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:18:34 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 14:18:35 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 14:20:49 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_symbol	produce_io_redirect(t_parser *state)
 		parser_produce_push(state, produce_io_file, symbol.production);
 	}
 	else if (parser_matches_one_of(state, (t_token_type[]){DL_ANGLE_BRACKET},
-			1))
+		1))
 	{
 		parser_produce_push(state, produce_io_here, symbol.production);
 	}

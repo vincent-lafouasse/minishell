@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:18:14 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 14:18:15 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 14:21:28 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,6 @@ t_symbol	produce_cmd_suffix(t_parser *state)
 				symbol.production);
 	}
 	else
-	{
 		state->err = E_UNEXPECTED_TOKEN;
-	}
 	return (symbol);
 }

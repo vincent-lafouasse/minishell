@@ -6,11 +6,16 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:18:24 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 14:18:25 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 14:25:14 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "productions.h"
+
+static void	set_oom(t_parser *state)
+{
+	state->err = E_OOM;
+}
 
 t_symbol	produce_complete_command_rest(t_parser *state)
 {
@@ -18,10 +23,7 @@ t_symbol	produce_complete_command_rest(t_parser *state)
 
 	symbol = symbol_new_non_terminal(SYM_COMPLETE_CMD_REST, 3);
 	if (symbol.production == NULL)
-	{
-		state->err = E_OOM;
-		return (symbol);
-	}
+		return (set_oom(state), symbol);
 	if (parser_matches_one_of(state, (t_token_type[]){R_PAREN, EOF_TOKEN}, 2))
 	{
 	}
@@ -40,8 +42,6 @@ t_symbol	produce_complete_command_rest(t_parser *state)
 					symbol.production);
 	}
 	else
-	{
 		state->err = E_UNEXPECTED_TOKEN;
-	}
 	return (symbol);
 }
