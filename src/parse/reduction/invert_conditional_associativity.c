@@ -6,27 +6,18 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:25:38 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:50:01 by poss             ###   ########.fr       */
+/*   Updated: 2024/11/12 19:54:20 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft/stdlib.h"
 #include "reduction_internals.h"
+#include "associativity_inversal_internals.h"
 #include <stdlib.h>
 
-typedef struct s_cond_data
-{
-	t_command				*commands;
-	t_conditional_operator	*operators;
-	size_t					connector_count;
-}							t_cond_data;
-
-static t_cond_data			gather_data_and_free(t_conditional *cond);
-static t_error				reconstruct_conditional_command(t_cond_data data,
-								t_conditional **out);
-static t_cond_data			cond_data_allocate(size_t connector_count);
-static size_t				n_connectors(const t_conditional *cond);
-static void					destroy_cond_data(t_cond_data data, size_t start);
+static t_cond_data	gather_data_and_free(t_conditional *cond);
+static t_error		reconstruct_conditional_command(t_cond_data data,
+						t_conditional **out);
+static size_t		n_connectors(const t_conditional *cond);
 
 t_error	invert_conditional_associativity(t_conditional **out)
 {
@@ -100,23 +91,6 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 	return (NO_ERROR);
 }
 
-static t_cond_data	cond_data_allocate(size_t connector_count)
-{
-	t_command				*commands;
-	t_conditional_operator	*operators;
-
-	commands = ft_calloc(connector_count + 1, sizeof(*commands));
-	operators = ft_calloc(connector_count, sizeof(*operators));
-	if (commands == NULL || operators == NULL)
-	{
-		free(commands);
-		free(operators);
-		return ((t_cond_data){0});
-	}
-	return ((t_cond_data){.commands = commands, .operators = operators,
-		.connector_count = connector_count});
-}
-
 static size_t	n_connectors(const t_conditional *cond)
 {
 	size_t	n;
@@ -128,16 +102,4 @@ static size_t	n_connectors(const t_conditional *cond)
 		n++;
 	}
 	return (n);
-}
-
-static void	destroy_cond_data(t_cond_data data, size_t start)
-{
-	size_t	i;
-
-	i = start;
-	while (i < data.connector_count)
-	{
-		command_destroy(data.commands[i]);
-		i++;
-	}
 }
