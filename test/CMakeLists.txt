@@ -38,4 +38,4 @@ add_test(NAME ParserTest
 
 set(exec_test_root ${CMAKE_CURRENT_SOURCE_DIR}/src/execution_test)
 add_test(NAME ExecutionTest
-         COMMAND pytest --verbose ${exec_test_root}/main.py)
+         COMMAND bash ${exec_test_root}/main.sh)
