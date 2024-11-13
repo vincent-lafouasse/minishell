@@ -39,7 +39,7 @@ static bool identifier_len(const char *str) {
 
 enum e_quote_context {NOT_IN_QUOTE, IN_SINGLE_QUOTE, IN_DOUBLE_QUOTE};
 
-t_error expand_single_word(char* filename, t_state* state)
+t_error expand_single_word(t_expansion_variables vars, char* filename)
 {
 	enum e_quote_context quote_ctx = NOT_IN_QUOTE;
 
