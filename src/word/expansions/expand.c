@@ -31,7 +31,7 @@ static bool is_identifier(const char* start, size_t len) {
 	return true;
 }
 
-static bool identifier_len(const char *str) {
+static size_t identifier_len(const char *str) {
 	size_t len = 0;
 
 	if (ft_isdigit(*str))
