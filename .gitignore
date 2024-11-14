@@ -4,7 +4,6 @@ build/
 Testing
 target
 .vscode
-__pycache__
 
 minishell
 local*
