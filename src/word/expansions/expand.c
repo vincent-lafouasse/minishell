@@ -1,7 +1,10 @@
 #include "expand.h"
 #include "execute/t_env/t_env.h"
+#include "error/t_error.h"
 
 #include "libft/ctype.h"
+
+#include <stdbool.h>
 
 t_error perform_all_expansions_on_words(t_word_list *word)
 {
