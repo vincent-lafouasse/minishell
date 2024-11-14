@@ -62,6 +62,7 @@ compare_with_bash() {
             echo -ne "$NC"
             cat "$file"
         done
+        echo -e "${RED}✓   ${test_name} failed${NC}"
         ((N_FAILED++))
         FAILED_TESTS+=("${test_name}")
     fi
