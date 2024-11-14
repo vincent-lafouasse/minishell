@@ -64,10 +64,13 @@ main() {
     FAILED_TESTS=()
     setup
 
-    compare_with_bash 'HelloWorld'          'echo hello world'
-    compare_with_bash 'CanTakeInfile'       'cat INFILE_DIR/Makefile'
-    compare_with_bash 'SeparateOutfiles'    'echo 420 > OUTFILE_DIR/out'
-    compare_with_bash 'EnvStuff'            'export COOL_NUMBER=420; echo $COOL_NUMBER'
+    compare_with_bash 'Simple_HelloWorld'   'echo hello world'
+    compare_with_bash 'Simple_pwdIntoFile'  'pwd > OUTFILE_DIR/pwd_log'
+    compare_with_bash 'Simple_SearchFile'   'grep thou INFILE_DIR/shakespeare.txt'
+
+    compare_with_bash 'Pipe_FindIncludes'   'grep -r include ./src | sort | uniq'
+
+    compare_with_bash 'EnvStuff'            'export COOL_NUMBER=420 && echo $COOL_NUMBER'
 
     if [ "$N_FAILED" -eq 0 ]; then
         echo -e "\n${GREEN}==========ALL TESTS PASSED======================================================${NC}"
