@@ -7,7 +7,11 @@ PURPLE='\033[0;35m'
 NC='\033[0m'
 
 setup() {
-    make -C .
+    if ! make -C .; then
+        echo -e "${RED}Failed to build minishell$NC"
+        exit 1
+    fi
+
     mkdir -p "$BUILD"
 }
 
