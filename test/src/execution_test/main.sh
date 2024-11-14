@@ -47,17 +47,19 @@ compare_with_bash() {
     echo $? >"${bash_output}/status"
 
     if diff "$minishell_output" "$bash_output" >"${BUILD}/${test_name}/log"; then
-        echo -e "${GREEN}✓    ${test_name} passed${NC}"
+        echo -e "${GREEN}✓   ${test_name} passed${NC}"
         ((N_PASSED++))
     else
-        echo -e "${RED}✗    ${test_name} failed${NC}"
+        echo -e "${RED}✗   ${test_name} failed${NC}"
         ((N_FAILED++))
+        FAILED_TESTS+=("${test_name}")
     fi
 }
 
 main() {
     N_PASSED=0
     N_FAILED=0
+    FAILED_TESTS=()
 
     compare_with_bash 'HelloWorld'          'echo hello world'
     compare_with_bash 'CanTakeInfile'       'cat INFILE_DIR/Makefile'
@@ -65,8 +67,14 @@ main() {
     compare_with_bash 'EnvStuff'            'export COOL_NUMBER=420; echo $COOL_NUMBER'
 
     if [ "$N_FAILED" -eq 0 ]; then
+        echo -e "\n${GREEN}==========ALL TESTS PASSED======================================================${NC}"
         exit 0
     else
+        echo -e "\n${RED}==========SOME TESTS FAILED=====================================================${NC}"
+        echo Failed tests:
+        for failed in "${FAILED_TESTS[@]}"; do
+            echo "    $failed"
+        done
         exit 1
     fi
 }
