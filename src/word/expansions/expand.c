@@ -42,7 +42,7 @@ static size_t identifier_len(const char *str) {
 	return (len);
 }
 
-bool can_expand_variable(const char *substring)
+static bool can_expand_variable(const char *substring)
 {
 	return (*substring == '$' && identifier_len(substring + 1) > 0);
 }
