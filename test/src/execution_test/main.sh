@@ -3,6 +3,7 @@ BUILD="./build/exec_test"
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
+PURPLE='\033[0;35m'
 NC='\033[0m'
 
 setup() {
@@ -44,10 +45,19 @@ compare_with_bash() {
         ((N_PASSED++))
     else
         echo -e "${YELLOW}expected${NC}"
-        bat "$bash_output/"*
+        for file in "$bash_output/"*; do
+            echo -ne "$PURPLE"
+            basename "$file"
+            echo -ne "$NC"
+            cat "$file"
+        done
         echo -e "${YELLOW}was${NC}"
-        bat "$minishell_output/"*
-        echo -e "${RED}✗   ${test_name} failed${NC}"
+        for file in "$minishell_output/"*; do
+            echo -ne "$PURPLE"
+            basename "$file"
+            echo -ne "$NC"
+            cat "$file"
+        done
         ((N_FAILED++))
         FAILED_TESTS+=("${test_name}")
     fi
