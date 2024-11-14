@@ -42,6 +42,11 @@ static size_t identifier_len(const char *str) {
 	return (len);
 }
 
+bool can_expand_variable(const char *word)
+{
+	return (*word == '$' && identifier_len(word + 1) > 0);
+}
+
 t_error expand_single_word(t_expansion_variables vars, const char *word)
 {
 	bool should_be_expanding;
@@ -49,25 +54,31 @@ t_error expand_single_word(t_expansion_variables vars, const char *word)
 	t_string *expanded;
 
 	i = 0;
-	should_be_expanding = false;
+	should_be_expanding = true;
 	expanded = string_new();
 	while (word[i]) {
 		if (word[i] == '\'')
 			should_be_expanding = !should_be_expanding;
-
-		if (should_be_expanding && word[i] == '$') {
-			// xxx make sure nothing breaks if variable_name_len = 0
+		if (should_be_expanding && can_expand_variable(&word[i])) {
 			size_t variable_name_len = identifier_len(word + i + 1);
 			char *variable_name = ft_substr(word, i + 1, variable_name_len);
 			if (!variable_name)
 				return (string_destroy(expanded), E_OOM);
-			if (variable_name_len != 0)
+			if (word[i + 1] == '?')
+				"expand with last_status";
+			const t_env_entry *variable = env_get(vars.env, variable_name);
+			if (variable)
 			{
-				if (word[i + 1] == '?')
-					"expand with last_status";
-				t_env_entry *variable = env_get(vars.env, variable_name);
+				if (string_extend(&expanded, variable->value) == true)
+					return (string_destroy(expanded), E_OOM);
 			}
+			i += 1 + variable_name_len;
 		}
-		i++;
+		else
+		{
+			if (string_push(&expanded, word[i]) == true)
+				return (string_destroy(expanded), E_OOM);
+			i++;
+		}
 	}
 }
