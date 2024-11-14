@@ -1,6 +1,7 @@
 #include "expand.h"
 #include "execute/t_env/t_env.h"
 #include "error/t_error.h"
+#include "word/t_string/t_string.h"
 
 #include "libft/ctype.h"
 
@@ -44,9 +45,11 @@ t_error expand_single_word(t_expansion_variables vars, char* filename)
 {
 	bool should_be_expanding;
 	size_t i;
+	t_string *expanded;
 
 	i = 0;
 	should_be_expanding = false;
+	expanded = string_new();
 	while (filename[i]) {
 		if (filename[i] == '\'')
 			should_be_expanding = !should_be_expanding;
