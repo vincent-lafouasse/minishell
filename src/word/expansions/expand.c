@@ -47,7 +47,7 @@ static bool can_expand_variable(const char *substring)
 	return (*substring == '$' && identifier_len(substring + 1) > 0);
 }
 
-t_error expand_string(t_expansion_variables vars, const char *str, char **out)
+t_error variable_expand_string(t_expansion_variables vars, const char *str, char **out)
 {
 	bool should_be_expanding;
 	size_t i;
