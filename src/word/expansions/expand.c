@@ -42,9 +42,9 @@ static size_t identifier_len(const char *str) {
 	return (len);
 }
 
-bool can_expand_variable(const char *word)
+bool can_expand_variable(const char *substring)
 {
-	return (*word == '$' && identifier_len(word + 1) > 0);
+	return (*substring == '$' && identifier_len(substring + 1) > 0);
 }
 
 t_error expand_string(t_expansion_variables vars, const char *str, char **out)
