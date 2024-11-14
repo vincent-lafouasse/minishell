@@ -33,6 +33,7 @@ compare_with_bash() {
     local command="$2"
 
     setup_test "$test_name"
+    echo -e "${YELLOW}Testing $test_name$NC"
 
     local bash_output="${BUILD}/${test_name}/bash"
     local minishell_output="${BUILD}/${test_name}/minishell"
