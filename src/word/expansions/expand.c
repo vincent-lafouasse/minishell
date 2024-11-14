@@ -42,7 +42,7 @@ static bool identifier_len(const char *str) {
 	return (len);
 }
 
-t_error expand_single_word(t_expansion_variables vars, char* word)
+t_error expand_single_word(t_expansion_variables vars, const char *word)
 {
 	bool should_be_expanding;
 	size_t i;
