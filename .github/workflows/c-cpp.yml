@@ -24,4 +24,4 @@ jobs:
       run: CC=clang make
 
     - name: run tests
-      run: CC=clang make test
+      run: CC=clang make vtest

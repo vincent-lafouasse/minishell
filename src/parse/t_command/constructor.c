@@ -17,7 +17,7 @@ t_pipeline	*pipeline_new(t_command first, t_command second)
 
 t_command	command_from_pipeline(t_pipeline *pipeline)
 {
-	return ((t_command){.type = PIPELINE_CMD, .pipeline = pipeline});
+	return ((t_command){.type = CMD_PIPELINE, .pipeline = pipeline});
 }
 
 t_command	command_new_pipeline(t_command first, t_command second)
@@ -39,7 +39,7 @@ t_conditional	*conditional_new(t_conditional_operator op,
 
 t_command	command_from_conditional(t_conditional *conditional)
 {
-	return ((t_command){.type = CONDITIONAL_CMD, .conditional = conditional});
+	return ((t_command){.type = CMD_CONDITIONAL, .conditional = conditional});
 }
 
 t_command	command_new_conditional(t_conditional_operator op,
@@ -61,7 +61,7 @@ t_subshell	*subshell_new(t_command cmd, t_redir_list *redirections)
 
 t_command	command_from_subshell(t_subshell *subshell)
 {
-	return ((t_command){.type = SUBSHELL_CMD, .subshell = subshell});
+	return ((t_command){.type = CMD_SUBSHELL, .subshell = subshell});
 }
 
 t_command	command_new_subshell(t_command cmd, t_redir_list *redirections)
@@ -82,7 +82,7 @@ t_simple	*simple_new(t_word_list *words, t_redir_list *redirections)
 
 t_command	command_from_simple(t_simple *simple)
 {
-	return ((t_command){.type = SIMPLE_CMD, .simple = simple});
+	return ((t_command){.type = CMD_SIMPLE, .simple = simple});
 }
 
 t_command	command_new_simple(t_word_list *words, t_redir_list *redirections)

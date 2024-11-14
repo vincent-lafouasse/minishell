@@ -8,7 +8,7 @@ t_error	reduce_simple_command(t_symbol *root, t_command *out)
 {
 	t_error		err;
 
-	assert (root->kind == SIMPLE_COMMAND);
+	assert (root->kind == SYM_SIMPLE_CMD);
 
 	out->simple = simple_new(NULL, NULL);
 	if (!out->simple)

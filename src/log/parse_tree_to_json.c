@@ -4,49 +4,49 @@
 
 static const char* node_repr(enum e_symbol_kind kind)
 {
-    if (kind == COMPLETE_COMMAND)
+    if (kind == SYM_COMPLETE_CMD)
         return "Complete Command";
-    if (kind == SUBSHELL)
+    if (kind == SYM_SUBSHELL)
         return "Subshell";
-    if (kind == CMD_PREFIX_REST)
+    if (kind == SYM_CMD_PREFIX_REST)
         return "Cmd Prefix'";
-    if (kind == IO_REDIRECT)
+    if (kind == SYM_IO_REDIRECT)
         return "Io Redirect";
-    if (kind == IO_FILE)
+    if (kind == SYM_IO_FILE)
         return "Io File";
-    if (kind == PROGRAM)
+    if (kind == SYM_PROGRAM)
         return "Program";
-    if (kind == CMD_PREFIX_PRECEDES)
+    if (kind == SYM_CMD_PREFIX_PRECEDES)
         return "Cmd Prefix''";
-    if (kind == IO_HERE)
+    if (kind == SYM_IO_HERE)
         return "Io Here";
-    if (kind == COMPLETE_COMMAND_REST)
+    if (kind == SYM_COMPLETE_CMD_REST)
         return "Complete Command'";
-    if (kind == MAYBE_CMD_SUFFIX)
+    if (kind == SYM_MAYBE_CMD_SUFFIX)
         return "Maybe Cmd Suffix";
-    if (kind == CMD_SUFFIX)
+    if (kind == SYM_CMD_SUFFIX)
         return "Cmd Suffix";
-    if (kind == PIPELINE_REST)
+    if (kind == SYM_PIPELINE_REST)
         return "Pipeline'";
-    if (kind == PIPELINE)
+    if (kind == SYM_PIPELINE)
         return "Pipeline";
-    if (kind == REDIRECT_LIST)
+    if (kind == SYM_REDIRECT_LIST)
         return "Redirect List";
-    if (kind == SIMPLE_COMMAND)
+    if (kind == SYM_SIMPLE_CMD)
         return "Simple Command";
-    if (kind == HERE_END)
+    if (kind == SYM_HERE_END)
         return "Here End";
-    if (kind == FILENAME)
+    if (kind == SYM_FILENAME)
         return "Filename";
-    if (kind == CMD_PREFIX)
+    if (kind == SYM_CMD_PREFIX)
         return "Cmd Prefix";
-    if (kind == COMMAND)
+    if (kind == SYM_COMMAND)
         return "Command";
-    if (kind == CMD_SUFFIX_REST)
+    if (kind == SYM_CMD_SUFFIX_REST)
         return "Cmd Suffix'";
-    if (kind == REDIRECT_LIST_REST)
+    if (kind == SYM_REDIRECT_LIST_REST)
         return "Redirect List'";
-    if (kind == SUBSHELL_PRECEDES)
+    if (kind == SYM_SUBSHELL_PRECEDES)
         return "Subshell''";
     return "???";
 }
@@ -56,7 +56,7 @@ void print_non_terminal(const t_symbol* node);
 
 void print_node(const t_symbol* node)
 {
-    if (node->kind == TERMINAL)
+    if (node->kind == SYM_TERMINAL)
         print_terminal(node);
     else
         print_non_terminal(node);
