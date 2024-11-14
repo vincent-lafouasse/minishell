@@ -70,7 +70,6 @@ vtest: test
 .PHONY: exec_test
 exec_test: build
 	bash  test/src/execution_test/main.sh
-	# pytest --verbose test/src/execution_test/main.py
 
 
 .PHONY: test_libft

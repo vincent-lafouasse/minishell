@@ -92,7 +92,7 @@ void run_interpreter(t_state* state)
 		free(input);
 		printf("command status: %s\n", error_repr(err));
 	}
-	clear_history();
+	rl_clear_history();
 	// TODO: call `exit` builtin on Ctrl-D
 }
 
