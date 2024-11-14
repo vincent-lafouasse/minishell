@@ -53,7 +53,7 @@ t_error expand_single_word(t_expansion_variables vars, char* filename)
 
 		if (should_be_expanding && filename[i] == '$') {
 			// xxx make sure nothing breaks if variable_name_len = 0
-			size_t variable_name_len = identifier_len(filename + i);
+			size_t variable_name_len = identifier_len(filename + i + 1);
 			if (variable_name_len != 0)
 			{
 				if (filename[i + 1] == '?')
