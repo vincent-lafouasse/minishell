@@ -153,7 +153,7 @@ main() {
 
     refute 'Refute_NonExistantCommand' 'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
 
-    if test_success "$N_PASSED" "N_FAILED"; then
+    if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
     else
         exit 1
