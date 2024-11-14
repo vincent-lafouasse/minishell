@@ -1,3 +1,5 @@
+#!/bin/bash
+
 EXEC_TEST_ROOT="$(
     cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit
     pwd -P
