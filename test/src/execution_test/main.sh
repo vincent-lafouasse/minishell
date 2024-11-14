@@ -1,4 +1,12 @@
-BUILD="./build/exec_test"
+EXEC_TEST_ROOT="$(
+    cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit
+    pwd -P
+)"
+MINISHELL_ROOT="${EXEC_TEST_ROOT}/../../.."
+MINISHELL="${MINISHELL_ROOT}/minishell"
+
+BUILD="${MINISHELL_ROOT}/build/exec_test"
+INFILE_DIR="${MINISHELL_ROOT}/aux/infiles"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -7,7 +15,7 @@ PURPLE='\033[0;35m'
 NC='\033[0m'
 
 setup() {
-    if ! make -C .; then
+    if ! make -C "$MINISHELL_ROOT"; then
         echo -e "${RED}Failed to build minishell$NC"
         exit 1
     fi
@@ -35,10 +43,11 @@ compare_with_bash() {
     local bash_output="${BUILD}/${test_name}/bash"
     local minishell_output="${BUILD}/${test_name}/minishell"
 
+    local command="${command//INFILE_DIR/${INFILE_DIR}}"
     local minishell_command="${command//OUTFILE_DIR/${minishell_output}}"
     local bash_command="${command//OUTFILE_DIR/${bash_output}}"
 
-    ./minishell -c "$minishell_command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
+    "$MINISHELL" -c "$minishell_command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
     echo $? >"${minishell_output}/status"
 
     bash -c "$bash_command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
@@ -78,9 +87,10 @@ refute() {
     mkdir -p "$build_dir"
     echo -e "${YELLOW}Testing $test_name$NC"
 
+    local command="${command//INFILE_DIR/${INFILE_DIR}}"
     local command="${command//OUTFILE_DIR/${build_dir}}"
 
-    ./minishell -c "$minishell_command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
+    $MINISHELL -c "$minishell_command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
     local actual_status=$?
 
     local had_error=0
@@ -135,7 +145,7 @@ main() {
 
     compare_with_bash 'Simple_HelloWorld'  'echo hello world'
     compare_with_bash 'Simple_pwdIntoFile' 'pwd > OUTFILE_DIR/pwd_log'
-    compare_with_bash 'Simple_SearchFile'  'grep thou ./aux/infiles/shakespeare.txt'
+    compare_with_bash 'Simple_SearchFile'  'grep thou INFILE_DIR/shakespeare.txt'
 
     compare_with_bash 'Pipe_FindIncludes' 'grep -r include ./src | sort | uniq'
 
