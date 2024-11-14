@@ -27,7 +27,7 @@ static size_t identifier_len(const char *str) {
 	return (len);
 }
 
-static bool can_expand_variable(const char *substring)
+static bool is_valid_dollar_variable(const char *substring)
 {
 	return (*substring == '$' && identifier_len(substring + 1) > 0);
 }
@@ -80,7 +80,7 @@ t_error variable_expand_string(t_expansion_variables vars, const char *str, char
 	while (str[i]) {
 		if (str[i] == '\'')
 			should_be_expanding = !should_be_expanding;
-		if (should_be_expanding && can_expand_variable(&str[i]))
+		if (should_be_expanding && is_valid_dollar_variable(&str[i]))
 		{
 			err = expand_dollar_variable(vars, &str[i], &expanded);
 			if (err != NO_ERROR)
