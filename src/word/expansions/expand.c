@@ -42,7 +42,7 @@ static bool identifier_len(const char *str) {
 	return (len);
 }
 
-t_error expand_single_word(t_expansion_variables vars, char* filename)
+t_error expand_single_word(t_expansion_variables vars, char* word)
 {
 	bool should_be_expanding;
 	size_t i;
@@ -51,19 +51,19 @@ t_error expand_single_word(t_expansion_variables vars, char* filename)
 	i = 0;
 	should_be_expanding = false;
 	expanded = string_new();
-	while (filename[i]) {
-		if (filename[i] == '\'')
+	while (word[i]) {
+		if (word[i] == '\'')
 			should_be_expanding = !should_be_expanding;
 
-		if (should_be_expanding && filename[i] == '$') {
+		if (should_be_expanding && word[i] == '$') {
 			// xxx make sure nothing breaks if variable_name_len = 0
-			size_t variable_name_len = identifier_len(filename + i + 1);
-			char *variable_name = ft_substr(filename, i + 1, variable_name_len);
+			size_t variable_name_len = identifier_len(word + i + 1);
+			char *variable_name = ft_substr(word, i + 1, variable_name_len);
 			if (!variable_name)
 				return (string_destroy(expanded), E_OOM);
 			if (variable_name_len != 0)
 			{
-				if (filename[i + 1] == '?')
+				if (word[i + 1] == '?')
 					"expand with last_status";
 				t_env_entry *variable = env_get(vars.env, variable_name);
 			}
