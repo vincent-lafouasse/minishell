@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   produce_cmd_suffix_rest.c                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 14:18:16 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 14:22:53 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "productions.h"
 
 t_symbol	produce_cmd_suffix_rest(t_parser *state)
@@ -23,13 +35,8 @@ t_symbol	produce_cmd_suffix_rest(t_parser *state)
 			parser_produce_push(state, produce_cmd_suffix_rest,
 				symbol.production);
 	}
-	else if (parser_matches_one_of(state, (t_token_type[]){OR_OR, PIPE,
+	else if (!parser_matches_one_of(state, (t_token_type[]){OR_OR, PIPE,
 			EOF_TOKEN, R_PAREN, AND_AND}, 5))
-	{
-	}
-	else
-	{
 		state->err = E_UNEXPECTED_TOKEN;
-	}
 	return (symbol);
 }

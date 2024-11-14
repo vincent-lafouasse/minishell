@@ -1,5 +1,17 @@
-#include "t_command.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   destructor.c                                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:57:53 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 13:57:53 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "io/t_redir_list/t_redir_list.h"
+#include "t_command.h"
 #include "word/t_word_list/t_word_list.h"
 #include <stdlib.h>
 
@@ -44,11 +56,11 @@ void	command_destroy(t_command command)
 	if (!command_is_initialized(command))
 		return ;
 	if (command.type == CMD_SIMPLE)
-		return simple_destroy(command.simple);
+		return (simple_destroy(command.simple));
 	else if (command.type == CMD_SUBSHELL)
-		return subshell_destroy(command.subshell);
+		return (subshell_destroy(command.subshell));
 	else if (command.type == CMD_PIPELINE)
-		return pipeline_destroy(command.pipeline);
+		return (pipeline_destroy(command.pipeline));
 	else if (command.type == CMD_CONDITIONAL)
-		return conditional_destroy(command.conditional);
+		return (conditional_destroy(command.conditional));
 }

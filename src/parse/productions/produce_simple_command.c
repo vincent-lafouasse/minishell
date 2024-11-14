@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   produce_simple_command.c                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 14:18:54 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 14:20:26 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "productions.h"
 
 t_symbol	produce_simple_command(t_parser *state)
@@ -24,8 +36,6 @@ t_symbol	produce_simple_command(t_parser *state)
 				symbol.production);
 	}
 	else
-	{
 		state->err = E_UNEXPECTED_TOKEN;
-	}
 	return (symbol);
 }
