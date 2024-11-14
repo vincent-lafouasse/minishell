@@ -6,7 +6,6 @@ MINISHELL_ROOT="${EXEC_TEST_ROOT}/../../.."
 MINISHELL="${MINISHELL_ROOT}/minishell"
 
 BUILD="${MINISHELL_ROOT}/build/exec_test"
-INFILE_DIR="${EXEC_TEST_ROOT}/infiles"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -38,7 +37,6 @@ compare_with_bash() {
     local bash_output="${BUILD}/${test_name}/bash"
     local minishell_output="${BUILD}/${test_name}/minishell"
 
-    local command="${command//INFILE_DIR/${INFILE_DIR}}"
     local minishell_command="${command//OUTFILE_DIR/${minishell_output}}"
     local bash_command="${command//OUTFILE_DIR/${bash_output}}"
 
@@ -68,7 +66,6 @@ refute() {
     mkdir -p "$build_dir"
     echo -e "${YELLOW}Testing $test_name$NC"
 
-    local command="${command//INFILE_DIR/${INFILE_DIR}}"
     local command="${command//OUTFILE_DIR/${build_dir}}"
 
     $MINISHELL -c "$minishell_command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
@@ -126,7 +123,7 @@ main() {
 
     compare_with_bash 'Simple_HelloWorld'  'echo hello world'
     compare_with_bash 'Simple_pwdIntoFile' 'pwd > OUTFILE_DIR/pwd_log'
-    compare_with_bash 'Simple_SearchFile'  'grep thou INFILE_DIR/shakespeare.txt'
+    compare_with_bash 'Simple_SearchFile'  'grep thou ./aux/infiles/shakespeare.txt'
 
     compare_with_bash 'Pipe_FindIncludes' 'grep -r include ./src | sort | uniq'
 
