@@ -47,7 +47,7 @@ bool can_expand_variable(const char *word)
 	return (*word == '$' && identifier_len(word + 1) > 0);
 }
 
-t_error expand_single_word(t_expansion_variables vars, const char *word)
+t_error expand_string(t_expansion_variables vars, const char *str)
 {
 	bool should_be_expanding;
 	size_t i;
