@@ -13,7 +13,7 @@ typedef struct s_expansion_variables {
 t_error perform_all_expansions_on_words(t_word_list *word);
 
 t_error expand_env_variables(t_expansion_variables vars, t_word_list* words);
-t_error expand_string(t_expansion_variables vars, const char *word);
+t_error expand_string(t_expansion_variables vars, const char *str);
 
 t_error path_expanded_word(const t_env *env, const char *word, char **out);
 char *quote_removed_word(const char *word);

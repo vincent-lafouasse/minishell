@@ -56,15 +56,15 @@ t_error expand_string(t_expansion_variables vars, const char *str)
 	i = 0;
 	should_be_expanding = true;
 	expanded = string_new();
-	while (word[i]) {
-		if (word[i] == '\'')
+	while (str[i]) {
+		if (str[i] == '\'')
 			should_be_expanding = !should_be_expanding;
-		if (should_be_expanding && can_expand_variable(&word[i])) {
-			size_t variable_name_len = identifier_len(word + i + 1);
-			char *variable_name = ft_substr(word, i + 1, variable_name_len);
+		if (should_be_expanding && can_expand_variable(&str[i])) {
+			size_t variable_name_len = identifier_len(str + i + 1);
+			char *variable_name = ft_substr(str, i + 1, variable_name_len);
 			if (!variable_name)
 				return (string_destroy(expanded), E_OOM);
-			if (word[i + 1] == '?')
+			if (str[i + 1] == '?')
 				"expand with last_status";
 			const t_env_entry *variable = env_get(vars.env, variable_name);
 			if (variable)
@@ -76,7 +76,7 @@ t_error expand_string(t_expansion_variables vars, const char *str)
 		}
 		else
 		{
-			if (string_push(&expanded, word[i]) == true)
+			if (string_push(&expanded, str[i]) == true)
 				return (string_destroy(expanded), E_OOM);
 			i++;
 		}
