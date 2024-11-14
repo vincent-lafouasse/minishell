@@ -47,11 +47,12 @@ bool can_expand_variable(const char *word)
 	return (*word == '$' && identifier_len(word + 1) > 0);
 }
 
-t_error expand_string(t_expansion_variables vars, const char *str)
+t_error expand_string(t_expansion_variables vars, const char *str, char **out)
 {
 	bool should_be_expanding;
 	size_t i;
 	t_string *expanded;
+	t_error err;
 
 	i = 0;
 	should_be_expanding = true;
@@ -81,4 +82,7 @@ t_error expand_string(t_expansion_variables vars, const char *str)
 			i++;
 		}
 	}
+	err = string_make_c_string(expanded, out);
+	string_destroy(expanded);
+	return (err);
 }
