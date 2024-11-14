@@ -10,6 +10,7 @@ INFILE_DIR="${EXEC_TEST_ROOT}/infiles"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
+YELLOW='\033[0;33m'
 NC='\033[0m'
 
 setup() {
@@ -60,6 +61,7 @@ main() {
     N_PASSED=0
     N_FAILED=0
     FAILED_TESTS=()
+    setup
 
     compare_with_bash 'HelloWorld'          'echo hello world'
     compare_with_bash 'CanTakeInfile'       'cat INFILE_DIR/Makefile'
@@ -73,7 +75,7 @@ main() {
         echo -e "\n${RED}==========SOME TESTS FAILED=====================================================${NC}"
         echo Failed tests:
         for failed in "${FAILED_TESTS[@]}"; do
-            echo "    $failed"
+            echo -e "    $YELLOW$failed$NC"
         done
         exit 1
     fi
