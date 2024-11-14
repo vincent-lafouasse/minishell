@@ -98,6 +98,26 @@ refute() {
     fi
 }
 
+test_success() {
+    local n_passed="$1"
+    local n_failed="$2"
+    local total=$((n_passed + n_failed))
+
+    if ! ((n_failed)); then
+        echo -e "\n${GREEN}==========ALL TESTS PASSED======================================================${NC}"
+        echo -e "    ${GREEN}$n_passed/$total${NC}"
+        return 0
+    else
+        echo -e "\n${RED}==========SOME TESTS FAILED=====================================================${NC}"
+        echo -e "    ${RED}$n_passed/$total${NC}"
+        echo Failed tests:
+        for failed in "${FAILED_TESTS[@]}"; do
+            echo -e "    $YELLOW$failed$NC"
+        done
+        return 1
+    fi
+}
+
 main() {
     N_PASSED=0
     N_FAILED=0
@@ -114,15 +134,9 @@ main() {
 
     refute 'Refute_NonExistantCommand' 'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
 
-    if [ "$N_FAILED" -eq 0 ]; then
-        echo -e "\n${GREEN}==========ALL TESTS PASSED======================================================${NC}"
+    if test_success "$N_PASSED" "N_FAILED"; then
         exit 0
     else
-        echo -e "\n${RED}==========SOME TESTS FAILED=====================================================${NC}"
-        echo Failed tests:
-        for failed in "${FAILED_TESTS[@]}"; do
-            echo -e "    $YELLOW$failed$NC"
-        done
         exit 1
     fi
 }
