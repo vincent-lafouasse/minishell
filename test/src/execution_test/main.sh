@@ -1,11 +1,4 @@
-EXEC_TEST_ROOT="$(
-    cd -- "$(dirname "$0")" >/dev/null 2>&1 || exit
-    pwd -P
-)"
-MINISHELL_ROOT="${EXEC_TEST_ROOT}/../../.."
-MINISHELL="${MINISHELL_ROOT}/minishell"
-
-BUILD="${MINISHELL_ROOT}/build/exec_test"
+BUILD="./build/exec_test"
 
 GREEN='\033[0;32m'
 RED='\033[0;31m'
@@ -13,7 +6,7 @@ YELLOW='\033[0;33m'
 NC='\033[0m'
 
 setup() {
-    make -C "$MINISHELL_ROOT"
+    make -C .
     mkdir -p "$BUILD"
 }
 
@@ -40,7 +33,7 @@ compare_with_bash() {
     local minishell_command="${command//OUTFILE_DIR/${minishell_output}}"
     local bash_command="${command//OUTFILE_DIR/${bash_output}}"
 
-    $MINISHELL -c "$minishell_command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
+    ./minishell -c "$minishell_command" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
     echo $? >"${minishell_output}/status"
 
     bash -c "$bash_command" >"${bash_output}/stdout" 2>"${bash_output}/stderr"
@@ -50,6 +43,10 @@ compare_with_bash() {
         echo -e "${GREEN}✓   ${test_name} passed${NC}"
         ((N_PASSED++))
     else
+        echo -e "${YELLOW}expected${NC}"
+        bat "$bash_output/"*
+        echo -e "${YELLOW}was${NC}"
+        bat "$minishell_output/"*
         echo -e "${RED}✗   ${test_name} failed${NC}"
         ((N_FAILED++))
         FAILED_TESTS+=("${test_name}")
@@ -68,7 +65,7 @@ refute() {
 
     local command="${command//OUTFILE_DIR/${build_dir}}"
 
-    $MINISHELL -c "$minishell_command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
+    ./minishell -c "$minishell_command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
     local actual_status=$?
 
     local had_error=0
