@@ -15,6 +15,7 @@
 
 # include <stddef.h>
 # include <stdbool.h>
+# include "error/t_error.h"
 
 # ifndef T_STRING_DEFAULT_CAPACITY
 #  define T_STRING_DEFAULT_CAPACITY 64
@@ -35,7 +36,7 @@ t_oom		string_push(t_string **self, char t);
 t_oom		string_extend(t_string **self, const char *str);
 t_oom		string_extend_n(t_string **self, const char *str, size_t n);
 
-char		*string_make_c_string(t_string *self);
+t_error		string_make_c_string(const t_string *self, char **out);
 
 t_oom		string_resize(t_string **self, size_t new_cap);
 t_oom		string_reserve(t_string **self, size_t additional);
