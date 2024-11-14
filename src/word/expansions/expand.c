@@ -16,23 +16,6 @@ t_error perform_all_expansions_on_words(t_word_list *word)
 	return (NO_ERROR); // bad, dummy `perform_all_expansions_on_words` implementation
 }
 
-static bool is_identifier(const char* start, size_t len) {
-	size_t i = 0;
-	
-	if (len == 0)
-		return false;
-
-	if (ft_isdigit(*start))
-		return false;
-
-	while (i < len) {
-		if(!ft_isalnum(start[i]) && start[i] != '_')
-			return false;
-		i++;
-	}
-	return true;
-}
-
 static size_t identifier_len(const char *str) {
 	size_t len = 0;
 
