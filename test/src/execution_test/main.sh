@@ -6,8 +6,11 @@ MINISHELL_ROOT="${EXEC_TEST_ROOT}/../../.."
 MINISHELL="${MINISHELL_ROOT}/minishell"
 
 BUILD="${MINISHELL_ROOT}/build/exec_test"
-
 INFILE_DIR="${EXEC_TEST_ROOT}/infiles"
+
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m'
 
 setup() {
     make -C "$MINISHELL_ROOT"
@@ -44,8 +47,10 @@ compare_with_bash() {
     echo $? >"${bash_output}/status"
 
     if diff "$minishell_output" "$bash_output" >"${BUILD}/${test_name}/log"; then
+        echo -e "${GREEN}✓    ${test_name} passed${NC}"
         ((N_PASSED++))
     else
+        echo -e "${RED}✗    ${test_name} failed${NC}"
         ((N_FAILED++))
     fi
 }
