@@ -2,7 +2,7 @@
 #include "libft/string.h"
 #include "t_word_quotes_list.h"
 
-#include <assert.h>
+#include <assert.h> // temporarily
 #include <stdlib.h>
 
 static t_word_quote_state current_word_part_kind(const char *start)
@@ -15,27 +15,37 @@ static t_word_quote_state current_word_part_kind(const char *start)
 		return (WQS_UNQUOTED);
 }
 
+static const char *find_next_quote_or_nul_char(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i] != '\0' && str[i] != '"' && str[i] != '\'')
+		i++;
+	return (&str[i]);
+}
+
 static size_t	current_word_part_len(const char *start)
 {
-	const char *next_quote;
+	const char *next_quote_or_nul;
 	size_t len;
 
 	len = 0;
+	if (*start == '\0')
+		return 0;
+	next_quote_or_nul = find_next_quote_or_nul_char(start + 1);
 	if (*start == '"' || *start == '\'')
 	{
-		next_quote = ft_strchr(start + 1, *start);
-		assert(next_quote != NULL);
-		len = next_quote - start;
+		if (*next_quote_or_nul != *start) /* quotes don't match for some reason? */
+			return (next_quote_or_nul - start);
+		len = next_quote_or_nul + 1 - start;
 	}
 	else
-	{
-		while (start[len] != '"' && start[len] != '\'')
-			len++;
-	}
+		len = next_quote_or_nul - start;
 	return (len);
 }
 
-t_error wql_parse(const char *compound_word, t_word_quotes_list **out)
+t_error wql_parse(const char *word, t_word_quotes_list **out)
 {
 	t_word_quotes_list *quotes;
 	size_t current_part_len;
@@ -44,11 +54,11 @@ t_error wql_parse(const char *compound_word, t_word_quotes_list **out)
 	char *part;
 
 	quotes = NULL;
-	while (*compound_word)
+	while (*word)
 	{
-		current_part_kind = current_word_part_kind(compound_word);
-		current_part_len = current_word_part_len(compound_word);
-		part = ft_substr(compound_word, 0, current_part_len);
+		current_part_kind = current_word_part_kind(word);
+		current_part_len = current_word_part_len(word);
+		part = ft_substr(word, 0, current_part_len);
 		if (!part)
 		{
 			wql_clear(&quotes);
@@ -61,7 +71,7 @@ t_error wql_parse(const char *compound_word, t_word_quotes_list **out)
 			wql_clear(&quotes);
 			return (E_OOM);
 		}
-		compound_word += current_part_len;
+		word += current_part_len;
 	}
 	*out = quotes;
 	return (NO_ERROR);
