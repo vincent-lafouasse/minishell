@@ -58,7 +58,7 @@ char *read_a_line(void)
 	while (1)
 	{
 		last_signal = 0;
-		input = readline(SHELL_PROMPT);
+		input = readline(SHELL_PROMPT); // TODO: make readline output the prompt (and heredoc prompt) to stderr
 		if (input == NULL)
 			return (NULL);
 		if (last_signal != SIGINT)
