@@ -30,6 +30,8 @@ void wql_push_back_link(t_word_quotes_list **wql, t_word_quotes_list *link);
 void wql_delone(t_word_quotes_list **wql);
 void wql_clear(t_word_quotes_list **wql);
 
+t_error wql_make_joined(const t_word_quotes_list *wql, char **out);
+
 t_error make_split_wl_with_ifs(t_word_quotes_list *wql, const char *ifs, t_word_list **out);
 
 #endif // T_WORD_QUOTES_LIST_H
