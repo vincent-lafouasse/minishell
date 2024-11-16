@@ -2,6 +2,7 @@
 #include "execute/t_env/t_env.h"
 #include "error/t_error.h"
 #include "libft/string.h"
+#include "word/expansions/t_word_quotes_list/t_word_quotes_list.h"
 #include "word/t_string/t_string.h"
 
 #include "libft/ctype.h"
@@ -67,34 +68,85 @@ static t_error expand_dollar_variable(t_expansion_variables vars, \
 	return (err);
 }
 
-t_error variable_expand_word(t_expansion_variables vars, const char *word, char **out)
+static t_error variable_expand_word_quote(t_expansion_variables vars, \
+										  t_word_quotes_list *wq, t_string **out)
 {
-	bool should_be_expanding;
-	size_t i;
-	t_string *expanded;
 	t_error err;
+	size_t i;
 
 	i = 0;
-	should_be_expanding = true;
-	expanded = string_new();
-	while (str[i]) {
-		if (str[i] == '\'')
-			should_be_expanding = !should_be_expanding;
-		if (should_be_expanding && is_valid_dollar_variable(&str[i]))
+	if (wq->state == WQS_SINGLY_QUOTED)
+		return (NO_ERROR);
+	while (wq->part[i])
+	{
+		if (is_valid_dollar_variable(&wq->part[i]))
 		{
-			err = expand_dollar_variable(vars, &str[i], &expanded);
+			err = expand_dollar_variable(vars, &wq->part[i], out);
 			if (err != NO_ERROR)
-				return (string_destroy(expanded), E_OOM);
-			i += 1 + identifier_len(&str[i]);
+				return (E_OOM);
+			i += 1 + identifier_len(&wq->part[i]);
 		}
 		else
 		{
-			if (string_push(&expanded, str[i]) == true)
-				return (string_destroy(expanded), E_OOM);
-			i++;
+			if (string_push(out, wq->part[i]) == true)
+				return (E_OOM);
 		}
+		i++;
 	}
-	err = string_make_c_string(expanded, out);
-	string_destroy(expanded);
+	return (NO_ERROR);
+}
+
+static t_error variable_expand_wql(t_expansion_variables vars, \
+											t_word_quotes_list *wql)
+{
+	t_string *expanded;
+	char *expanded_c_string; // XXX: this variable name is kinda goofy
+	t_error err;
+
+	while (wql)
+	{
+		expanded = string_new();
+		if (!expanded)
+			return (E_OOM);
+		err = variable_expand_word_quote(vars, wql, &expanded);
+		if (err != NO_ERROR)
+		{
+			string_destroy(expanded);
+			return (err);
+		}
+		err = string_make_c_string(expanded, &expanded_c_string);
+		if (err != NO_ERROR)
+		{
+			string_destroy(expanded);
+			return (err);
+		}
+		free(wql->part);
+		wql->part = expanded_c_string;
+		string_destroy(expanded);
+	}
 	return (err);
+}
+
+t_error variable_expand_word(t_expansion_variables vars, const char *word, char **out)
+{
+	t_error err;
+	t_word_quotes_list *parts;
+
+	err = wql_parse(word, &parts);
+	if (err != NO_ERROR)
+		return (err);
+	err = variable_expand_wql(vars, parts);
+	if (err != NO_ERROR)
+	{
+		wql_clear(&parts);
+		return (err);
+	}
+	err = wql_make_joined(parts, out);
+	if (err != NO_ERROR)
+	{
+		wql_clear(&parts);
+		return (err);
+	}
+	wql_clear(&parts);
+	return (NO_ERROR);
 }
