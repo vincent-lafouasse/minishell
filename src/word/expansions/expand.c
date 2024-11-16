@@ -27,6 +27,7 @@ t_error variable_expand_word(t_expansion_variables vars, const char *word, char 
 		wql_clear(&parts);
 		return (err);
 	}
+	wql_remove_outer_quotes(parts);
 	err = wql_make_joined(parts, out);
 	if (err != NO_ERROR)
 	{
