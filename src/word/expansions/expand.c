@@ -7,12 +7,6 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-t_error perform_all_expansions_on_words(t_word_list *word)
-{
-	(void)word;
-	return (NO_ERROR); // bad, dummy `perform_all_expansions_on_words` implementation
-}
-
 t_error variable_expand_word(t_expansion_variables vars, const char *word, char **out)
 {
 	t_error err;
