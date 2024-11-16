@@ -37,7 +37,7 @@ static size_t	current_word_part_len(const char *start)
 	if (*start == '"' || *start == '\'')
 	{
 		if (*next_quote_or_nul != *start) /* quotes don't match for some reason? */
-			return (next_quote_or_nul - start);
+			return (next_quote_or_nul - start); // TODO: return error instead
 		len = next_quote_or_nul + 1 - start;
 	}
 	else
