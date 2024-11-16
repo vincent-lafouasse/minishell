@@ -1,6 +1,8 @@
 #ifndef EXPAND_INTERNALS_H
 # define EXPAND_INTERNALS_H
 
+#include "./expand.h"
+
 #include "error/t_error.h"
 #include "word/t_word_list/t_word_list.h"
 
@@ -30,6 +32,7 @@ void wql_push_back_link(t_word_quotes_list **wql, t_word_quotes_list *link);
 void wql_delone(t_word_quotes_list **wql);
 void wql_clear(t_word_quotes_list **wql);
 
+t_error wql_variable_expand(t_expansion_variables vars, t_word_quotes_list *wql);
 t_error wql_make_joined(const t_word_quotes_list *wql, char **out);
 
 t_error make_split_wl_with_ifs(t_word_quotes_list *wql, const char *ifs, t_word_list **out);
