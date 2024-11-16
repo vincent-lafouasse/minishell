@@ -1,9 +1,9 @@
 add_executable(expansion_test)
 
 set(word_quotes_list_module
-	word/expansions/t_word_quotes_list/make_joined.c
-	word/expansions/t_word_quotes_list/parse.c
-	word/expansions/t_word_quotes_list/t_word_quotes_list.c
+	word/expansions/make_joined.c
+	word/expansions/parse.c
+	word/expansions/t_word_quotes_list.c
 )
 
 set(tested_source

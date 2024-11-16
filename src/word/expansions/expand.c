@@ -2,11 +2,12 @@
 #include "execute/t_env/t_env.h"
 #include "error/t_error.h"
 #include "libft/string.h"
-#include "word/expansions/t_word_quotes_list/t_word_quotes_list.h"
 #include "word/t_string/t_string.h"
 
 #include "libft/ctype.h"
 #include "libft/ft_string.h"
+
+#include "./t_word_quotes_list.h"
 
 #include <stdlib.h>
 #include <stdbool.h>

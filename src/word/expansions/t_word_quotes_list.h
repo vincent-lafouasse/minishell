@@ -17,7 +17,7 @@ typedef struct s_word_quotes_list
 	struct s_word_quotes_list *next;
 	enum e_word_quote_state state;
 	char *part;
-} t_word_quotes_list; // TODO: denest this entire module one level and rename accordingly
+} t_word_quotes_list;
 
 t_error wql_parse(const char *compound_word, t_word_quotes_list **out);
 t_error wql_new(t_word_quote_state state, char *part, t_word_quotes_list **out);
