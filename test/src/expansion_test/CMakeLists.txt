@@ -12,7 +12,7 @@ list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 
 target_sources(expansion_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
-	${CMAKE_CURRENT_LIST_DIR}/word_quotes_list.cpp
+	${CMAKE_CURRENT_LIST_DIR}/parse.cpp
 
 	${tested_source}
 )
