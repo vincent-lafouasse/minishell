@@ -37,6 +37,4 @@ t_error wql_variable_expand(t_expansion_variables vars, t_word_quotes_list *wql)
 void	wql_remove_outer_quotes(t_word_quotes_list *wql);
 t_error wql_make_joined(const t_word_quotes_list *wql, char **out);
 
-t_error make_split_wl_with_ifs(t_word_quotes_list *wql, const char *ifs, t_word_list **out);
-
 #endif // EXPAND_INTERNALS_H
