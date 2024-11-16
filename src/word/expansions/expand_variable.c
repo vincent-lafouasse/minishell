@@ -78,14 +78,14 @@ static t_error variable_expand_word_quote(t_expansion_variables vars, \
 			err = expand_dollar_variable(vars, &wq->part[i], out);
 			if (err != NO_ERROR)
 				return (E_OOM);
-			i += 1 + identifier_len(&wq->part[i]);
+			i += 1 + identifier_len(&wq->part[i + 1]);
 		}
 		else
 		{
 			if (string_push(out, wq->part[i]) == true)
 				return (E_OOM);
+			i++;
 		}
-		i++;
 	}
 	return (NO_ERROR);
 }
