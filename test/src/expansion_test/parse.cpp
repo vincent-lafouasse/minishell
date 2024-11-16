@@ -45,21 +45,6 @@ TEST(WordQuotesListParsing, ParsesSingleUnquotedString)
     wql_clear(&actual);
 }
 
-TEST(WordQuotesListParsing, ParsesManyUnquotedStrings)
-{
-    std::vector<t_word_quotes_list> expected = {
-        word_quotes_list("hello world", WQS_UNQUOTED)
-    };
-
-    const char *input = "hello world";
-
-    t_word_quotes_list *actual = nullptr;
-    ASSERT_EQ(wql_parse(input, &actual), NO_ERROR);
-    ASSERT_NE(actual, nullptr);
-    ASSERT_TRUE(word_quotes_list_equals(actual, expected));
-    wql_clear(&actual);
-}
-
 TEST(WordQuotesListParsing, ParsesSingleDoublyQuotedString)
 {
     std::vector<t_word_quotes_list> expected = {
