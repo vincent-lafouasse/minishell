@@ -1,6 +1,7 @@
 add_executable(expansion_test)
 
 set(word_quotes_list_module
+	word/expansions/t_word_quotes_list/make_joined.c
 	word/expansions/t_word_quotes_list/parse.c
 	word/expansions/t_word_quotes_list/t_word_quotes_list.c
 )
@@ -13,6 +14,7 @@ list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 target_sources(expansion_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
 	${CMAKE_CURRENT_LIST_DIR}/parse.cpp
+	${CMAKE_CURRENT_LIST_DIR}/join.cpp
 
 	${tested_source}
 )
