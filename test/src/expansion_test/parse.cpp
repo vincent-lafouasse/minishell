@@ -5,7 +5,7 @@
 
 extern "C"
 {
-#include "word/expansions/t_word_quotes_list.h"
+#include "word/expansions/expand_internals.h"
 };
 
 static bool word_quotes_list_equals(t_word_quotes_list *actual, \

@@ -1,6 +1,6 @@
 #include "libft/ft_string.h"
 #include "libft/string.h"
-#include "t_word_quotes_list.h"
+#include "expand_internals.h"
 
 #include <assert.h> // temporarily
 #include <stdlib.h>

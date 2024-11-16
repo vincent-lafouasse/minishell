@@ -1,4 +1,4 @@
-#include "t_word_quotes_list.h"
+#include "expand_internals.h"
 
 #include <stdlib.h>
 

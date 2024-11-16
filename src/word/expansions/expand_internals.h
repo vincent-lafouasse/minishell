@@ -1,5 +1,5 @@
-#ifndef T_WORD_QUOTES_LIST_H
-# define T_WORD_QUOTES_LIST_H
+#ifndef EXPAND_INTERNALS_H
+# define EXPAND_INTERNALS_H
 
 #include "error/t_error.h"
 #include "word/t_word_list/t_word_list.h"
@@ -34,4 +34,4 @@ t_error wql_make_joined(const t_word_quotes_list *wql, char **out);
 
 t_error make_split_wl_with_ifs(t_word_quotes_list *wql, const char *ifs, t_word_list **out);
 
-#endif // T_WORD_QUOTES_LIST_H
+#endif // EXPAND_INTERNALS_H

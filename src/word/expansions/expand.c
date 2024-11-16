@@ -7,7 +7,7 @@
 #include "libft/ctype.h"
 #include "libft/ft_string.h"
 
-#include "./t_word_quotes_list.h"
+#include "./expand_internals.h"
 
 #include <stdlib.h>
 #include <stdbool.h>
