@@ -6,7 +6,7 @@
 /*   By: jamar <jamar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 19:24:50 by jamar             #+#    #+#             */
-/*   Updated: 2024/01/31 15:51:28 by jamar            ###   ########.fr       */
+/*   Updated: 2024/11/16 20:32:36 by jamar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ t_oom	string_resize(t_string **self, size_t new_cap)
 		return (true);
 	new_self = ft_realloc(
 			current_self,
-			sizeof(t_string) + current_self->len * sizeof(char),
-			sizeof(t_string) + new_cap * sizeof(char) \
+			sizeof(t_string) + (current_self->len * sizeof(char)),
+			sizeof(t_string) + (new_cap * sizeof(char)) \
 	);
 	if (new_self == NULL)
 		return (true);
+	new_self->cap = new_cap;
 	*self = new_self;
 	return (false);
 }
