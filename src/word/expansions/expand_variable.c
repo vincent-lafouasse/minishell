@@ -116,6 +116,7 @@ t_error wql_variable_expand(t_expansion_variables vars, t_word_quotes_list *wql)
 		free(wql->part);
 		wql->part = expanded_c_string;
 		string_destroy(expanded);
+		wql = wql->next;
 	}
 	return (err);
 }
