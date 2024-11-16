@@ -67,7 +67,7 @@ static t_error expand_dollar_variable(t_expansion_variables vars, \
 	return (err);
 }
 
-t_error variable_expand_string(t_expansion_variables vars, const char *str, char **out)
+t_error variable_expand_word(t_expansion_variables vars, const char *word, char **out)
 {
 	bool should_be_expanding;
 	size_t i;
