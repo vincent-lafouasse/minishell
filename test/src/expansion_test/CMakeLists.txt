@@ -22,11 +22,17 @@ set(env_module
 	execute/t_env/getter.c
 	execute/t_env/constructor.c
 )
+set(word_module
+	word/t_word_list/t_word_list.h
+	word/t_word_list/t_word_list.c
+)
+
 
 set(tested_source
 	${word_expansions_module}
 	${t_string_module}
 	${env_module}
+	${word_module}
 )
 list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 
@@ -36,6 +42,7 @@ target_sources(expansion_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/join.cpp
 	${CMAKE_CURRENT_LIST_DIR}/expand.cpp
 	${CMAKE_CURRENT_LIST_DIR}/Variables.cpp
+	${CMAKE_CURRENT_LIST_DIR}/Words.cpp
 
 	${tested_source}
 )
