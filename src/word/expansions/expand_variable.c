@@ -69,11 +69,10 @@ static t_error variable_expand_word_quote(t_expansion_variables vars, \
 	size_t i;
 
 	i = 0;
-	if (wq->state == WQS_SINGLY_QUOTED)
-		return (NO_ERROR);
 	while (wq->part[i])
 	{
-		if (is_valid_dollar_variable(&wq->part[i]))
+		if (wq->state != WQS_SINGLY_QUOTED && \
+			is_valid_dollar_variable(&wq->part[i]))
 		{
 			err = expand_dollar_variable(vars, &wq->part[i], out);
 			if (err != NO_ERROR)
