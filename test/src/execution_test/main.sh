@@ -102,11 +102,9 @@ refute() {
         had_error=1
     fi
 
-    if [ -z "$partial_stderr" ]; then
-        if ! grep -q "${build_dir}/stderr" "$partial_stderr"; then
-            echo -e "    ${RED}Stderr doesnt contain pattern \'$partial_stderr\'$NC"
-            had_error=1
-        fi
+    if ! grep -q "${build_dir}/stderr" "$partial_stderr"; then
+        echo -e "    ${RED}Stderr doesnt contain pattern '$partial_stderr'$NC"
+        had_error=1
     fi
 
     if [ "$had_error" -eq 0 ]; then
@@ -153,7 +151,9 @@ main() {
 
     compare_with_bash 'EnvStuff' 'export COOL_NUMBER=420 && echo $COOL_NUMBER'
 
-    refute 'Refute_NonExistantCommand' 'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
+    refute 'Refute_NonExistantCommand'  'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
+    refute 'Refute_UnexpectedToken'     '>' 2 'unexpected token'
+    refute 'Refute_IsADirectory'        '>' 126 'is a directorytory'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
