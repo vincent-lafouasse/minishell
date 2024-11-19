@@ -144,6 +144,7 @@ main() {
     setup
 
     compare_with_bash 'Simple_HelloWorld'  'echo hello world'
+    compare_with_bash 'Simple_PrintWhitespace' 'echo "         " | cat -e'
     compare_with_bash 'Simple_pwdIntoFile' 'pwd > OUTFILE_DIR/pwd_log'
     compare_with_bash 'Simple_SearchFile'  'grep thou INFILE_DIR/shakespeare.txt'
 
