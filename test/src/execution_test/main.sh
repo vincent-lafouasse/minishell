@@ -98,11 +98,15 @@ refute() {
     local had_error=0
 
     if [ "$actual_status" -ne "$status" ]; then
+        echo -e "    ${YELLOW}For command:$NC $command"
         echo -e "    ${RED}Expected status $status was $actual_status$NC"
         had_error=1
     fi
 
     if ! grep -q "$partial_stderr" "${build_dir}/stderr"; then
+        if [ "$had_error" -eq 0 ]; then
+            echo -e "    ${YELLOW}For command:$NC $command"
+        fi
         echo -e "    ${RED}Stderr doesnt contain pattern '$partial_stderr'$NC"
         had_error=1
     fi
@@ -143,18 +147,18 @@ main() {
     FAILED_TESTS=()
     setup
 
-    compare_with_bash 'Simple_HelloWorld'  'echo hello world'
+    compare_with_bash 'Simple_HelloWorld' 'echo hello world'
     compare_with_bash 'Simple_PrintWhitespace' 'echo "         " | cat -e'
     compare_with_bash 'Simple_pwdIntoFile' 'pwd > OUTFILE_DIR/pwd_log'
-    compare_with_bash 'Simple_SearchFile'  'grep thou INFILE_DIR/shakespeare.txt'
+    compare_with_bash 'Simple_SearchFile' 'grep thou INFILE_DIR/shakespeare.txt'
 
     compare_with_bash 'Pipe_FindIncludes' 'grep -r include ./src | sort | uniq'
 
     compare_with_bash 'EnvStuff' 'export COOL_NUMBER=420 && echo $COOL_NUMBER'
 
-    refute 'Refute_NonExistantCommand'  'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
-    refute 'Refute_UnexpectedToken'     '>' 2 'unexpected token'
-    refute 'Refute_IsADirectory'        '>' 126 'is a directory'
+    refute 'Refute_NonExistantCommand' 'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
+    refute 'Refute_UnexpectedToken' '>' 2 'unexpected token'
+    refute 'Refute_IsADirectory' '>' 126 'is a directory'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
