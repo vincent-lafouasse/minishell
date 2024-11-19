@@ -104,7 +104,7 @@ refute() {
         had_error=1
     fi
 
-    if ! grep -q "$partial_stderr" "${build_dir}/stderr"; then
+    if ! grep --quiet --ignore-case "$partial_stderr" "${build_dir}/stderr"; then
         if [ "$had_error" -eq 0 ]; then
             echo -e "    ${YELLOW}For command:$NC $command"
         fi
