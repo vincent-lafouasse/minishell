@@ -158,7 +158,7 @@ main() {
 
     refute 'Refute_NonExistantCommand' 'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
     refute 'Refute_UnexpectedToken' '>' 2 'unexpected token'
-    refute 'Refute_IsADirectory' '>' 126 'is a directory'
+    refute 'Refute_IsADirectory' '/' 126 'is a directory'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
