@@ -27,7 +27,7 @@ static bool word_quotes_list_equals(t_word_quotes_list *actual, \
 
 t_word_quotes_list word_quotes_list(const char *part, t_word_quote_state state)
 {
-    return ((t_word_quotes_list){.part = const_cast<char *>(part), .state = state});
+    return ((t_word_quotes_list){.state = state, .part = const_cast<char *>(part)});
 }
 
 TEST(WordQuotesListParsing, ParsesSingleUnquotedString)

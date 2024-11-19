@@ -39,7 +39,6 @@ list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 target_sources(expansion_test PRIVATE
 	${CMAKE_CURRENT_LIST_DIR}/main.cpp
 	${CMAKE_CURRENT_LIST_DIR}/parse.cpp
-	${CMAKE_CURRENT_LIST_DIR}/join.cpp
 	${CMAKE_CURRENT_LIST_DIR}/expand.cpp
 	${CMAKE_CURRENT_LIST_DIR}/Variables.cpp
 	${CMAKE_CURRENT_LIST_DIR}/Words.cpp
