@@ -59,6 +59,7 @@ compare_with_bash() {
         echo -e "${GREEN}✓   ${test_name} passed${NC}"
         ((N_PASSED++))
     else
+        echo -e "    ${YELLOW}For command:$NC $command"
         echo -e "${YELLOW}expected${NC}"
         for file in "$bash_output/"*; do
             echo -ne "$PURPLE"
