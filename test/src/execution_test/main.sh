@@ -102,7 +102,7 @@ refute() {
         had_error=1
     fi
 
-    if ! grep -q "${build_dir}/stderr" "$partial_stderr"; then
+    if ! grep -q "$partial_stderr" "${build_dir}/stderr"; then
         echo -e "    ${RED}Stderr doesnt contain pattern '$partial_stderr'$NC"
         had_error=1
     fi
@@ -153,7 +153,7 @@ main() {
 
     refute 'Refute_NonExistantCommand'  'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
     refute 'Refute_UnexpectedToken'     '>' 2 'unexpected token'
-    refute 'Refute_IsADirectory'        '>' 126 'is a directorytory'
+    refute 'Refute_IsADirectory'        '>' 126 'is a directory'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
