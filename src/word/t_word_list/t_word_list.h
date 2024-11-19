@@ -8,6 +8,7 @@ typedef void (*t_destructor)(void *);
 typedef struct s_word_list
 {
 	struct s_word_list *next;
+	struct s_word_list *prev;
 	char *contents;
 } t_word_list;
 
