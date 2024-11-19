@@ -10,10 +10,13 @@
 t_error variable_expand_words(t_expansion_variables vars, t_word_list *words) // TODO: do field splitting
 {
 	char *expanded_word;
+	t_error err;
 
 	while (words)
 	{
-		variable_expand_word(vars, words->contents, &expanded_word);
+		err = variable_expand_word(vars, words->contents, &expanded_word);
+		if (err != NO_ERROR)
+			return (err);
 		free(words->contents);
 		words->contents = expanded_word;
 		words = words->next;
