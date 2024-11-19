@@ -16,12 +16,33 @@ static size_t wql_cumulated_length(const t_word_quotes_list *wql)
 	return (len);
 }
 
+static bool any_words_were_quoted(const t_word_quotes_list *wql)
+{
+	while (wql)
+	{
+		if (wql->quotes_removed == true)
+			return (true);
+		wql = wql->next;
+	}
+	return (false);
+}
+
+static bool expands_to_nonempty_word_list(const t_word_quotes_list *wql)
+{
+	return (wql_cumulated_length(wql) != 0 || any_words_were_quoted(wql));
+}
+
 t_error wql_make_joined(const t_word_quotes_list *wql, char **out)
 {
 	char *joined;
 	size_t current_part_len;
 	size_t i;
 
+	if (!expands_to_nonempty_word_list(wql))
+	{
+		*out = NULL;
+		return (NO_ERROR);
+	}
 	joined = malloc((wql_cumulated_length(wql) + 1) * sizeof(char));
 	if (!joined)
 		return (E_OOM);
