@@ -123,7 +123,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 		close(fd_to_close);
 
 	t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
-	err = variable_expand_words(vars, simple->words);
+	err = variable_expand_words(vars, &simple->words);
 	if (err != NO_ERROR)
 		graceful_exit_from_child();
 
