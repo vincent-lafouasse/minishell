@@ -7,19 +7,32 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-t_error variable_expand_words(t_expansion_variables vars, t_word_list *words) // TODO: do field splitting
+t_error variable_expand_words(t_expansion_variables vars, t_word_list **words) // TODO: do field splitting
 {
 	char *expanded_word;
 	t_error err;
+	t_word_list *current;
 
-	while (words)
+	current = *words;
+	while (current)
 	{
-		err = variable_expand_word(vars, words->contents, &expanded_word);
+		err = variable_expand_word(vars, current->contents, &expanded_word);
 		if (err != NO_ERROR)
 			return (err);
-		free(words->contents);
-		words->contents = expanded_word;
-		words = words->next;
+		if (!expanded_word && current->prev == NULL)
+		{
+			wl_delone(words, free);
+			current = *words;
+		}
+		else if (!expanded_word && current->prev != NULL) {
+			wl_delone(&current, free);
+		}
+		else
+		{
+			free(current->contents);
+			current->contents = expanded_word;
+			current = current->next;
+		}
 	}
 	return (NO_ERROR);
 }
