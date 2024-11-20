@@ -7,7 +7,7 @@
 #include "word/t_word_list/t_word_list.h"
 #include "word/expansions/expand.h"
 #include "signal/signal.h"
-#include "log/log.h" // bad, remove in prod
+#include "builtin.h"
 
 
 #include <stdio.h>
@@ -122,11 +122,6 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close);
 
-	t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
-	err = variable_expand_words(vars, &simple->words);
-	if (err != NO_ERROR)
-		graceful_exit_from_child();
-
 	err = do_piping(io);
 	if (err != NO_ERROR)
 		perror("dup2");
@@ -158,18 +153,30 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 t_command_result execute_command(t_state *state, t_command command) {
 
 	t_command_result res;
+	t_error err;
 
 	if (command.type == CMD_SIMPLE)
 	{
-		t_launch_result launch_res;
-		launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
-		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
+		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
+		err = variable_expand_words(vars, &command.simple->words);
+		if (err != NO_ERROR)
+			return (t_command_result){.error = err};
 
-		int status;
-		int options = 0;
-		assert(launch_res.pids != NULL);
-		waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
-		res = (t_command_result){.error = NO_ERROR, .status_code = status}; // bad, might err
+		if (is_builtin_command(command.simple))
+		{
+			res = execute_builtin(state, command.simple);
+		}
+		else 
+		{
+			t_launch_result launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
+			assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
+
+			int status;
+			int options = 0;
+			assert(launch_res.pids != NULL);
+			waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
+			res = (t_command_result){.error = NO_ERROR, .status_code = status}; // bad, might err
+		}
 	}
 	else if (command.type == CMD_PIPELINE)
 	{
