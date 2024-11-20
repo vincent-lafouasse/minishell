@@ -59,11 +59,27 @@ int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
 t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
 	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
 
-	if (command.type == CMD_SIMPLE)
+	t_error err;
+
+	if (command.type == CMD_SIMPLE) {
+		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
+		err = variable_expand_words(vars, &command.simple->words);
+		if (err != NO_ERROR)
+			return (t_launch_result){.error = err, .pids = NULL};
+
+		if (is_builtin_command(command.simple))
+		{
+			t_command subshell = command_new_subshell(command, NULL);
+			if (!subshell.subshell)
+				return (t_launch_result){.error = E_OOM, .pids = NULL};
+			t_launch_result res = launch_subshell(state, subshell.subshell, io, fd_to_close);
+			free(subshell.subshell);
+			return res;
+		}
 		return launch_simple_command(state, command.simple, io, fd_to_close);
+	}
 	else // subshell
 		return launch_subshell(state, command.subshell, io, fd_to_close);
-
 }
 
 t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
