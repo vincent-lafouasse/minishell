@@ -1,7 +1,6 @@
 #pragma once
 
 #include "error/t_error.h"
-#include <stddef.h>
 
 typedef struct s_env_entry {
 	const char	*key;
@@ -17,7 +16,6 @@ typedef struct s_env {
 t_error				from_envp(const char *values[], t_env **out);
 
 const t_env_entry	*env_get(const t_env *env, const char *key);
-const t_env_entry	*env_get_key_slice(const t_env *env, const char *start, size_t len);
 t_env_entry			*env_get_mut(t_env *env, const char *key);
 t_error				env_insert(t_env **env, const char *key, const char *value);
 t_env				*env_remove(t_env **env, const char *key);
