@@ -27,6 +27,7 @@ list(TRANSFORM tested_files PREPEND ${tested_src_dir}/)
 
 include(./src/lexer_test/CMakeLists.txt)
 include(./src/parser_test/CMakeLists.txt)
+include(./src/expansion_test/CMakeLists.txt)
 
 include(CTest)
 enable_testing()
@@ -35,6 +36,8 @@ add_test(NAME LexerTest
          COMMAND lexer_test)
 add_test(NAME ParserTest
          COMMAND parser_test)
+add_test(NAME ExpansionTest
+         COMMAND expansion_test)
 
 set(exec_test_root ${CMAKE_CURRENT_SOURCE_DIR}/src/execution_test)
 add_test(NAME ExecutionTest
