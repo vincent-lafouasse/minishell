@@ -1,30 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   tkl_delone.c                                       :+:      :+:    :+:   */
+/*   associativity_inversal_internals.h                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/11/12 13:51:14 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 13:51:15 by poss             ###   ########.fr       */
+/*   Created: 2024/11/12 19:51:30 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 20:07:38 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "t_token_list.h"
-#include <stdlib.h>
+#ifndef ASSOCIATIVITY_INVERSAL_INTERNALS_H
+# define ASSOCIATIVITY_INVERSAL_INTERNALS_H
 
-void	tkl_delone(t_token_list **tokens_p, t_destructor literal_destructor)
+# include "reduction_internals.h"
+
+typedef struct s_cond_data
 {
-	t_token_list	*buffer;
+	t_command				*commands;
+	t_conditional_operator	*operators;
+	size_t					connector_count;
+}							t_cond_data;
 
-	if (!tokens_p || !*tokens_p)
-		return ;
-	buffer = (*tokens_p)->next;
-	if (literal_destructor)
-		literal_destructor((*tokens_p)->token.literal);
-	free(*tokens_p);
-	*tokens_p = buffer;
-	if (buffer)
-		buffer->prev = NULL;
-	return ;
-}
+t_cond_data	cond_data_allocate(size_t connector_count);
+void		destroy_cond_data(t_cond_data data, size_t start);
+
+#endif

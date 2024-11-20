@@ -1,30 +1,28 @@
-#include "libft/stdlib.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   invert_conditional_associativity.c                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 14:25:38 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 19:54:20 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "reduction_internals.h"
-#include <assert.h> // temporarily
+#include "associativity_inversal_internals.h"
 #include <stdlib.h>
 
-typedef struct s_cond_data
-{
-	t_command				*commands;
-	t_conditional_operator	*operators;
-	size_t					connector_count;
-}							t_cond_data;
-
-static t_cond_data			gather_data_and_free(t_conditional *cond);
-static t_error				reconstruct_conditional_command(t_cond_data data,
-								t_conditional **out);
-static t_cond_data			cond_data_allocate(size_t connector_count);
-static size_t				n_connectors(const t_conditional *cond);
-static void					destroy_cond_data(t_cond_data data, size_t start) {
-	for (size_t i = start; i < data.connector_count; i++) {
-		command_destroy(data.commands[i]);
-	}
-}
+static t_cond_data	gather_data_and_free(t_conditional *cond);
+static t_error		reconstruct_conditional_command(t_cond_data data,
+						t_conditional **out);
+static size_t		n_connectors(const t_conditional *cond);
 
 t_error	invert_conditional_associativity(t_conditional **out)
 {
 	t_cond_data	data;
-	t_error err;
+	t_error		err;
 
 	data = gather_data_and_free(*out);
 	if (data.connector_count == 0)
@@ -47,7 +45,7 @@ static t_cond_data	gather_data_and_free(t_conditional *cond)
 	if (data.connector_count == 0)
 		return ((t_cond_data){0});
 	i = 0;
-	while (cond->second.type == CONDITIONAL_CMD)
+	while (cond->second.type == CMD_CONDITIONAL)
 	{
 		data.commands[i] = cond->first;
 		data.operators[i] = cond->op;
@@ -93,29 +91,12 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 	return (NO_ERROR);
 }
 
-static t_cond_data	cond_data_allocate(size_t connector_count)
-{
-	t_command				*commands;
-	t_conditional_operator	*operators;
-
-	commands = ft_calloc(connector_count + 1, sizeof(*commands));
-	operators = ft_calloc(connector_count, sizeof(*operators));
-	if (commands == NULL || operators == NULL)
-	{
-		free(commands);
-		free(operators);
-		return ((t_cond_data){0});
-	}
-	return ((t_cond_data){.commands = commands, .operators = operators,
-		.connector_count = connector_count});
-}
-
 static size_t	n_connectors(const t_conditional *cond)
 {
 	size_t	n;
 
 	n = 1;
-	while (cond->second.type == CONDITIONAL_CMD)
+	while (cond->second.type == CMD_CONDITIONAL)
 	{
 		cond = cond->second.conditional;
 		n++;

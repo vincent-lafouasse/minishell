@@ -18,30 +18,30 @@ extern "C"
 
 const char* command_type_repr(t_command_type ty) {
 	switch (ty) {
-		case SIMPLE_CMD:
+		case CMD_SIMPLE:
 			return "Simple";
-		case PIPELINE_CMD:
+		case CMD_PIPELINE:
 			return "Pipeline";
-		case CONDITIONAL_CMD:
+		case CMD_CONDITIONAL:
 			return "Conditional";
-		case SUBSHELL_CMD:
+		case CMD_SUBSHELL:
 			return "Subshell";
 	}
 }
 
 void assert_command_eq(t_command actual, t_command expected) {
 	ASSERT_EQ(actual.type, expected.type) << "Expected " << command_type_repr(expected.type) << " was " << command_type_repr(actual.type);
-	if (actual.type == SIMPLE_CMD) {
+	if (actual.type == CMD_SIMPLE) {
 		ASSERT_EQ(Words(actual.simple), Words(expected.simple));
 		ASSERT_EQ(Redirections(actual.simple), Redirections(expected.simple));
-	} else if (actual.type == SUBSHELL_CMD) {
+	} else if (actual.type == CMD_SUBSHELL) {
 		ASSERT_EQ(Redirections(actual.subshell), Redirections(expected.subshell));
 		assert_command_eq(actual.subshell->cmd, expected.subshell->cmd);
-	} else if (actual.type == CONDITIONAL_CMD) {
+	} else if (actual.type == CMD_CONDITIONAL) {
 		ASSERT_EQ(actual.conditional->op, expected.conditional->op);
 		assert_command_eq(actual.conditional->first, expected.conditional->first);
 		assert_command_eq(actual.conditional->second, expected.conditional->second);
-	} else if (actual.type == PIPELINE_CMD) {
+	} else if (actual.type == CMD_PIPELINE) {
 		assert_command_eq(actual.pipeline->first, expected.pipeline->first);
 		assert_command_eq(actual.pipeline->second, expected.pipeline->second);
 	} else FAIL() << "unreachable statement";

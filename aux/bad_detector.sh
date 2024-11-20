@@ -1,9 +1,9 @@
 #!/bin/bash
 
-PATTERNS=(bad xxx dummy hack todo temporarily '#include <assert.h>')
+PATTERNS=(bad xxx dummy hack todo temporarily '#include <assert.h>' pragma)
 
 for pattern in "${PATTERNS[@]}"; do
-	grep --recursive --ignore-case "${pattern}" ./src/
+	grep --recursive --ignore-case "${pattern}" ./src
 done
 
 MAKEFILE_HAS_WERROR=$(grep '^CFLAGS += -Werror' Makefile)

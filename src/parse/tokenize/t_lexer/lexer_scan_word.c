@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   lexer_scan_word.c                                  :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 13:46:08 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 13:50:22 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "error/t_error.h"
 #include "lexer_internals.h"
 #include "libft/ctype.h"
@@ -5,7 +17,7 @@
 #include "libft/string.h"
 #include <stdlib.h>
 
-#define SIMPLE_WORD_BREAK SHELL_BREAK_CHARS "\"'"
+#define SIMPLE_WORD_BREAK "\"' \t\n()<>|&"
 
 t_error	extract_quoted_string(t_lexer *lexer, char **str_out);
 t_error	extract_simple_word(t_lexer *lexer, char **str_out);
@@ -14,8 +26,8 @@ t_error	append_next_word_or_string(t_lexer *lexer, char **onto);
 t_error	lexer_scan_word(t_lexer *lexer, t_token *out)
 {
 	char	*str_out;
+	bool	must_continue;
 	t_error	err;
-	bool must_continue;
 
 	must_continue = true;
 	str_out = ft_strdup("");
@@ -46,7 +58,7 @@ t_error	append_next_word_or_string(t_lexer *lexer, char **onto)
 		err = extract_simple_word(lexer, &next);
 	if (err != NO_ERROR)
 		return (err);
-	buffer = ft_strjoin((const char*)*onto, next);
+	buffer = ft_strjoin((const char *)*onto, next);
 	if (!buffer)
 	{
 		free(next);
