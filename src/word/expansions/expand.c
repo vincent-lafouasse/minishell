@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-t_error variable_expand_words(t_expansion_variables vars, t_word_list **words) // TODO: do field splitting
+t_error variable_expand_words(t_expansion_variables vars, t_word_list **words)
 {
 	char *expanded_word;
 	t_error err;
