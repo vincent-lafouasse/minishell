@@ -199,6 +199,25 @@ main() {
     refute 'CommandNotFound_BunchaBackslashes03' '\\\\\\\\\\' 127 'command not found'
     refute 'CommandNotFound_Dash' '-' 127 'command not found'
 
+    # 51-66
+    refute 'UnexpectedToken_HangingPipe01' '|' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingPipe02' '| hola' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingPipe03' '| | |' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingPipe04' '||' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingPipe05' '|||||' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingPipe06' '|||||||||||||' 2 'unexpected token'
+    refute 'UnexpectedToken_MixedPipeRedir' '>>|><' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingCond01' '&&' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingCond02' '&&&&&' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingCond03' '&&&&&&&&&&&&&&' 2 'unexpected token'
+    refute 'UnexpectedToken_NoSemiColon01' ';;' 2 'unexpected token'
+    refute 'UnexpectedToken_NoSemiColon02' ';;;;;' 2 'unexpected token'
+    refute 'UnexpectedToken_NoSemiColon03' ';;;;;;;;;;;;;;;' 2 'unexpected token'
+    refute 'UnexpectedToken_EmptySubshell01' '()' 2 'unexpected token'
+    refute 'UnexpectedToken_EmptySubshell02' '( ( ) )' 2 'unexpected token'
+    refute 'UnexpectedToken_EmptySubshell03' '( ( ( ( ) ) ) )' 2 'unexpected token'
+
+
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
     else
