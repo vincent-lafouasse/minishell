@@ -132,12 +132,12 @@ test_success() {
         echo -e "    ${GREEN}$n_passed/$total${NC}"
         return 0
     else
-        echo -e "\n${RED}==========SOME TESTS FAILED=====================================================${NC}"
-        echo -e "    ${RED}$n_passed/$total${NC}"
         echo Failed tests:
         for failed in "${FAILED_TESTS[@]}"; do
             echo -e "    $YELLOW$failed$NC"
         done
+        echo -e "\n${RED}==========SOME TESTS FAILED=====================================================${NC}"
+        echo -e "    ${RED}$n_passed/$total${NC}"
         return 1
     fi
 }
