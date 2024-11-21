@@ -171,20 +171,20 @@ main() {
     # same here, minishell receives tttt compare_with_bash "BunchaTabs" "\t\t\t\t\t"
 
     # 28-41
-    refute 'UnexpectedToken01' ':' 2 'unexpected token'
-    refute 'UnexpectedToken02' '!' 2 'unexpected token'
-    refute 'UnexpectedToken03' '>' 2 'unexpected token'
-    refute 'UnexpectedToken04' '<' 2 'unexpected token'
-    refute 'UnexpectedToken05' '>>' 2 'unexpected token'
-    refute 'UnexpectedToken06' '<<' 2 'unexpected token'
-    refute 'UnexpectedToken07' '<>' 2 'unexpected token'
-    refute 'UnexpectedToken08' '>>>>>' 2 'unexpected token'
-    refute 'UnexpectedToken09' '>>>>>>>>>>>>>>>' 2 'unexpected token'
-    refute 'UnexpectedToken10' '<<<<<' 2 'unexpected token'
-    refute 'UnexpectedToken11' '<<<<<<<<<<<<<<<<' 2 'unexpected token'
-    refute 'UnexpectedToken12' '> > > >' 2 'unexpected token'
-    refute 'UnexpectedToken13' '>> >> >> >>' 2 'unexpected token'
-    refute 'UnexpectedToken14' '>>>> >> >> >>' 2 'unexpected token'
+    refute 'UnexpectedToken_NoColon' ':' 2 'unexpected token'
+    refute 'UnexpectedToken_NoBang' '!' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir01' '>' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir02' '<' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir03' '>>' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir04' '<<' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir05' '<>' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir06' '>>>>>' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir07' '>>>>>>>>>>>>>>>' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir08' '<<<<<' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir09' '<<<<<<<<<<<<<<<<' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir10' '> > > >' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir11' '>> >> >> >>' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingRedir12' '>>>> >> >> >>' 2 'unexpected token'
 
     # 42-46
     refute 'IsADirectory01' '/' 126 'is a directory'
@@ -192,6 +192,12 @@ main() {
     refute 'IsADirectory03' '/.' 126 'is a directory'
     refute 'IsADirectory04' '/./../../../../..' 126 'is a directory'
     refute 'IsADirectory05' '///////' 126 'is a directory'
+
+    # 47-50
+    refute 'CommandNotFound_BunchaBackslashes01' '\\\\' 127 'command not found'
+    refute 'CommandNotFound_BunchaBackslashes02' '\\\\\\' 127 'command not found'
+    refute 'CommandNotFound_BunchaBackslashes03' '\\\\\\\\\\' 127 'command not found'
+    refute 'CommandNotFound_Dash' '-' 127 'command not found'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
