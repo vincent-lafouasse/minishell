@@ -23,9 +23,20 @@ static bool number_fits_in_long_long(const char *status) // bad, dummy impl
 	return (true);
 }
 
+// NOTE(bit): i get a linker error locally every time i try to compile with libft
+//
+// Undefined symbols for architecture arm64:
+//   "_ft_isspace", referenced from:
+//       _is_valid_number in exit.c.o
+// ld: symbol(s) not found for architecture arm64
+static bool hack_isspace(char c) // bad, replace this with the libft implementation
+{
+	return (c == ' ');
+}
+
 static bool is_valid_number(const char *num)
 {
-	while (ft_isspace(*num)) num++;
+	while (hack_isspace(*num)) num++;
 	while (*num == '-' || *num == '+') num++;
 	if (!*num)
 		return (false);
