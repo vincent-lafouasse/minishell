@@ -217,6 +217,30 @@ main() {
     refute 'UnexpectedToken_EmptySubshell02' '( ( ) )' 2 'unexpected token'
     refute 'UnexpectedToken_EmptySubshell03' '( ( ( ( ) ) ) )' 2 'unexpected token'
 
+    # 110-132
+    compare_with_bash 'Expansion01' 'echo $'
+    compare_with_bash 'Expansion02_DollarBang' 'echo $?'
+    compare_with_bash 'Expansion03_DollarBang' 'echo $?$'
+    compare_with_bash 'Expansion04_DollarBang' 'echo $? | echo $? | echo $?'
+    compare_with_bash 'Expansion05' 'echo $:$= | cat -e'
+    compare_with_bash 'Expansion06' 'echo " $ " | cat -e'
+    compare_with_bash 'Expansion07' 'echo ' $ ' | cat -e'
+    compare_with_bash 'Expansion08' 'echo $HOME'
+    # no escape, compare_with_bash 'Expansion09' 'echo \$HOME'
+    compare_with_bash 'Expansion10' 'echo my shit terminal is [$TERM]'
+    compare_with_bash 'Expansion11' 'echo my shit terminal is [$TERM4'
+    compare_with_bash 'Expansion12' 'echo my shit terminal is [$TERM4]'
+    # no bash vars, compare_with_bash 'Expansion13' 'echo $UID'
+    compare_with_bash 'Expansion14' 'echo $HOME9'
+    # no bash vars, compare_with_bash 'Expansion15' 'echo $9HOME'
+    compare_with_bash 'Expansion16' 'echo $HOME%'
+    # no bash vars, compare_with_bash 'Expansion17' 'echo $UID$HOME'
+    compare_with_bash 'Expansion18' 'echo Le path de mon HOME est $HOME'
+    # no escape, compare_with_bash 'Expansion19' 'echo $USER$var\$USER$USER\$USERtest$USER'
+    compare_with_bash 'Expansion20_wildcard' 'echo $hola*'
+    compare_with_bash 'Expansion21_echonnnnn' 'echo -nnnn $hola'
+    refute 'Expansion22_unexpected_token_echo_redir' 'echo > <' 2 'unexpected token'
+    refute 'Expansion23_unexpected_token_echo_pipe' 'echo | |' 2 'unexpected token'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
