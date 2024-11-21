@@ -253,6 +253,7 @@ main() {
     compare_with_bash 'Expansion28_wildcard' 'echo hola*hola *'
     compare_with_bash 'Expansion29_wildcard' 'echo $hola*'
     compare_with_bash 'Expansion31_wildcard' 'echo $HOME*'
+    # 150
     compare_with_bash 'Expansion32' 'echo $""'
     compare_with_bash 'Expansion33' 'echo "$"""'
     compare_with_bash 'Expansion34' 'echo '\''$'\'''\'''\'''
@@ -263,6 +264,7 @@ main() {
     compare_with_bash 'Expansion39' 'echo '\''$HO'\''ME'
     compare_with_bash 'Expansion40' 'echo "$HO""ME"'
     compare_with_bash 'Expansion41' 'echo '\''$HO'\'''\''ME'\'''
+    # 160
     compare_with_bash 'Expansion42' 'echo "'\''$HO'\'''\''ME'\''"'
     compare_with_bash 'Expansion43' 'echo ""$HOME'
     compare_with_bash 'Expansion44' 'echo "" $HOME'
@@ -273,6 +275,7 @@ main() {
     compare_with_bash 'Expansion49' 'echo $'\''HOME'\'''
     compare_with_bash 'Expansion50' 'echo "$"HOME'
     compare_with_bash 'Expansion51' 'echo $=HOME'
+    # 170
     compare_with_bash 'Expansion52' 'echo $"HOLA"'
     compare_with_bash 'Expansion53' 'echo $'\''HOLA'\'''
     compare_with_bash 'Expansion54' 'echo $DONTEXIST Hola'
@@ -281,9 +284,9 @@ main() {
     compare_with_bash 'Expansion57' 'echo '\'''\''hola'\'''\'''
     compare_with_bash 'Expansion58' 'echo '\'''\''h'\''o'\''la'\'''\'''
     compare_with_bash 'Expansion59' 'echo "'\'''\''h'\''o'\''la'\'''\''"'
-
     compare_with_bash 'Expansion21' 'echo "'"h'o'la"'"'
     compare_with_bash 'Expansion21' 'echo"'hola'"'
+    # 180
     compare_with_bash 'Expansion21' 'echo "'hola'"'
     compare_with_bash 'Expansion21' 'echo '"hola"''
     compare_with_bash 'Expansion21' 'echo '''ho"''''l"a''''
@@ -294,6 +297,7 @@ main() {
     compare_with_bash 'Expansion21' 'e"cho hola"'
     compare_with_bash 'Expansion21' 'e'cho hola''
     compare_with_bash 'Expansion21' 'echo "hola     " | cat -e'
+    # 190
     compare_with_bash 'Expansion21' 'echo ""hola'
     compare_with_bash 'Expansion21' 'echo "" hola'
     compare_with_bash 'Expansion21' 'echo ""             hola'
@@ -304,6 +308,7 @@ main() {
     compare_with_bash 'Expansion21' '""e"'c'ho 'b'"o"nj"o"'u'r"'
     compare_with_bash 'Expansion21' 'echo "$DONTEXIST"Makefile'
     compare_with_bash 'Expansion21' 'echo "$DONTEXIST""Makefile"'
+    # 200
     compare_with_bash 'Expansion21' 'echo "$DONTEXIST" "Makefile"'
     compare_with_bash 'Expansion21' '$?'
     compare_with_bash 'Expansion21' '$?$?'
