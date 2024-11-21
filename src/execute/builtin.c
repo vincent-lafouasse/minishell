@@ -10,53 +10,12 @@
 #include <unistd.h>
 
 static bool str_eq(const char* a, const char* b);
+t_command_result execute_echo(t_state *state, t_simple *builtin);
 
 t_command_result execute_export(t_state *state, t_simple *builtin)
 {
 	printf("called export\n");
 	return (t_command_result){.error = E_DUMMY};
-}
-t_command_result execute_echo(t_state *state, t_simple *builtin)
-{
-	t_string *out;
-	t_word_list* words = builtin->words;
-
-	words = words->next;
-	if (!words)
-	{
-		ft_putstr_fd("\n", STDOUT_FILENO);
-		return (t_command_result){.error = NO_ERROR, .status_code = 0};
-	}
-
-	out = string_new();
-	if (!out)
-		return (t_command_result){.error = E_OOM};
-
-
-	if (string_extend(&out, words->contents)) {
-		string_destroy(out);
-		return (t_command_result){.error = E_OOM};
-	}
-	words = words->next;
-	while (words)
-	{
-		if (string_extend(&out, " ")) {
-			string_destroy(out);
-			return (t_command_result){.error = E_OOM};
-		}
-		if (string_extend(&out, words->contents)) {
-			string_destroy(out);
-			return (t_command_result){.error = E_OOM};
-		}
-		words = words->next;
-	}
-	if (string_extend(&out, "\n")) {
-		string_destroy(out);
-		return (t_command_result){.error = E_OOM};
-	}
-
-	write(STDOUT_FILENO, &out->data, out->len); // bad check for error
-	return (t_command_result){.error = NO_ERROR, .status_code = 0};
 }
 
 t_command_result execute_cd(t_state *state, t_simple *builtin)
