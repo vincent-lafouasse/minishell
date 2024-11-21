@@ -47,6 +47,8 @@ static bool advance_and_find_n_argument(t_word_list **arguments)
 
 t_command_result execute_echo(t_state *state, t_simple *builtin)
 {
+	(void)state;
+
 	bool should_print_newline;
 	t_string *out;
 	t_word_list* words = builtin->words->next;
