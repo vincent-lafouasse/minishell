@@ -164,7 +164,7 @@ main() {
     refute 'Refute_IsADirectory' '/' 126 'is a directory'
 
     # minishell map
-    
+
     # 25-27
     # minishell receives "n" somehow compare_with_bash "JustANewLine" "\n"
     compare_with_bash "BunchaSpace" "         "
