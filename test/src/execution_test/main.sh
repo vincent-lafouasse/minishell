@@ -184,6 +184,13 @@ main() {
     refute 'UnexpectedToken13' '>> >> >> >>' 2 'unexpected token'
     refute 'UnexpectedToken14' '>>>> >> >> >>' 2 'unexpected token'
 
+    # 42-46
+    refute 'IsADirectory01' '/' 126 'is a directory'
+    refute 'IsADirectory02' '//' 126 'is a directory'
+    refute 'IsADirectory03' '/.' 126 'is a directory'
+    refute 'IsADirectory04' '/./../../../../..' 126 'is a directory'
+    refute 'IsADirectory05' '///////' 126 'is a directory'
+
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
     else
