@@ -101,6 +101,7 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	t_state		state;
 	t_error		err;
 
+	state = (t_state){0};
 	err = from_envp((const char **)envp, &state.env);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
