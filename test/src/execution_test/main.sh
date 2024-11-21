@@ -33,6 +33,8 @@ setup_test() {
     local minishell_output="${build}/minishell"
     mkdir -p "${bash_output}"
     mkdir -p "${minishell_output}"
+    rm -rf "${bash_output:?}"/*
+    rm -rf "${minishell_output:?}"/*
 }
 
 compare_with_bash() {
