@@ -11,6 +11,7 @@
 
 static bool str_eq(const char* a, const char* b);
 t_command_result execute_echo(t_state *state, t_simple *builtin);
+t_command_result execute_exit(t_state *state, t_simple *builtin);
 
 t_command_result execute_export(t_state *state, t_simple *builtin)
 {
@@ -38,13 +39,6 @@ t_command_result execute_env(t_state *state, t_simple *builtin)
 	(void)state;
 	(void)builtin;
 	printf("called env\n");
-	return (t_command_result){.error = E_DUMMY};
-}
-t_command_result execute_exit(t_state *state, t_simple *builtin)
-{
-	(void)state;
-	(void)builtin;
-	printf("called exit\n");
 	return (t_command_result){.error = E_DUMMY};
 }
 
