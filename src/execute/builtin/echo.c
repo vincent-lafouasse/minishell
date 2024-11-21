@@ -52,31 +52,22 @@ t_command_result execute_echo(t_state *state, t_simple *builtin)
 
 	should_print_newline = advance_and_find_n_argument(&words);
 
-	if (!words)
-	{
-		ft_putstr_fd("\n", STDOUT_FILENO);
-		return (t_command_result){.error = NO_ERROR, .status_code = 0};
-	}
-
 	out = string_new();
 	if (!out)
 		return (t_command_result){.error = E_OOM};
 
-
-	if (string_extend(&out, words->contents)) {
-		string_destroy(out);
-		return (t_command_result){.error = E_OOM};
-	}
-	words = words->next;
 	while (words)
 	{
-		if (string_extend(&out, " ")) {
-			string_destroy(out);
-			return (t_command_result){.error = E_OOM};
-		}
 		if (string_extend(&out, words->contents)) {
 			string_destroy(out);
 			return (t_command_result){.error = E_OOM};
+		}
+		if (words->next)
+		{
+			if (string_extend(&out, " ")) {
+				string_destroy(out);
+				return (t_command_result){.error = E_OOM};
+			}
 		}
 		words = words->next;
 	}
