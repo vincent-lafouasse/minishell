@@ -128,7 +128,7 @@ test_success() {
     local total=$((n_passed + n_failed))
 
     if ! ((n_failed)); then
-        echo -e "\n${GREEN}==========ALL TESTS PASSED======================================================${NC}"
+        echo -e "\n${GREEN}========= ALL TESTS PASSED =====================================================${NC}"
         echo -e "    ${GREEN}$n_passed/$total${NC}"
         return 0
     else
@@ -136,7 +136,7 @@ test_success() {
         for failed in "${FAILED_TESTS[@]}"; do
             echo -e "    $YELLOW$failed$NC"
         done
-        echo -e "\n${RED}==========SOME TESTS FAILED=====================================================${NC}"
+        echo -e "\n${RED}========= SOME TESTS FAILED ====================================================${NC}"
         echo -e "    ${RED}$n_passed/$total${NC}"
         return 1
     fi
