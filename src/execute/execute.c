@@ -7,8 +7,7 @@
 #include "word/t_word_list/t_word_list.h"
 #include "word/expansions/expand.h"
 #include "signal/signal.h"
-#include "builtin.h"
-
+#include "./builtin/builtin.h"
 
 #include <stdio.h>
 #include <stdlib.h>

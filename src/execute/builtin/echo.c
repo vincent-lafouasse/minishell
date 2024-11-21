@@ -1,5 +1,6 @@
+#include "builtin.h"
+
 #include "../execute.h"
-#include "../builtin.h"
 #include "word/t_string/t_string.h"
 #include "libft/string.h"
 #include "libft/ft_io.h"
