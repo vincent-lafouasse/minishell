@@ -161,6 +161,29 @@ main() {
     refute 'Refute_UnexpectedToken' '>' 2 'unexpected token'
     refute 'Refute_IsADirectory' '/' 126 'is a directory'
 
+    # minishell map
+    
+    # 25-27
+    # minishell receives "n" somehow compare_with_bash "JustANewLine" "\n"
+    compare_with_bash "BunchaSpace" "         "
+    # same here, minishell receives tttt compare_with_bash "BunchaTabs" "\t\t\t\t\t"
+
+    # 28-41
+    refute 'UnexpectedToken01' ':' 2 'unexpected token'
+    refute 'UnexpectedToken02' '!' 2 'unexpected token'
+    refute 'UnexpectedToken03' '>' 2 'unexpected token'
+    refute 'UnexpectedToken04' '<' 2 'unexpected token'
+    refute 'UnexpectedToken05' '>>' 2 'unexpected token'
+    refute 'UnexpectedToken06' '<<' 2 'unexpected token'
+    refute 'UnexpectedToken07' '<>' 2 'unexpected token'
+    refute 'UnexpectedToken08' '>>>>>' 2 'unexpected token'
+    refute 'UnexpectedToken09' '>>>>>>>>>>>>>>>' 2 'unexpected token'
+    refute 'UnexpectedToken10' '<<<<<' 2 'unexpected token'
+    refute 'UnexpectedToken11' '<<<<<<<<<<<<<<<<' 2 'unexpected token'
+    refute 'UnexpectedToken12' '> > > >' 2 'unexpected token'
+    refute 'UnexpectedToken13' '>> >> >> >>' 2 'unexpected token'
+    refute 'UnexpectedToken14' '>>>> >> >> >>' 2 'unexpected token'
+
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
     else
