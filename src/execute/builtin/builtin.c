@@ -13,6 +13,7 @@ static bool str_eq(const char* a, const char* b);
 t_command_result execute_echo(t_state *state, t_simple *builtin);
 t_command_result execute_exit(t_state *state, t_simple *builtin);
 t_command_result execute_env(t_state *state, t_simple *builtin);
+t_command_result execute_pwd(t_state *state, t_simple *builtin);
 
 t_command_result execute_export(t_state *state, t_simple *builtin)
 {
@@ -47,6 +48,8 @@ t_command_result execute_builtin(t_state *state, t_simple *simple) {
 		return execute_echo(state, simple);
 	if (str_eq(command, "cd"))
 		return execute_cd(state, simple);
+	if (str_eq(command, "pwd"))
+		return execute_pwd(state, simple);
 	if (str_eq(command, "export"))
 		return execute_export(state, simple);
 	if (str_eq(command, "unset"))
@@ -68,6 +71,8 @@ bool is_builtin_command(const t_simple* simple) {
 	if (str_eq(command, "echo"))
 		return true;
 	if (str_eq(command, "cd"))
+		return true;
+	if (str_eq(command, "pwd"))
 		return true;
 	if (str_eq(command, "export"))
 		return true;
