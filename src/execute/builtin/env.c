@@ -8,7 +8,7 @@
 
 #include <unistd.h>
 
-t_error gather_environment(t_env *env, t_string **out)
+static t_error gather_environment(t_env *env, t_string **out)
 {
 	t_env_entry curr;
 
