@@ -91,3 +91,13 @@ char	**env_make_envp(const t_env *env)
 	}
 	return (out);
 }
+
+t_env	*env_remove(t_env **env, const char *key)
+{
+	return env_pop_key(env, key);
+}
+
+void	env_destroy(t_env **env)
+{
+	env_clear(env, NULL); // bad, should destroy key and value
+}
