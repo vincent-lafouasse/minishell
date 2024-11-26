@@ -73,7 +73,7 @@ t_command_result execute_exit(t_state *state, t_simple *builtin)
 	}
 	if (!parse_status_code(args->contents, &exit_status))
 	{
-		const char *error = "minishell: exit: numeric argument required";
+		const char *error = "minishell: exit: numeric argument required\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
 		exit_and_cleanup(state, EX_BUILTIN_BAD_USAGE);
 	}
