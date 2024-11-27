@@ -13,6 +13,7 @@
 #include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
 #include "libft/string.h"
+#include "libft/ft_io.h"
 #include "parse/t_command/t_command.h"
 #include "signal/signal.h"
 
@@ -109,7 +110,15 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	if (argc == 1)
 		run_interpreter(&state);
 	else if (argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0)
-		run_and_parse_command(argv[2], &state);
+	{
+		err = run_and_parse_command(argv[2], &state);
+		if (err != NO_ERROR)
+		{
+			ft_putendl_fd(error_repr(err), STDERR_FILENO);
+			// env_destroy(&state.env); bad, env destroyer is not implemented
+			exit(error_status_table(err));
+		}
+	}
 	else
 		printf("%s\n", USAGE);
 }
