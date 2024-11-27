@@ -53,7 +53,7 @@ t_command_result execute_pwd(t_state *state, t_simple *builtin)
 	else if (err == E_GETCWD)
 	{
 		perror("minishell: pwd: getcwd");
-		return (t_command_result){.error = E_OOM};
+		return (t_command_result){.error = NO_ERROR, .status_code = 1};
 	}
 	write_status = write_cwd_with_newline(working_directory);
 	free(working_directory);
