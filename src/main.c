@@ -112,14 +112,9 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	if (argc == 1)
 		run_interpreter(&state);
 	else if (argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0)
-	{
-		err = run_and_parse_command(argv[2], &state);
-		if (err != NO_ERROR)
-		{
-			// env_destroy(&state.env); bad, env destroyer is not implemented
-			exit(state.last_status);
-		}
-	}
+		run_and_parse_command(argv[2], &state);
 	else
 		printf("%s\n", USAGE);
+	// env_destroy(&state.env); bad, env destroyer is not implemented
+	exit(state.last_status);
 }
