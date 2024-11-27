@@ -28,6 +28,8 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	err = parse(input, &cmd);
 	if (err != NO_ERROR)
 	{
+		ft_putendl_fd(error_repr(err), STDERR_FILENO);
+		state->last_status = parse_error_exit_code(err);
 		return err;
 	}
 
@@ -114,9 +116,8 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 		err = run_and_parse_command(argv[2], &state);
 		if (err != NO_ERROR)
 		{
-			ft_putendl_fd(error_repr(err), STDERR_FILENO);
 			// env_destroy(&state.env); bad, env destroyer is not implemented
-			exit(error_status_table(err));
+			exit(state.last_status);
 		}
 	}
 	else
