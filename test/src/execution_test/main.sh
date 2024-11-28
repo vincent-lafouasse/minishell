@@ -42,7 +42,6 @@ compare_with_bash() {
     local command="$2"
 
     setup_test "$test_name"
-    echo -e "${YELLOW}Testing $test_name$NC"
 
     local bash_output="${BUILD}/${test_name}/bash"
     local minishell_output="${BUILD}/${test_name}/minishell"
@@ -61,15 +60,16 @@ compare_with_bash() {
         echo -e "${GREEN}✓   ${test_name} passed${NC}"
         ((N_PASSED++))
     else
+        echo -e "${YELLOW}Testing $test_name$NC"
         echo -e "    ${YELLOW}For command:$NC $command"
-        echo -e "${YELLOW}expected${NC}"
+        echo -e "  ${YELLOW}expected${NC}"
         for file in "$bash_output/"*; do
             echo -ne "$PURPLE"
             basename "$file"
             echo -ne "$NC"
             cat "$file"
         done
-        echo -e "${YELLOW}was${NC}"
+        echo -e "  ${YELLOW}was${NC}"
         for file in "$minishell_output/"*; do
             echo -ne "$PURPLE"
             basename "$file"
@@ -90,7 +90,6 @@ refute() {
 
     local build_dir="${BUILD}/${test_name}"
     mkdir -p "$build_dir"
-    echo -e "${YELLOW}Testing $test_name$NC"
 
     local command="${command//INFILE_DIR/${INFILE_DIR}}"
     local command="${command//OUTFILE_DIR/${build_dir}}"
@@ -101,6 +100,7 @@ refute() {
     local had_error=0
 
     if [ "$actual_status" -ne "$status" ]; then
+        echo -e "${YELLOW}Testing $test_name$NC"
         echo -e "    ${YELLOW}For command:$NC $command"
         echo -e "    ${RED}Expected status $status was $actual_status$NC"
         had_error=1
@@ -108,6 +108,7 @@ refute() {
 
     if ! grep --quiet --ignore-case "$partial_stderr" "${build_dir}/stderr"; then
         if [ "$had_error" -eq 0 ]; then
+            echo -e "${YELLOW}Testing $test_name$NC"
             echo -e "    ${YELLOW}For command:$NC $command"
         fi
         echo -e "    ${RED}Stderr doesnt contain pattern '$partial_stderr'$NC"
