@@ -15,6 +15,16 @@ static t_word_quote_state current_word_part_kind(const char *start)
 		return (WQS_UNQUOTED);
 }
 
+static const char *find_next_quote_or_nul_char(const char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i] != '\0' && str[i] != '"' && str[i] != '\'')
+		i++;
+	return (&str[i]);
+}
+
 static size_t	current_word_part_len(const char *start)
 {
 	const char *next_quote;
@@ -31,7 +41,7 @@ static size_t	current_word_part_len(const char *start)
 		len = next_quote + 1 - start;
 	}
 	else
-		len = ft_strlen(start);
+		len = find_next_quote_or_nul_char(start + 1) - start;
 	return (len);
 }
 
