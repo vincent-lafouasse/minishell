@@ -15,33 +15,23 @@ static t_word_quote_state current_word_part_kind(const char *start)
 		return (WQS_UNQUOTED);
 }
 
-static const char *find_next_quote_or_nul_char(const char *str)
-{
-	size_t	i;
-
-	i = 0;
-	while (str[i] != '\0' && str[i] != '"' && str[i] != '\'')
-		i++;
-	return (&str[i]);
-}
-
 static size_t	current_word_part_len(const char *start)
 {
-	const char *next_quote_or_nul;
+	const char *next_quote;
 	size_t len;
 
 	len = 0;
 	if (*start == '\0')
 		return 0;
-	next_quote_or_nul = find_next_quote_or_nul_char(start + 1);
 	if (*start == '"' || *start == '\'')
 	{
-		if (*next_quote_or_nul != *start) /* quotes don't match for some reason? */
-			return (next_quote_or_nul - start); // TODO: return error instead
-		len = next_quote_or_nul + 1 - start;
+		next_quote = ft_strchr(start + 1, *start);
+		if (!next_quote) /* xxx - unreachable: no matching quote for some reason? */
+			return (next_quote - start); // TODO: return error instead
+		len = next_quote + 1 - start;
 	}
 	else
-		len = next_quote_or_nul - start;
+		len = ft_strlen(start);
 	return (len);
 }
 
