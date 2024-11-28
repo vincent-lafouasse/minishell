@@ -309,18 +309,18 @@ main() {
     compare_with_bash 'Expansion79' '""e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r"'
     compare_with_bash 'Expansion80' 'echo "$DONTEXIST"Makefile'
     compare_with_bash 'Expansion81' 'echo "$DONTEXIST""Makefile"'
-    #    # 200
-    #    compare_with_bash 'Expansion21' 'echo "$DONTEXIST" "Makefile"'
-    #    compare_with_bash 'Expansion21' '$?'
-    #    compare_with_bash 'Expansion21' '$?$?'
-    #    compare_with_bash 'Expansion21' '?$HOME'
-    #    compare_with_bash 'Expansion21' '$'
-    #    compare_with_bash 'Expansion21' '$HOME'
-    #    compare_with_bash 'Expansion21' '$HOMEdskjhfkdshfsd'
-    #    compare_with_bash 'Expansion21' '"$HOMEdskjhfkdshfsd"'
-    #    compare_with_bash 'Expansion21' ''$HOMEdskjhfkdshfsd''
-    #    compare_with_bash 'Expansion21' '$DONTEXIST'
-    #    compare_with_bash 'Expansion21' '$LESS$VAR'
+    # 200
+    compare_with_bash 'Expansion82' 'echo "$DONTEXIST" "Makefile"'
+    refute 'Expansion83' '$?' 127 'command not found'
+    refute 'Expansion84' '$?$?' 127 'command not found'
+    refute 'Expansion85' '?$HOME' 127 'command not found'
+    refute 'Expansion86' '$' 127 'command not found'
+    refute 'Expansion87' '$HOME' 127 'command not found'
+    refute 'Expansion88' '$HOMEdskjhfkdshfsd' 127 'command not found'
+    refute 'Expansion89' '"$HOMEdskjhfkdshfsd"' 127 'command not found'
+    refute 'Expansion90' ''\''$HOMEdskjhfkdshfsd'\''' 127 'command not found'
+    refute 'Expansion91' '$DONTEXIST' 127 'command not found'
+    refute 'Expansion92' '$LESS$VAR' 127 'command not found'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
