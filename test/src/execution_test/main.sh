@@ -295,8 +295,8 @@ main() {
     compare_with_bash 'Expansion66' 'echo hola"'\'''\'''\'''\'''\'''\'''\'''\'''\'''\''"'
     compare_with_bash 'Expansion67' 'echo hola'\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''
     compare_with_bash 'Expansion68' 'echo hola'\''""""""""""'\'''
-    compare_with_bash 'Expansion69_WordSplit' 'e"cho hola"'
-    compare_with_bash 'Expansion70_WordSplit' 'e'\''cho hola'\'''
+    compare_with_bash 'Expansion69_CommandNotFound' 'e"cho hola"'
+    compare_with_bash 'Expansion70_CommandNotFound' 'e'\''cho hola'\'''
     compare_with_bash 'Expansion71' 'echo "hola     " | cat -e'
     # 190
     compare_with_bash 'Expansion72' 'echo ""hola'
@@ -306,7 +306,7 @@ main() {
     compare_with_bash 'Expansion76' 'echo "" hola'
     compare_with_bash 'Expansion77' 'echo hola""bonjour'
     compare_with_bash 'Expansion78' '"e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r'
-    compare_with_bash 'Expansion79_WordSplit' '""e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r"'
+    compare_with_bash 'Expansion79_CommandNotFound' '""e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r"'
     compare_with_bash 'Expansion80' 'echo "$DONTEXIST"Makefile'
     compare_with_bash 'Expansion81' 'echo "$DONTEXIST""Makefile"'
     # 200
