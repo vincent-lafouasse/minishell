@@ -109,7 +109,7 @@ static void exit_with_error(const char* command_path, t_state* state) // bad ? a
 	struct stat command_stats;
 	stat(command_path, &command_stats);
 
-	if (S_ISDIR(command_stats.st_mode)) {
+	if (S_ISDIR(command_stats.st_mode)) { // maybe we should check S_ISREG aswell
 		ft_putstr_fd("is a directory\n", STDERR_FILENO);
 		state->last_status = IS_A_DIR_EXIT_CODE;
 		exit(state->last_status); // bad no cleanup
