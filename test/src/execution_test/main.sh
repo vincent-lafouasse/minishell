@@ -119,6 +119,12 @@ refute() {
         echo -e "${GREEN}✓   ${test_name} passed${NC}"
         ((N_PASSED++))
     else
+        for file in "$build_dir/"*; do
+            echo -ne "$PURPLE"
+            basename "$file"
+            echo -ne "$NC"
+            cat "$file"
+        done
         echo -e "${RED}✗   ${test_name} failed${NC}"
         ((N_FAILED++))
         FAILED_TESTS+=("${test_name}")
