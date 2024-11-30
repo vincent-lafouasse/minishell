@@ -13,6 +13,7 @@
 #include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
 #include "libft/string.h"
+#include "libft/ft_io.h"
 #include "parse/t_command/t_command.h"
 #include "signal/signal.h"
 
@@ -27,6 +28,8 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	err = parse(input, &cmd);
 	if (err != NO_ERROR)
 	{
+		ft_putendl_fd(error_repr(err), STDERR_FILENO);
+		state->last_status = parse_error_exit_code(err);
 		return err;
 	}
 
@@ -112,4 +115,6 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 		run_and_parse_command(argv[2], &state);
 	else
 		printf("%s\n", USAGE);
+	// env_destroy(&state.env); bad, env destroyer is not implemented
+	exit(state.last_status);
 }
