@@ -104,20 +104,21 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 #define NOT_EXECUTABLE_EXIT_CODE 126
 
 _Noreturn
-static void exit_with_error(const t_simple* simple) // bad ? am i missing cases ?
+static void exit_with_error(const char* command_path, t_state* state) // bad ? am i missing cases ?
 {
-	const char* command = simple->words->contents;
 	struct stat command_stats;
-	stat(command, &command_stats);
+	stat(command_path, &command_stats);
 
 	if (S_ISDIR(command_stats.st_mode)) {
 		ft_putstr_fd("is a directory\n", STDERR_FILENO);
-		exit(IS_A_DIR_EXIT_CODE); // bad no cleanup
+		state->last_status = IS_A_DIR_EXIT_CODE;
+		exit(state->last_status); // bad no cleanup
 	}
 
 	// catchall
 	ft_putstr_fd("command not found\n", STDERR_FILENO);
-	exit(COMMAND_NOT_FOUND_EXIT_CODE); // bad no cleanup
+	state->last_status = COMMAND_NOT_FOUND_EXIT_CODE; // bad no cleanup
+	exit(state->last_status); // bad no cleanup
 }
 
 t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
@@ -161,10 +162,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
 	if (err != NO_ERROR)
-		graceful_exit_from_child(); // bad, should exit with status 127 or 126
-									// if the command could not be found or if
-									// we don't have execution permissions to
-									// the candiate executable, respectively
+		exit_with_error(command_path, state); // bad could also oom
 
 	// temporarily? where exactly in the code should signal handlers be reset?
 	// what happens if we've caught one up until this point? exit(128 + signal)?
@@ -175,7 +173,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	char** envp = env_make_envp(state->env);
 	execve(command_path, argv, envp);
 
-	exit_with_error(simple);
+	exit_with_error(command_path, state);
 }
 
 t_command_result execute_command(t_state *state, t_command command) {
