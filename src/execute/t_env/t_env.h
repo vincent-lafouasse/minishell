@@ -18,6 +18,7 @@ t_error				from_envp(const char *values[], t_env **out);
 const t_env_entry	*env_get(const t_env *env, const char *key);
 t_env_entry			*env_get_mut(t_env *env, const char *key);
 t_error				env_insert(t_env **env, const char *key, const char *value);
+bool				env_key_exists(const t_env *env, const char *key);
 t_env				*env_remove(t_env **env, const char *key);
 
 char				**env_make_path_or_empty(const t_env *env);

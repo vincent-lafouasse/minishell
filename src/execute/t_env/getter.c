@@ -16,6 +16,11 @@ const t_env_entry	*env_get(const t_env *env, const char *key)
 	return (&node->entry);
 }
 
+bool	env_key_exists(const t_env *env, const char *key)
+{
+	return env_get(env, key) != NULL;
+}
+
 static char	**empty_array(void)
 {
 	char **out;
