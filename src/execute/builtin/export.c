@@ -104,6 +104,8 @@ static t_error assign_variable(t_env **env, t_assignment assignment)
 
 	if (!env_key_exists(*env, assignment.name))
 		return (env_insert_owned_kv(env, assignment.name, assignment.value));
+	if (!assignment.value)
+		return NO_ERROR;
 	entry = env_get_mut(*env, assignment.name);
 	assert(entry != NULL);
 	if (assignment.appending)
