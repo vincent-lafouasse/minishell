@@ -91,7 +91,7 @@ static t_error parse_assignment(char *str, t_assignment *out)
 
 #include <stdio.h>
 
-static t_error assign_variable(t_env *env, t_assignment assignment)
+static t_error assign_variable(t_env **env, t_assignment assignment)
 {
 	(void)env;
 	printf("assignment: \n");
@@ -101,7 +101,7 @@ static t_error assign_variable(t_env *env, t_assignment assignment)
 	return (NO_ERROR);
 }
 
-static t_command_result do_assignments(t_env *env, t_word_list *assignments)
+static t_command_result do_assignments(t_env **env, t_word_list *assignments)
 {
 	bool any_failed;
 	t_assignment assignment;
@@ -146,7 +146,7 @@ t_command_result execute_export(t_state *state, t_simple *builtin)
 	assignments = builtin->words->next;
 
 	if (assignments)
-		return do_assignments(state->env, assignments);
+		return do_assignments(&state->env, assignments);
 	else
 		return print_all_variables(state);
 }
