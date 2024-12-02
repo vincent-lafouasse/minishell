@@ -113,17 +113,12 @@ static t_error assign_variable(t_env **env, t_assignment assignment)
 		joined = ft_strjoin(!entry->value ? "" :  entry->value, assignment.value);
 		if (!joined)
 			return (E_OOM);
-		free(entry->value);
-		free(assignment.name);
 		free(assignment.value);
-		entry->value = joined;
+		assignment.value = joined;
 	}
-	else
-	{
-		free(entry->value);
-		free(assignment.name);
-		entry->value = assignment.value;
-	}
+	free(entry->value);
+	free(assignment.name);
+	entry->value = assignment.value;
 	return (NO_ERROR);
 }
 
