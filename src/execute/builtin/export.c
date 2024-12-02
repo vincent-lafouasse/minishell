@@ -110,7 +110,7 @@ static t_error assign_variable(t_env **env, t_assignment assignment)
 	assert(entry != NULL);
 	if (assignment.appending)
 	{
-		joined = ft_strjoin(entry->value, assignment.value);
+		joined = ft_strjoin(!entry->value ? "" :  entry->value, assignment.value);
 		if (!joined)
 			return (E_OOM);
 		free(entry->value);
