@@ -13,6 +13,9 @@
 #include <stddef.h>
 #include <unistd.h>
 
+#include <stdio.h> // temporarily
+#include <assert.h> // temporarily
+
 typedef struct s_assignment
 {
 	bool appending;
@@ -89,15 +92,36 @@ static t_error parse_assignment(char *str, t_assignment *out)
 	return NO_ERROR;
 }
 
-#include <stdio.h>
-
 static t_error assign_variable(t_env **env, t_assignment assignment)
 {
-	(void)env;
 	printf("assignment: \n");
 	printf(" > appending: %d\n", assignment.appending);
 	printf(" > name: %s\n", assignment.name);
 	printf(" > value: %s\n", assignment.value);
+
+	t_env_entry *entry;
+	char *joined;
+
+	if (!env_key_exists(*env, assignment.name))
+		return (env_insert_owned_kv(env, assignment.name, assignment.value));
+	entry = env_get_mut(*env, assignment.name);
+	assert(entry != NULL);
+	if (assignment.appending)
+	{
+		joined = ft_strjoin(entry->value, assignment.value);
+		if (!joined)
+			return (E_OOM);
+		free(entry->value);
+		free(assignment.name);
+		free(assignment.value);
+		entry->value = joined;
+	}
+	else
+	{
+		free(entry->value);
+		free(assignment.name);
+		entry->value = assignment.value;
+	}
 	return (NO_ERROR);
 }
 
