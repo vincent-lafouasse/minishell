@@ -12,8 +12,9 @@
 #define COMMAND_NOT_FOUND_REPR "Command not found"
 #define FORK_REPR "Fork error"
 #define DUP2_REPR "Dup2 error"
-#define GETCWD_REPR "Getcwd error"
 #define ACCESS_REPR "Access error"
+#define GETCWD_REPR "Getcwd error"
+#define WRITE_REPR "Write error"
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
@@ -47,5 +48,7 @@ const char *error_repr(t_error err)
         return ACCESS_REPR;
     if (err == E_GETCWD)
         return GETCWD_REPR;
+    if (err == E_WRITE)
+        return WRITE_REPR;
     return UNKNOWN_ERROR_REPR;
 }
