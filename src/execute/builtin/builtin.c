@@ -16,14 +16,7 @@ t_command_result execute_env(t_state *state, t_simple *builtin);
 t_command_result execute_pwd(t_state *state, t_simple *builtin);
 t_command_result execute_cd(t_state *state, t_simple *builtin);
 t_command_result execute_unset(t_state *state, t_simple *builtin);
-
-t_command_result execute_export(t_state *state, t_simple *builtin)
-{
-	(void)state;
-	(void)builtin;
-	printf("called export\n");
-	return (t_command_result){.error = E_DUMMY};
-}
+t_command_result execute_export(t_state *state, t_simple *builtin);
 
 t_command_result execute_builtin(t_state *state, t_simple *simple) {
 	assert(is_builtin_command(simple));
