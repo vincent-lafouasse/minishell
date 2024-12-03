@@ -99,13 +99,23 @@ void run_interpreter(t_state* state)
 	// TODO: call `exit` builtin on Ctrl-D
 }
 
+t_error state_init(char *envp[], t_state *state_out)
+{
+	t_error		err;
+
+	*state_out = (t_state){0};
+	err = from_envp((const char **)envp, &state_out->env);
+	if (err != NO_ERROR)
+		return (err);
+	return (NO_ERROR);
+}
+
 int	main(int argc, char *argv[], char *envp[]) // bad main should return last status
 {
 	t_state		state;
 	t_error		err;
 
-	state = (t_state){0};
-	err = from_envp((const char **)envp, &state.env);
+	err = state_init(envp, &state);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
 	
