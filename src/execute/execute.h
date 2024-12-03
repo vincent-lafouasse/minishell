@@ -13,6 +13,7 @@ typedef struct s_state {
 	t_env *env;
 	t_command root;
 	int last_status;
+	bool is_interactive;
 	char* line;
 } t_state;
 
