@@ -33,6 +33,7 @@ t_error run_and_parse_command(const char* input, t_state* state)
 		return err;
 	}
 
+	state->root = cmd;
 	t_command_result res = execute_command(state, cmd); // bad, should probablue check err value maybe
 	/*
 	switch (res.error) {
