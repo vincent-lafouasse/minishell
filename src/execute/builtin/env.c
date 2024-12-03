@@ -51,7 +51,7 @@ t_command_result execute_env(t_state *state, t_simple *builtin)
 		return (t_command_result){.error = E_OOM};
 	}
 
-	write(STDOUT_FILENO, &env->data, env->len);
+	write(STDOUT_FILENO, &env->data, env->len); // maybe bad, write error may be handled
 	string_destroy(env);
 	return (t_command_result){.error = NO_ERROR, .status_code = 0};
 }
