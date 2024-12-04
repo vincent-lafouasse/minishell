@@ -100,6 +100,41 @@ void run_interpreter(t_state* state)
 	// TODO: call `exit` builtin on Ctrl-D
 }
 
+char *non_interactive_read_line(void)
+{
+	char *input;
+
+	last_signal = 0;
+	input = readline(NULL);
+	if (last_signal == SIGINT || input == NULL)
+	{
+		last_signal = 0;
+		free(input);
+		return (NULL);
+	}
+	truncate_to_one_line_if_necessary(input);
+	return (input);
+}
+
+void run_non_interactive_loop(t_state *state)
+{
+	char		*input;
+	t_error err;
+
+	while (1)
+	{
+		install_non_interactive_handlers();
+		input = non_interactive_read_line();
+		if (!input)
+			break; /* no more bytes to read on stdin or read error */
+		//install_execution_handlers();
+
+		err = run_and_parse_command(input, state);
+		free(input);
+		printf("command status: %s\n", error_repr(err));
+	}
+}
+
 t_error state_init(char *envp[], t_state *state_out)
 {
 	t_error		err;
@@ -122,8 +157,10 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
 	
-	if (argc == 1)
+	if (argc == 1 && state.is_interactive)
 		run_interpreter(&state);
+	else if (argc == 1 && !state.is_interactive)
+		run_non_interactive_loop(&state);
 	else if (argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0)
 		run_and_parse_command(argv[2], &state);
 	else
