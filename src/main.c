@@ -143,7 +143,7 @@ t_error state_init(char *envp[], t_state *state_out)
 	err = from_envp((const char **)envp, &state_out->env);
 	if (err != NO_ERROR)
 		return (err);
-	if (isatty(STDIN_FILENO) && isatty(STDERR_FILENO))
+	if (isatty(STDIN_FILENO))
 		state_out->is_interactive = true;
 	return (NO_ERROR);
 }
