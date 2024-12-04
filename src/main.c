@@ -53,7 +53,7 @@ void truncate_to_one_line_if_necessary(char *input)
 		*line_break = '\0';
 }
 
-char *read_a_line(void)
+char *interactive_read_line(void)
 {
 	char *input;
 	int old_last_signal; // XXX is this necessary?
@@ -87,7 +87,7 @@ void run_interpreter(t_state* state)
 	while (1)
 	{
 		install_interactive_handlers();
-		input = read_a_line();
+		input = interactive_read_line();
 		if (!input)
 			break; /* eof or read error */
 		//install_execution_handlers();
