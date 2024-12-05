@@ -7,12 +7,14 @@
 #include "word/t_word_list/t_word_list.h"
 #include "word/expansions/expand.h"
 #include "signal/signal.h"
+#include "libft/ft_io.h"
 #include "log/log.h" // bad, remove in prod
 
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/wait.h>
+#include <sys/stat.h>
 #include <assert.h> // bad
 
 #define READ 0
@@ -97,6 +99,28 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	return (t_launch_result){.error = NO_ERROR, .pids = pids_to_wait};
 }
 
+#define COMMAND_NOT_FOUND_EXIT_CODE 127
+#define IS_A_DIR_EXIT_CODE 126
+#define NOT_EXECUTABLE_EXIT_CODE 126
+
+_Noreturn
+static void exit_with_error(const char* command_path, t_state* state) // bad ? am i missing cases ?
+{
+	struct stat command_stats;
+	stat(command_path, &command_stats);
+
+	if (S_ISDIR(command_stats.st_mode)) { // maybe we should check S_ISREG aswell
+		ft_putstr_fd("is a directory\n", STDERR_FILENO);
+		state->last_status = IS_A_DIR_EXIT_CODE;
+		exit(state->last_status); // bad no cleanup
+	}
+
+	// catchall
+	ft_putstr_fd("command not found\n", STDERR_FILENO);
+	state->last_status = COMMAND_NOT_FOUND_EXIT_CODE; // bad no cleanup
+	exit(state->last_status); // bad no cleanup
+}
+
 t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
 {
 	t_error err;
@@ -138,10 +162,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
 	if (err != NO_ERROR)
-		graceful_exit_from_child(); // bad, should exit with status 127 or 126
-									// if the command could not be found or if
-									// we don't have execution permissions to
-									// the candiate executable, respectively
+		exit_with_error(command_path, state); // bad could also oom
 
 	// temporarily? where exactly in the code should signal handlers be reset?
 	// what happens if we've caught one up until this point? exit(128 + signal)?
@@ -152,7 +173,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	char** envp = env_make_envp(state->env);
 	execve(command_path, argv, envp);
 
-	graceful_exit_from_child();
+	exit_with_error(command_path, state);
 }
 
 t_command_result execute_command(t_state *state, t_command command) {
