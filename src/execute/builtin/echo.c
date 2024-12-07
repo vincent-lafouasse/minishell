@@ -93,5 +93,6 @@ t_command_result execute_echo(t_state *state, t_simple *builtin)
 	}
 
 	write(STDOUT_FILENO, &out->data, out->len); // bad check for error, and potentially return status code `EXIT_FAILURE`
+	string_destroy(out);
 	return (t_command_result){.error = NO_ERROR, .status_code = 0};
 }
