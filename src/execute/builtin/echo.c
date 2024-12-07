@@ -7,6 +7,7 @@
 #include "libft/ft_io.h"
 #include "word/t_word_list/t_word_list.h"
 
+#include <stdlib.h>
 #include <unistd.h>
 
 #define VALID_FLAGS "n"
@@ -92,7 +93,9 @@ t_command_result execute_echo(t_state *state, t_simple *builtin)
 		return (t_command_result){.error = err};
 	}
 
-	write(STDOUT_FILENO, &out->data, out->len); // bad check for error, and potentially return status code `EXIT_FAILURE`
+	int chars_written = write(STDOUT_FILENO, &out->data, out->len);
 	string_destroy(out);
+	if (chars_written < 0)
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	return (t_command_result){.error = NO_ERROR, .status_code = 0};
 }
