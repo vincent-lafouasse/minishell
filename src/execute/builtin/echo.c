@@ -46,6 +46,30 @@ static bool advance_and_find_n_argument(t_word_list **arguments)
 	return (res);
 }
 
+static t_error echo_into_string(t_string **str, t_word_list *words, bool finish_with_newline)
+{
+	t_word_list *current;
+
+	current = words;
+	while (current)
+	{
+		if (string_extend(str, current->contents))
+			return (E_OOM);
+		if (current->next)
+		{
+			if (string_extend(str, " "))
+				return (E_OOM);
+		}
+		current = current->next;
+	}
+	if (finish_with_newline)
+	{
+		if (string_extend(str, "\n"))
+			return (E_OOM);
+	}
+	return (NO_ERROR);
+}
+
 t_command_result execute_echo(t_state *state, t_simple *builtin)
 {
 	(void)state;
@@ -53,6 +77,7 @@ t_command_result execute_echo(t_state *state, t_simple *builtin)
 	bool should_print_newline;
 	t_string *out;
 	t_word_list* words = builtin->words->next;
+	t_error err;
 
 	should_print_newline = advance_and_find_n_argument(&words);
 
@@ -60,27 +85,11 @@ t_command_result execute_echo(t_state *state, t_simple *builtin)
 	if (!out)
 		return (t_command_result){.error = E_OOM};
 
-	while (words)
+	err = echo_into_string(&out, words, should_print_newline);
+	if (err != NO_ERROR)
 	{
-		if (string_extend(&out, words->contents)) {
-			string_destroy(out);
-			return (t_command_result){.error = E_OOM};
-		}
-		if (words->next)
-		{
-			if (string_extend(&out, " ")) {
-				string_destroy(out);
-				return (t_command_result){.error = E_OOM};
-			}
-		}
-		words = words->next;
-	}
-	if (should_print_newline)
-	{
-		if (string_extend(&out, "\n")) {
-			string_destroy(out);
-			return (t_command_result){.error = E_OOM};
-		}
+		string_destroy(out);
+		return (t_command_result){.error = err};
 	}
 
 	write(STDOUT_FILENO, &out->data, out->len); // bad check for error, and potentially return status code `EXIT_FAILURE`
