@@ -165,6 +165,38 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	graceful_exit_from_child();
 }
 
+t_error save_standard_input_and_output(int save[2])
+{
+	int in;
+	int out;
+
+	in = dup(STDIN_FILENO);
+	if (in == -1)
+		return (E_DUP2);
+	out = dup(STDOUT_FILENO);
+	if (out == -1)
+		return (close(out), E_DUP2);
+	save[0] = in;
+	save[1] = out;
+	return (NO_ERROR);
+}
+
+t_error restore_standard_input_and_output(int save[2])
+{
+	int in;
+	int out;
+
+	in = save[0];
+	out = save[1];
+	if (dup2(in, STDIN_FILENO) < 0)
+		return (E_DUP2);
+	if (dup2(out, STDOUT_FILENO) < 0)
+		return (E_DUP2);
+	close(in);
+	close(out);
+	return (NO_ERROR);
+}
+
 t_command_result execute_command(t_state *state, t_command command) {
 
 	t_command_result res;
@@ -179,7 +211,16 @@ t_command_result execute_command(t_state *state, t_command command) {
 
 		if (is_builtin_command(command.simple))
 		{
+			int io_backup[2]; // TODO: make sure all files are properly closed and messages are printed in case of errors
+
+			if (save_standard_input_and_output(io_backup) != NO_ERROR)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
+			err = apply_redirections(command.simple->redirections);
+			if (err != NO_ERROR)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
 			res = execute_builtin(state, command.simple);
+			if (restore_standard_input_and_output(io_backup) != NO_ERROR)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
 		}
 		else 
 		{
