@@ -10,13 +10,6 @@
 #include <unistd.h>
 
 static bool str_eq(const char* a, const char* b);
-t_command_result execute_echo(t_state *state, t_simple *builtin);
-t_command_result execute_exit(t_state *state, t_simple *builtin);
-t_command_result execute_env(t_state *state, t_simple *builtin);
-t_command_result execute_pwd(t_state *state, t_simple *builtin);
-t_command_result execute_cd(t_state *state, t_simple *builtin);
-t_command_result execute_unset(t_state *state, t_simple *builtin);
-t_command_result execute_export(t_state *state, t_simple *builtin);
 
 t_command_result execute_builtin(t_state *state, t_simple *simple) {
 	assert(is_builtin_command(simple));
