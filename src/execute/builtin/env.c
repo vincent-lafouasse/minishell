@@ -15,6 +15,11 @@ static t_error gather_environment(t_env *env, t_string **out)
 	while (env)
 	{
 		curr = env->entry;
+		if (!curr.value)
+		{
+			env = env->next;
+			continue;
+		}
 		if (string_extend(out, curr.key))
 			return (E_OOM);
 		if (string_push(out, '='))
