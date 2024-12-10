@@ -11,6 +11,8 @@ static void env_entry_destroy(t_env_entry *entry)
 {
 	free((void *)entry->key);
 	free((void *)entry->value);
+	entry->key = NULL;
+	entry->value = NULL;
 }
 
 static t_error decompose_envp_value(const char *value, t_env_entry *entry)
