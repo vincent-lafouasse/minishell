@@ -94,7 +94,7 @@ refute() {
     local command="${command//INFILE_DIR/${INFILE_DIR}}"
     local command="${command//OUTFILE_DIR/${build_dir}}"
 
-    $MINISHELL -c "$minishell_command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
+    $MINISHELL -c "$command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
     local actual_status=$?
 
     local had_error=0
