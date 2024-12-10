@@ -94,11 +94,6 @@ static t_error parse_assignment(char *str, t_assignment *out)
 
 static t_error assign_variable(t_env **env, t_assignment assignment)
 {
-	printf("assignment: \n");
-	printf(" > appending: %d\n", assignment.appending);
-	printf(" > name: %s\n", assignment.name);
-	printf(" > value: %s\n", assignment.value);
-
 	t_env_entry *entry;
 	char *joined;
 
