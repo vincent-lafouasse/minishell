@@ -35,8 +35,16 @@ static t_error decompose_envp_value(const char *value, t_env_entry *entry)
 t_error	env_insert_owned_kv(t_env **env, char *key, char *value)
 {
 	t_env_entry entry;
+	t_env_entry *existing_entry;
 
 	entry = (t_env_entry) {.key = key, .value = value};
+	if (env_key_exists(env, key))
+	{
+		existing_entry = env_get_mut(env, key);
+		env_entry_destroy(existing_entry);
+		*existing_entry = entry;
+		return (NO_ERROR);
+	}
 	return (env_push_front(env, entry));
 }
 
