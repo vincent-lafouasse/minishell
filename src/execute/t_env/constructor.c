@@ -1,8 +1,9 @@
 #include "libft/string.h"
+#include "libft/ft_string.h"
+
+#include "error/t_error.h"
 #include "t_env.h"
 #include "t_env_internals.h"
-#include "error/t_error.h"
-#include "libft/ft_string.h"
 
 #include <stdlib.h>
 #include <stddef.h>
