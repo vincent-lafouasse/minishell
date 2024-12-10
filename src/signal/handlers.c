@@ -12,6 +12,14 @@ void install_interactive_handlers(void)
 	signal(SIGTERM, SIG_IGN);
 }
 
+void install_non_interactive_handlers(void)
+{
+	make_rl_return_when_input_exhausted();
+	signal(SIGINT, save_interrupt_and_reject_line);
+	signal(SIGQUIT, SIG_IGN);
+	signal(SIGTERM, SIG_IGN);
+}
+
 void reset_signal_handlers(void)
 {
 	signal(SIGINT, SIG_DFL);
