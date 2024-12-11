@@ -34,10 +34,11 @@ static bool hack_isspace(char c) // bad, replace this with the libft implementat
 	return (c == ' ');
 }
 
+// TODO: replicate bash number validation
 static bool is_valid_number(const char *num)
 {
 	while (hack_isspace(*num)) num++;
-	while (*num == '-' || *num == '+') num++;
+	if (*num == '-' || *num == '+') num++;
 	if (!*num)
 		return (false);
 	while (ft_isdigit(*num)) num++;
