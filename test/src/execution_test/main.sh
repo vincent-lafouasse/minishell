@@ -187,9 +187,8 @@ test_builtins() {
     refute 'Export_InvalidIdentifier3' 'export 1GREETING=hello' 1 'invalid identifier'
     refute 'Export_InvalidIdentifier4' 'export lol%%lol' 1 'invalid identifier'
 
-    # matches stdout using refute
-    #refute 'ExportEcho_InvalidIdentifierTriggersErrorButContinues' \
-    #    'export 1GREETING=hello GREETING=hello NAME=world || echo $GREETING $NAME' 1 'invalid identifier' 'hello world'
+    refute 'ExportEcho_InvalidIdentifierTriggersErrorButContinues' \
+        'export 1GREETING=hello GREETING=hello NAME=world || echo $GREETING $NAME' 1 'invalid identifier' 'hello world'
 
     compare_with_bash 'ExportEcho_NullVariable' 'export NULL && echo $NULL'
     compare_with_bash 'ExportEcho_ManyAssignments' 'export GREETING=hello NAME=world && echo $GREETING $NAME'
@@ -211,9 +210,8 @@ test_builtins() {
     refute 'Unset_InvalidIdentifier2' 'unset 1=one' 1 'invalid identifier'
     refute 'Unset_InvalidIdentifier3' 'unset 1GREETING=hello' 1 'invalid identifier'
     refute 'Unset_InvalidIdentifier4' 'unset lol%%lol' 1 'invalid identifier'
-    # matches stdout using refute
-    #refute 'ExportUnset_InvalidIdentifierTriggersErrorButContinues' \
-    #    'export ABC=abc && unset 1NVALID ABC || echo $ABC' 1 'invalid identifier' 'abc'
+    refute 'ExportUnset_InvalidIdentifierTriggersErrorButContinues' \
+        'export ABC=abc && unset 1NVALID ABC || echo $ABC' 1 'invalid identifier' 'abc'
 
     # env (to be partially tested by hand)
     refute 'Env_TakesNoArguments' 'env a b c d e f g' 2 'too many arguments'
