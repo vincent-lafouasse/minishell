@@ -13,6 +13,8 @@
 #define FORK_REPR "Fork error"
 #define DUP2_REPR "Dup2 error"
 #define ACCESS_REPR "Access error"
+#define GETCWD_REPR "Getcwd error"
+#define WRITE_REPR "Write error"
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
@@ -44,5 +46,9 @@ const char *error_repr(t_error err)
         return DUMMY_REPR;
     if (err == E_ACCESS)
         return ACCESS_REPR;
+    if (err == E_GETCWD)
+        return GETCWD_REPR;
+    if (err == E_WRITE)
+        return WRITE_REPR;
     return UNKNOWN_ERROR_REPR;
 }

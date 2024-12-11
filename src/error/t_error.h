@@ -18,6 +18,8 @@ typedef enum e_error
     E_DUP2,
     E_EXECVE,
     E_ACCESS,
+    E_GETCWD,
+    E_WRITE,
     E_DUMMY,
 } t_error;
 

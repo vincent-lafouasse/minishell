@@ -83,9 +83,15 @@ void	env_delone(t_env **env, t_destructor del)
 	return; // bad, filler `env_delone`
 }
 
-void	env_clear(t_env **env, t_destructor del)
+void	env_clear(t_env **env, t_destructor del) // bad dummy implementation
 {
-	(void)env;
-	(void)del;
-	return; // bad, filler `env_clear`
+	/*
+	if (!env || !(*env))
+		return ;
+	while ((*env)->prev)
+		*env = (*env)->prev;
+	while ((*env))
+		env_delone(env, del);
+	*/
+	return;
 }

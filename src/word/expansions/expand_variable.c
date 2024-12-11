@@ -29,7 +29,7 @@ static t_error append_variable_value(t_expansion_variables vars, \
 	else
 	{
 		var_entry = env_get(vars.env, var_name_substr);
-		if (var_entry)
+		if (var_entry && var_entry->value)
 			var_value = ft_strdup(var_entry->value);
 		else
 			var_value = ft_strdup("");
