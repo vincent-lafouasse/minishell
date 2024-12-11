@@ -41,9 +41,7 @@ static bool is_valid_number(const char *num)
 	if (!*num)
 		return (false);
 	while (ft_isdigit(*num)) num++;
-	if (!*num)
-		return (false);
-	return (true);
+	return (*num == '\0');
 }
 
 static bool parse_status_code(const char *str, long long *out)
