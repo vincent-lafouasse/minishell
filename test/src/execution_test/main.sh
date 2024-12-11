@@ -87,6 +87,7 @@ refute() {
     local command="$2"
     local status="$3"
     local partial_stderr="$4"
+    local expected_stdout="$5" # may not be here, only used if argc == 6
 
     local build_dir="${BUILD}/${test_name}"
     mkdir -p "$build_dir"
@@ -104,6 +105,18 @@ refute() {
         echo -e "    ${YELLOW}For command:$NC $command"
         echo -e "    ${RED}Expected status $status was $actual_status$NC"
         had_error=1
+    fi
+
+    if [ "$#" -eq 5 ]; then
+        echo "$expected_stdout" > "$build_dir/expected_stdout"
+        if ! diff "$build_dir/stdout" "$build_dir/expected_stdout" > "$build_dir/diff_log"; then
+            if [ "$had_error" -eq 0 ]; then
+                echo -e "${YELLOW}Testing $test_name$NC"
+                echo -e "    ${YELLOW}For command:$NC $command"
+            fi
+            echo -e "    ${RED}Stdout doesnt match '$expected_stdout'$NC"
+            had_error=1
+        fi
     fi
 
     if ! grep --quiet --ignore-case "$partial_stderr" "${build_dir}/stderr"; then
@@ -326,7 +339,7 @@ main() {
     refute 'Expansion89_CommandNotFound' '"$HOMEdskjhfkdshfsd"' 127 'command not found'
     refute 'Expansion90_CommandNotFound' ''\''$HOMEdskjhfkdshfsd'\''' 127 'command not found'
     refute 'Expansion91_CommandNotFound' '$DONTEXIST' 127 'command not found'
-    refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found'
+    refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found' foobar
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
