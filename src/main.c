@@ -162,7 +162,10 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	else if (argc == 1 && !state.is_interactive)
 		run_non_interactive_loop(&state);
 	else if (argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0)
+	{
+		state.is_interactive = false;
 		run_and_parse_command(argv[2], &state);
+	}
 	else
 		printf("%s\n", USAGE);
 	// env_destroy(&state.env); bad, env destroyer is not implemented
