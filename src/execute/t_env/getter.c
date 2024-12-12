@@ -16,6 +16,21 @@ const t_env_entry	*env_get(const t_env *env, const char *key)
 	return (&node->entry);
 }
 
+t_env_entry	*env_get_mut(t_env *env, const char *key)
+{
+	t_env *node;
+
+	node = env_find_node((t_env*)env, key);
+	if (!node)
+		return NULL;
+	return (&node->entry);
+}
+
+bool	env_key_exists(const t_env *env, const char *key)
+{
+	return env_get(env, key) != NULL;
+}
+
 static char	**empty_array(void)
 {
 	char **out;
@@ -30,7 +45,7 @@ char	**env_make_path_or_empty(const t_env *env)
 	const t_env_entry *path_entry;
 
 	path_entry = env_get(env, "PATH");
-	if (!path_entry)
+	if (!path_entry && !path_entry->value)
 		return (empty_array());
 	return (ft_split(path_entry->value, ':'));
 }
@@ -90,4 +105,14 @@ char	**env_make_envp(const t_env *env)
 		i++;
 	}
 	return (out);
+}
+
+t_env	*env_remove(t_env **env, const char *key)
+{
+	return env_pop_key(env, key);
+}
+
+void	env_destroy(t_env **env)
+{
+	env_clear(env, NULL); // bad, should destroy key and value
 }

@@ -9,10 +9,13 @@
 
 #define CLOSE_NOTHING -1
 
+#define EXIT_FAILED_REDIRECT 259
+
 typedef struct s_state {
 	t_env *env;
 	t_command root;
 	int last_status;
+	bool is_interactive;
 	char* line;
 } t_state;
 
@@ -39,6 +42,8 @@ t_command_result execute_conditional(t_state *state, t_conditional *cond);
 t_command_result execute_subshell(t_state *state, t_subshell *subshell);
 int wait_pipeline(t_pid_list* pids); // bad, should handle EINTR
 
+
+t_command_result execute_builtin(t_state *state, t_simple *simple);
 
 
 #endif // EXECUTE_H

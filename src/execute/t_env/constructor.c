@@ -1,8 +1,9 @@
 #include "libft/string.h"
+#include "libft/ft_string.h"
+
+#include "error/t_error.h"
 #include "t_env.h"
 #include "t_env_internals.h"
-#include "error/t_error.h"
-#include "libft/ft_string.h"
 
 #include <stdlib.h>
 #include <stddef.h>
@@ -11,6 +12,8 @@ static void env_entry_destroy(t_env_entry *entry)
 {
 	free((void *)entry->key);
 	free((void *)entry->value);
+	entry->key = NULL;
+	entry->value = NULL;
 }
 
 static t_error decompose_envp_value(const char *value, t_env_entry *entry)
@@ -58,4 +61,20 @@ t_error	from_envp(const char *values[], t_env **out)
 		i++;
 	}
 	return (NO_ERROR);
+}
+
+t_error	env_insert_owned_kv(t_env **env, char *key, char *value)
+{
+	t_env_entry entry;
+	t_env_entry *existing_entry;
+
+	entry = (t_env_entry) {.key = key, .value = value};
+	if (env_key_exists(*env, key))
+	{
+		existing_entry = env_get_mut(*env, key);
+		env_entry_destroy(existing_entry);
+		*existing_entry = entry;
+		return (NO_ERROR);
+	}
+	return (env_push_front(env, entry));
 }

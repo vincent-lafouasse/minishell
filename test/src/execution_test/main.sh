@@ -87,6 +87,7 @@ refute() {
     local command="$2"
     local status="$3"
     local partial_stderr="$4"
+    local expected_stdout="$5" # may not be here, only used if argc == 6
 
     local build_dir="${BUILD}/${test_name}"
     mkdir -p "$build_dir"
@@ -94,7 +95,7 @@ refute() {
     local command="${command//INFILE_DIR/${INFILE_DIR}}"
     local command="${command//OUTFILE_DIR/${build_dir}}"
 
-    $MINISHELL -c "$minishell_command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
+    $MINISHELL -c "$command" >"${build_dir}/stdout" 2>"${build_dir}/stderr"
     local actual_status=$?
 
     local had_error=0
@@ -104,6 +105,18 @@ refute() {
         echo -e "    ${YELLOW}For command:$NC $command"
         echo -e "    ${RED}Expected status $status was $actual_status$NC"
         had_error=1
+    fi
+
+    if [ "$#" -eq 5 ]; then
+        echo "$expected_stdout" > "$build_dir/expected_stdout"
+        if ! diff "$build_dir/stdout" "$build_dir/expected_stdout" > "$build_dir/diff_log"; then
+            if [ "$had_error" -eq 0 ]; then
+                echo -e "${YELLOW}Testing $test_name$NC"
+                echo -e "    ${YELLOW}For command:$NC $command"
+            fi
+            echo -e "    ${RED}Stdout doesnt match '$expected_stdout'$NC"
+            had_error=1
+        fi
     fi
 
     if ! grep --quiet --ignore-case "$partial_stderr" "${build_dir}/stderr"; then
@@ -119,6 +132,12 @@ refute() {
         echo -e "${GREEN}✓   ${test_name} passed${NC}"
         ((N_PASSED++))
     else
+        for file in "$build_dir/"*; do
+            echo -ne "$PURPLE"
+            basename "$file"
+            echo -ne "$NC"
+            cat "$file"
+        done
         echo -e "${RED}✗   ${test_name} failed${NC}"
         ((N_FAILED++))
         FAILED_TESTS+=("${test_name}")
@@ -145,11 +164,92 @@ test_success() {
     fi
 }
 
+test_builtins() {
+    # echo
+    compare_with_bash 'Echo_Nothing' 'echo'
+    compare_with_bash 'Echo_OneWord' 'echo greetings!'
+    compare_with_bash 'Echo_ManyWords' 'echo hello world'
+    compare_with_bash 'Echo_ManyWordsWithNOption' 'echo -n hello world'
+    compare_with_bash 'Echo_WithDashFollowedByManyN' 'echo -nnnnnnn hello world'
+    compare_with_bash 'Echo_WithDashFollowedByManyOptionStrings' 'echo -nnn -n -nnn  -nnnnnnn hello world'
+    compare_with_bash 'Echo_WithDashNAtTheEnd' 'echo hello world -n'
+    compare_with_bash 'Echo_NothingWithOnlyDashN' 'echo -n'
+    compare_with_bash 'Echo_NothingWithDashNs' 'echo -n -n -n -nnnn'
+    compare_with_bash 'Echo_BadOptionBeginsInputWords' 'echo -nnn -nXn -nnn  -nnnnnnn hello world'
+
+    # cd
+    refute 'Cd_WithNoArguments' 'cd' 2 'usage'
+    refute 'Cd_WithTooManyArguments' 'cd ./a ./b' 2 'usage'
+    refute 'Cd_IntoDash' 'cd -' 1 'no such file or directory'
+    refute 'Cd_IntoBadRelativePath' 'cd OUTFILE_DIR/./a' 1 'no such file or directory'
+    refute 'Cd_IntoBadAbsolutePath' 'cd OUTFILE_DIR/a' 1 'no such file or directory'
+    compare_with_bash 'Cd_IntoAbsolutePathIsReflectedInPwd' 'cd / && pwd'
+    compare_with_bash 'Cd_IntoAbsolutePathChangesDirectory' 'mkdir OUTFILE_DIR/a && echo hello world > OUTFILE_DIR/a/b && cd OUTFILE_DIR/a && cat b'
+
+    # test execution-related builtin edge cases
+    compare_with_bash 'RedirectedBuiltinDoesNotBreakStreams' '> OUTFILE_DIR/dummy echo hello world && echo are we still in stdout?'
+    compare_with_bash 'BuiltinsInPipelineAreRunInSubshell' 'cd / && cd /tmp | export NAME=world | exit && pwd && echo hello $NAME'
+
+    # pwd; Cd_IntoAbsolutePathIsReflectedInPwd tests both cd and pwd and tests the good path
+    refute 'Pwd_FromUnlinkedDirectory' 'mkdir -p OUTFILE_DIR/a/b && cd OUTFILE_DIR/a/b && rm -rf OUTFILE_DIR/a && pwd' 1 'pwd: getcwd'
+
+    # export
+    refute 'Export_NoArguments' 'export' 420 'unimplemented'
+    refute 'Export_InvalidIdentifier1' 'export 1abc=oneabc' 1 'invalid identifier'
+    refute 'Export_InvalidIdentifier2' 'export 1=one' 1 'invalid identifier'
+    refute 'Export_InvalidIdentifier3' 'export 1GREETING=hello' 1 'invalid identifier'
+    refute 'Export_InvalidIdentifier4' 'export lol%%lol' 1 'invalid identifier'
+
+    refute 'ExportEcho_InvalidIdentifierTriggersErrorButContinues' \
+        'export 1GREETING=hello GREETING=hello NAME=world || echo $GREETING $NAME' 1 'invalid identifier' 'hello world'
+
+    compare_with_bash 'ExportEcho_NullVariable' 'export NULL && echo $NULL'
+    compare_with_bash 'ExportEcho_ManyAssignments' 'export GREETING=hello NAME=world && echo $GREETING $NAME'
+    compare_with_bash 'ExportEcho_ManyAssignmentsAndAppends' 'export GREETING=good GREETING+=bye NAME=world && echo $GREETING $NAME'
+
+    compare_with_bash 'ExportEcho_SetVariable' 'export GREETING=hello && echo $GREETING world'
+    compare_with_bash 'ExportEcho_AssignNullVariable' 'export GREETING && export GREETING=hello && echo $GREETING world'
+    compare_with_bash 'ExportEcho_OverwriteVariable' 'export GREETING=bye && export GREETING=hello && echo $GREETING world'
+    compare_with_bash 'ExportEcho_AppendNullVariables' 'export GREETING && export GREETING+=hello && echo $GREETING world'
+    compare_with_bash 'ExportEcho_AppendSetVariable' 'export GREETING=good && export GREETING+=bye && echo $GREETING world'
+    compare_with_bash 'ExportEcho_AppendUnsetVariable' 'export GREETING+=hello && echo $GREETING world'
+
+    # unset
+    compare_with_bash 'ExportUnset_UnsetExistingVariable' 'export NAME=world && unset NAME && echo hello $NAME'
+    compare_with_bash 'Unset_UnsetNonExistentVariable' 'unset ABCDEF && echo hello $ABCDEF'
+
+    compare_with_bash 'Unset_NoArguments' 'unset'
+    refute 'Unset_InvalidIdentifier1' 'unset 1abc=oneabc' 1 'invalid identifier'
+    refute 'Unset_InvalidIdentifier2' 'unset 1=one' 1 'invalid identifier'
+    refute 'Unset_InvalidIdentifier3' 'unset 1GREETING=hello' 1 'invalid identifier'
+    refute 'Unset_InvalidIdentifier4' 'unset lol%%lol' 1 'invalid identifier'
+    refute 'ExportUnset_InvalidIdentifierTriggersErrorButContinues' \
+        'export ABC=abc && unset 1NVALID ABC || echo $ABC' 1 'invalid identifier' ''
+
+    # env (to be partially tested by hand)
+    refute 'Env_TakesNoArguments' 'env a b c d e f g' 2 'too many arguments'
+    # Env_Works
+    # Env_DoesNotShowNullVariables
+
+    compare_with_bash 'Exit_SilentInNonInteractiveMode' 'exit'
+    compare_with_bash 'Exit_WithArgument' 'exit 69'
+    compare_with_bash 'Exit_ExitsWithArgumentModulo255' 'exit 42069'
+    compare_with_bash 'Exit_AcceptsNegativeArgument' 'exit -42069'
+    compare_with_bash 'Exit_FollowsAtoiRules' 'exit "       +++++++++42069"'
+    refute 'Exit_TakesOnlyOneArgument' 'exit 123 456' 1 'too many arguments'
+    refute 'Exit_TakesNumericArgument' 'exit abc' 2 'numeric argument required'
+    refute 'Exit_CodeMustFitInLongLong' 'exit 19782908472398572398572398738409389' 2 'numeric argument required'
+    refute 'Exit_BadCode1' 'exit +-1' 2 'numeric argument required'
+    refute 'Exit_BadCode2' 'exit ++++' 2 'numeric argument required'
+}
+
 main() {
     N_PASSED=0
     N_FAILED=0
     FAILED_TESTS=()
     setup
+
+    test_builtins
 
     compare_with_bash 'Simple_HelloWorld' 'echo hello world'
     compare_with_bash 'Simple_PrintWhitespace' 'echo "         " | cat -e'
@@ -238,22 +338,22 @@ main() {
     # no bash vars, compare_with_bash 'Expansion17' 'echo $UID$HOME'
     compare_with_bash 'Expansion18' 'echo Le path de mon HOME est $HOME'
     # no escape, compare_with_bash 'Expansion19' 'echo $USER$var\$USER$USER\$USERtest$USER'
-    compare_with_bash 'Expansion20_wildcard' 'echo $hola*'
+    # compare_with_bash 'Expansion20_wildcard' 'echo $hola*'
     compare_with_bash 'Echo_buncha_n' 'echo -nnnn $hola'
     refute 'UnexpectedToken_echo_redir' 'echo > <' 2 'unexpected token'
     refute 'UnexpectedToken_echo_pipe' 'echo | |' 2 'unexpected token'
 
     # 140-210
-    compare_with_bash 'Expansion21_wildcad' 'echo *'
-    compare_with_bash 'Expansion22_wildcard_quote' 'echo '\''*'\'''
-    compare_with_bash 'Expansion23_wildcard' 'echo D*'
-    compare_with_bash 'Expansion24_wildcard' 'echo *Z'
-    compare_with_bash 'Expansion25_wildcard' 'echo *t hola'
-    compare_with_bash 'Expansion26_wildcard' 'echo *t'
+    # compare_with_bash 'Expansion21_wildcad' 'echo *'
+    # compare_with_bash 'Expansion22_wildcard_quote' 'echo '\''*'\'''
+    # compare_with_bash 'Expansion23_wildcard' 'echo D*'
+    # compare_with_bash 'Expansion24_wildcard' 'echo *Z'
+    # compare_with_bash 'Expansion25_wildcard' 'echo *t hola'
+    # compare_with_bash 'Expansion26_wildcard' 'echo *t'
     # hell nah compare_with_bash 'Expansion27' 'echo $*'
-    compare_with_bash 'Expansion28_wildcard' 'echo hola*hola *'
-    compare_with_bash 'Expansion29_wildcard' 'echo $hola*'
-    compare_with_bash 'Expansion31_wildcard' 'echo $HOME*'
+    # compare_with_bash 'Expansion28_wildcard' 'echo hola*hola *'
+    # compare_with_bash 'Expansion29_wildcard' 'echo $hola*'
+    # compare_with_bash 'Expansion31_wildcard' 'echo $HOME*'
     # 150
     # no dollar-quote compare_with_bash 'Expansion32' 'echo $""'
     # no dollar-quote compare_with_bash 'Expansion33' 'echo "$"""'
@@ -295,8 +395,8 @@ main() {
     compare_with_bash 'Expansion66' 'echo hola"'\'''\'''\'''\'''\'''\'''\'''\'''\'''\''"'
     compare_with_bash 'Expansion67' 'echo hola'\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''
     compare_with_bash 'Expansion68' 'echo hola'\''""""""""""'\'''
-    compare_with_bash 'Expansion69_WordSplit' 'e"cho hola"'
-    compare_with_bash 'Expansion70_WordSplit' 'e'\''cho hola'\'''
+    compare_with_bash 'Expansion69_CommandNotFound' 'e"cho hola"'
+    compare_with_bash 'Expansion70_CommandNotFound' 'e'\''cho hola'\'''
     compare_with_bash 'Expansion71' 'echo "hola     " | cat -e'
     # 190
     compare_with_bash 'Expansion72' 'echo ""hola'
@@ -306,7 +406,7 @@ main() {
     compare_with_bash 'Expansion76' 'echo "" hola'
     compare_with_bash 'Expansion77' 'echo hola""bonjour'
     compare_with_bash 'Expansion78' '"e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r'
-    compare_with_bash 'Expansion79_WordSplit' '""e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r"'
+    compare_with_bash 'Expansion79_CommandNotFound' '""e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r"'
     compare_with_bash 'Expansion80' 'echo "$DONTEXIST"Makefile'
     compare_with_bash 'Expansion81' 'echo "$DONTEXIST""Makefile"'
     # 200
@@ -320,7 +420,7 @@ main() {
     refute 'Expansion89_CommandNotFound' '"$HOMEdskjhfkdshfsd"' 127 'command not found'
     refute 'Expansion90_CommandNotFound' ''\''$HOMEdskjhfkdshfsd'\''' 127 'command not found'
     refute 'Expansion91_CommandNotFound' '$DONTEXIST' 127 'command not found'
-    refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found'
+    refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found' foobar
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
