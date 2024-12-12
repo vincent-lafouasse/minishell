@@ -58,8 +58,8 @@ t_command_result execute_exit(t_state *state, t_simple *builtin)
 	t_word_list *args;
 	long long exit_status;
 
-	/* bad: if (state.is_interactive) */
-	write(STDERR_FILENO, "exit\n", 5);
+	if (state->is_interactive)
+		write(STDERR_FILENO, "exit\n", 5);
 
 	args = builtin->words->next;
 	if (!args)
