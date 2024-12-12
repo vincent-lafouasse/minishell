@@ -95,11 +95,16 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	{
 		int pipe_fd[2];
 
-		pipe(pipe_fd); // bad must check out
+		// bad, should handle pipe error by killing all jobs thus far and setting
+		// last status to `EXIT_FAILURE | 128` (execute_cmd.c:2522 and sig.c:418)
+		pipe(pipe_fd);
 
 		t_io current_io = io_new(ends.input, pipe_fd[WRITE]);
 		ends.input = pipe_fd[READ];
 
+		// bad, should handle fork error by killing all jobs thus far and setting
+		// last status to `EXIT_FAILURE | (EX_NOEXEC = 126)` (execute_cmd.c:4443
+		// and jobs.c:4443)
 		t_launch_result launch_result = launch_pipeline_inner(state, current.pipeline->first,
 													  current_io, pipe_fd[READ]);
 
@@ -184,7 +189,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 		perror("dup2");
 
 	err = apply_redirections(simple->redirections);
-	if (err != NO_ERROR)
+	if (err != NO_ERROR) /* exit with status EXIT_FAILURE after logging error (execute_cmd.c:797) */
 		graceful_exit_from_child(EXIT_FAILURE);
 
 	char *command_path;
@@ -195,7 +200,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 		graceful_exit_from_child(COMMAND_NOT_FOUND_EXIT_CODE);
 	}
 	if (err != NO_ERROR)
-		exit_with_error(command_path, state); // bad could also oom
+		graceful_exit_from_child(EXIT_FAILURE); // bad, only possible error here is OOM, handle accordingly
 
 	// temporarily? where exactly in the code should signal handlers be reset?
 	// what happens if we've caught one up until this point? exit(128 + signal)?
