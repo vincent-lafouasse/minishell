@@ -137,6 +137,13 @@ static void exit_with_error(const char* command_path, t_state* state) // bad ? a
 	exit(state->last_status); // bad no cleanup
 }
 
+static void log_command_not_found(const char *pathname) // bad? input may be split by other processes writing to stderr
+{
+	ft_putstr_fd("minishell: ", STDERR_FILENO);
+	ft_putstr_fd(pathname, STDERR_FILENO);
+	ft_putstr_fd(": command not found\n", STDERR_FILENO);
+}
+
 t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
 {
 	t_error err;
@@ -172,6 +179,11 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 
 	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
+	if (err == E_COMMAND_NOT_FOUND && command_path == NULL)
+	{
+		log_command_not_found(simple->words->contents);
+		graceful_exit_from_child(COMMAND_NOT_FOUND_EXIT_CODE);
+	}
 	if (err != NO_ERROR)
 		exit_with_error(command_path, state); // bad could also oom
 
