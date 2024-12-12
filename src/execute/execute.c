@@ -39,9 +39,9 @@
 //            |----> succeeds
 
 _Noreturn
-static void graceful_exit_from_child() // bad dummy
+static void graceful_exit_from_child(int with_status) // bad dummy
 {
-	exit(EXIT_FAILURE); // bad, should clean up all allocations before exiting from child process
+	exit(with_status); // bad, should clean up all allocations before exiting from child process
 }
 
 int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
@@ -168,7 +168,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 
 	err = apply_redirections(simple->redirections);
 	if (err != NO_ERROR)
-		graceful_exit_from_child();
+		graceful_exit_from_child(EXIT_FAILURE);
 
 	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
