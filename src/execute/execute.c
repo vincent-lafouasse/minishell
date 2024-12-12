@@ -281,7 +281,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 			int options = 0;
 			assert(launch_res.pids != NULL);
 			waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
-			res = (t_command_result){.error = NO_ERROR, .status_code = status}; // bad, might err
+			res = (t_command_result){.error = NO_ERROR, .status_code = WEXITSTATUS(status)}; // bad, might err; and make sure waitpid worked before checking WEXITSTATUS
 		}
 	}
 	else if (command.type == CMD_PIPELINE)
