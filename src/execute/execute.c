@@ -15,6 +15,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <assert.h> // bad
 
 #define READ 0
@@ -116,24 +117,33 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 }
 
 #define COMMAND_NOT_FOUND_EXIT_CODE 127
-#define IS_A_DIR_EXIT_CODE 126
 #define NOT_EXECUTABLE_EXIT_CODE 126
 
-_Noreturn
-static void exit_with_error(const char* command_path, t_state* state) // bad ? am i missing cases ?
+bool file_is_directory(const char *command_path)
 {
 	struct stat command_stats;
-	stat(command_path, &command_stats);
+	if (stat(command_path, &command_stats) < 0)
+		return false;
+	return (S_ISDIR(command_stats.st_mode));
+}
 
-	if (S_ISDIR(command_stats.st_mode)) { // maybe we should check S_ISREG aswell
-		ft_putstr_fd("is a directory\n", STDERR_FILENO);
-		state->last_status = IS_A_DIR_EXIT_CODE;
+_Noreturn
+static void execve_and_exit(t_state* state, const char* command_path, char **argv, char **envp)
+{
+	execve(command_path, argv, envp);
+	int error = errno;
+
+	// ???? (execute_cmd.c:5967)
+	state->last_status = error == ENOENT ? COMMAND_NOT_FOUND_EXIT_CODE : NOT_EXECUTABLE_EXIT_CODE;
+
+	if (file_is_directory(command_path)) { // maybe we should check S_ISREG aswell
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(command_path, STDERR_FILENO);
+		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
 		exit(state->last_status); // bad no cleanup
 	}
 
-	// catchall
-	ft_putstr_fd("command not found\n", STDERR_FILENO);
-	state->last_status = COMMAND_NOT_FOUND_EXIT_CODE; // bad no cleanup
+	perror("minishell: execve");
 	exit(state->last_status); // bad no cleanup
 }
 
@@ -194,9 +204,10 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 
 	char** argv = wl_into_word_array(&simple->words);
 	char** envp = env_make_envp(state->env);
-	execve(command_path, argv, envp);
 
-	exit_with_error(command_path, state);
+	assert(argv && envp);
+
+	execve_and_exit(state, command_path, argv, envp);
 }
 
 t_error save_standard_input_and_output(int save[2])
