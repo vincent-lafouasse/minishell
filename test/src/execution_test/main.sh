@@ -224,7 +224,7 @@ test_builtins() {
     refute 'Unset_InvalidIdentifier3' 'unset 1GREETING=hello' 1 'invalid identifier'
     refute 'Unset_InvalidIdentifier4' 'unset lol%%lol' 1 'invalid identifier'
     refute 'ExportUnset_InvalidIdentifierTriggersErrorButContinues' \
-        'export ABC=abc && unset 1NVALID ABC || echo $ABC' 1 'invalid identifier' 'abc'
+        'export ABC=abc && unset 1NVALID ABC || echo $ABC' 1 'invalid identifier' ''
 
     # env (to be partially tested by hand)
     refute 'Env_TakesNoArguments' 'env a b c d e f g' 2 'too many arguments'
