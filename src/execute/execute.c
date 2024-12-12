@@ -92,7 +92,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	current = command_from_pipeline(pipeline);
 	while (current.type == CMD_PIPELINE)
 	{
-		pid_t pipe_fd[2];
+		int pipe_fd[2];
 
 		pipe(pipe_fd); // bad must check out
 
