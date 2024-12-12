@@ -9,8 +9,6 @@
 
 #define CLOSE_NOTHING -1
 
-#define EXIT_FAILED_REDIRECT 259
-
 typedef struct s_state {
 	t_env *env;
 	t_command root;

@@ -236,13 +236,13 @@ t_command_result execute_command(t_state *state, t_command command) {
 			int io_backup[2]; // TODO: make sure all files are properly closed and messages are printed in case of errors
 
 			if (save_standard_input_and_output(io_backup) != NO_ERROR)
-				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
 			err = apply_redirections(command.simple->redirections);
 			if (err != NO_ERROR)
-				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
 			res = execute_builtin(state, command.simple);
 			if (restore_standard_input_and_output(io_backup) != NO_ERROR)
-				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
 		}
 		else 
 		{

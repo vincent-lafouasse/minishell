@@ -6,6 +6,7 @@
 #include "word/t_string/t_string.h"
 #include "word/t_word_list/t_word_list.h"
 
+#include <stdlib.h>
 #include <unistd.h>
 
 static t_error gather_environment(t_env *env, t_string **out)
@@ -44,7 +45,7 @@ t_command_result execute_env(t_state *state, t_simple *builtin)
 	{
 		const char *error = "minishell: env: too many arguments\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
-		return (t_command_result){.error = NO_ERROR, .status_code = EX_BUILTIN_BAD_USAGE};
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	}
 
 	env = string_new();
