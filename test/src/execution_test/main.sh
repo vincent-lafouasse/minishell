@@ -22,6 +22,7 @@ setup() {
         exit 1
     fi
 
+    rm -rf "$BUILD"
     mkdir -p "$BUILD"
 }
 
