@@ -4,6 +4,7 @@
 #include "signal/signal.h"
 
 #include "libft/string.h"
+#include "libft/ft_io.h"
 #include "libft/ft_string.h"
 #include <stdio.h> // HACK: supress readline compilation errors on my end
 #include "readline/readline.h"
@@ -18,7 +19,7 @@ static void warn_for_unexpected_eof(void)
 	const char *message;
 
 	message = "minishell: warning: here-document delimited by end-of-file\n";
-	write(STDERR_FILENO, message, ft_strlen(message));
+	ft_putendl_fd(message, STDERR_FILENO);
 }
 
 static char *join_delimited(const char *s1, char delim, const char *s2)
