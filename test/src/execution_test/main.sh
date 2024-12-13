@@ -22,7 +22,7 @@ setup() {
         exit 1
     fi
 
-    mkdir -p "$BUILD"
+    mkdir -p "$BUILD"mainsh
 }
 
 setup_test() {
@@ -272,8 +272,8 @@ main() {
     # same here, minishell receives tttt compare_with_bash "BunchaTabs" "\t\t\t\t\t"
 
     # 28-41
-    refute 'UnexpectedToken_NoColon' ':' 2 'unexpected token'
-    refute 'UnexpectedToken_NoBang' '!' 2 'unexpected token'
+    refute 'CommandNotFoundColon' ':' 127 'command not found'
+    refute 'CommandNotFoundBang' '!' 127 'command not found'
     refute 'UnexpectedToken_HangingRedir01' '>' 2 'unexpected token'
     refute 'UnexpectedToken_HangingRedir02' '<' 2 'unexpected token'
     refute 'UnexpectedToken_HangingRedir03' '>>' 2 'unexpected token'
@@ -311,9 +311,9 @@ main() {
     refute 'UnexpectedToken_HangingCond01' '&&' 2 'unexpected token'
     refute 'UnexpectedToken_HangingCond02' '&&&&&' 2 'unexpected token'
     refute 'UnexpectedToken_HangingCond03' '&&&&&&&&&&&&&&' 2 'unexpected token'
-    refute 'UnexpectedToken_NoSemiColon01' ';;' 2 'unexpected token'
-    refute 'UnexpectedToken_NoSemiColon02' ';;;;;' 2 'unexpected token'
-    refute 'UnexpectedToken_NoSemiColon03' ';;;;;;;;;;;;;;;' 2 'unexpected token'
+    refute 'CommandNotFoundSemiColon01' ';;' 127 'command not found'
+    refute 'CommandNotFoundSemiColon02' ';;;;;' 127 'command not found'
+    refute 'CommandNotFoundSemiColon03' ';;;;;;;;;;;;;;;' 127 'command not found'
     refute 'UnexpectedToken_EmptySubshell01' '()' 2 'unexpected token'
     refute 'UnexpectedToken_EmptySubshell02' '( ( ) )' 2 'unexpected token'
     refute 'UnexpectedToken_EmptySubshell03' '( ( ( ( ) ) ) )' 2 'unexpected token'
