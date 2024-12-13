@@ -99,7 +99,7 @@ static t_error	read_here_document_internal(const char *delimiter, char **documen
 	return (NO_ERROR);
 }
 
-static t_error	read_in_here_document(const char *raw_delimiter, char **document_out)
+static t_error	read_here_document(const char *raw_delimiter, char **document_out)
 {
 	char *delimiter;
 	t_error err;
@@ -131,7 +131,7 @@ static t_error	read_here_documents_in_rdl(t_redir_list *rdl)
 		if (rdl->redirect.kind == HERE_DOCUMENT)
 		{
 			current_doc = &rdl->redirect.doc;
-			err = read_in_here_document(current_doc->here_doc_eof, &document);
+			err = read_here_document(current_doc->here_doc_eof, &document);
 			if (err != NO_ERROR)
 				return err;
 			current_doc->contents = document;
