@@ -146,23 +146,23 @@ t_error	gather_here_documents(t_command cmd)
 {
 	t_error err;
 
-	if (cmd.type == SIMPLE_CMD)
+	if (cmd.type == CMD_SIMPLE)
 		return read_here_documents_in_rdl(cmd.simple->redirections);
-	else if (cmd.type == SUBSHELL_CMD)
+	else if (cmd.type == CMD_SUBSHELL)
 	{
 		err = gather_here_documents(cmd.subshell->cmd);
 		if (err != NO_ERROR)
 			return err;
 		return read_here_documents_in_rdl(cmd.subshell->redirections);
 	}
-	else if (cmd.type == PIPELINE_CMD)
+	else if (cmd.type == CMD_PIPELINE)
 	{
 		err = gather_here_documents(cmd.pipeline->first);
 		if (err != NO_ERROR)
 			return err;
 		return gather_here_documents(cmd.pipeline->second);
 	}
-	else if (cmd.type == CONDITIONAL_CMD)
+	else if (cmd.type == CMD_CONDITIONAL)
 	{
 		err = gather_here_documents(cmd.conditional->first);
 		if (err != NO_ERROR)
