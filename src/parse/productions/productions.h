@@ -1,7 +1,20 @@
-#pragma once
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   productions.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 14:19:01 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 20:07:57 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-#include "../t_parser/t_parser.h"
-#include "../t_symbol/t_symbol.h"
+#ifndef PRODUCTIONS_H
+# define PRODUCTIONS_H
+
+# include "../t_parser/t_parser.h"
+# include "../t_symbol/t_symbol.h"
 
 t_symbol	produce_redirect_list_rest(t_parser *state);
 t_symbol	produce_subshell_precedes(t_parser *state);
@@ -25,3 +38,5 @@ t_symbol	produce_command(t_parser *state);
 t_symbol	produce_complete_command(t_parser *state);
 t_symbol	produce_io_here(t_parser *state);
 t_symbol	produce_subshell(t_parser *state);
+
+#endif

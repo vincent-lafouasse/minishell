@@ -18,10 +18,13 @@ typedef enum e_error
     E_DUP2,
     E_EXECVE,
     E_ACCESS,
+    E_GETCWD,
+    E_WRITE,
     E_DUMMY,
     E_INTERRUPTED, // XXX this does not refer to the errno value `EINTR`, rename?
 } t_error;
 
 const char *error_repr(t_error err);
+char parse_error_exit_code(t_error err);
 void die(const char *msg);
 void ft_assert(bool assertion, const char *msg);

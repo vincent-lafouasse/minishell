@@ -7,8 +7,7 @@
 #include "word/t_word_list/t_word_list.h"
 #include "word/expansions/expand.h"
 #include "signal/signal.h"
-#include "log/log.h" // bad, remove in prod
-
+#include "./builtin/builtin.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -57,13 +56,29 @@ int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
 
 // either simple or subshell or maybe builtin
 t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
-	assert(command.type == SIMPLE_CMD || command.type == SUBSHELL_CMD);
+	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
 
-	if (command.type == SIMPLE_CMD)
+	t_error err;
+
+	if (command.type == CMD_SIMPLE) {
+		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
+		err = variable_expand_words(vars, &command.simple->words);
+		if (err != NO_ERROR)
+			return (t_launch_result){.error = err, .pids = NULL};
+
+		if (is_builtin_command(command.simple))
+		{
+			t_command subshell = command_new_subshell(command, NULL);
+			if (!subshell.subshell)
+				return (t_launch_result){.error = E_OOM, .pids = NULL};
+			t_launch_result res = launch_subshell(state, subshell.subshell, io, fd_to_close);
+			free(subshell.subshell);
+			return res;
+		}
 		return launch_simple_command(state, command.simple, io, fd_to_close);
+	}
 	else // subshell
 		return launch_subshell(state, command.subshell, io, fd_to_close);
-
 }
 
 t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
@@ -72,7 +87,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	t_pid_list* pids_to_wait = NULL;
 
 	current = command_from_pipeline(pipeline);
-	while (current.type == PIPELINE_CMD)
+	while (current.type == CMD_PIPELINE)
 	{
 		pid_t pipe_fd[2];
 
@@ -122,10 +137,6 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close);
 
-	err = perform_all_expansions_on_words(simple->words);
-	if (err != NO_ERROR)
-		graceful_exit_from_child();
-
 	err = do_piping(io);
 	if (err != NO_ERROR)
 		perror("dup2");
@@ -154,23 +165,76 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	graceful_exit_from_child();
 }
 
+t_error save_standard_input_and_output(int save[2])
+{
+	int in;
+	int out;
+
+	in = dup(STDIN_FILENO);
+	if (in == -1)
+		return (E_DUP2);
+	out = dup(STDOUT_FILENO);
+	if (out == -1)
+		return (close(out), E_DUP2);
+	save[0] = in;
+	save[1] = out;
+	return (NO_ERROR);
+}
+
+t_error restore_standard_input_and_output(int save[2])
+{
+	int in;
+	int out;
+
+	in = save[0];
+	out = save[1];
+	if (dup2(in, STDIN_FILENO) < 0)
+		return (E_DUP2);
+	if (dup2(out, STDOUT_FILENO) < 0)
+		return (E_DUP2);
+	close(in);
+	close(out);
+	return (NO_ERROR);
+}
+
 t_command_result execute_command(t_state *state, t_command command) {
 
 	t_command_result res;
+	t_error err;
 
-	if (command.type == SIMPLE_CMD)
+	if (command.type == CMD_SIMPLE)
 	{
-		t_launch_result launch_res;
-		launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
-		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
+		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
+		err = variable_expand_words(vars, &command.simple->words);
+		if (err != NO_ERROR)
+			return (t_command_result){.error = err};
 
-		int status;
-		int options = 0;
-		assert(launch_res.pids != NULL);
-		waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
-		res = (t_command_result){.error = NO_ERROR, .status_code = status}; // bad, might err
+		if (is_builtin_command(command.simple))
+		{
+			int io_backup[2]; // TODO: make sure all files are properly closed and messages are printed in case of errors
+
+			if (save_standard_input_and_output(io_backup) != NO_ERROR)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
+			err = apply_redirections(command.simple->redirections);
+			if (err != NO_ERROR)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
+			res = execute_builtin(state, command.simple);
+			if (restore_standard_input_and_output(io_backup) != NO_ERROR)
+				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILED_REDIRECT}; // bad: should maybe notify (i haven't checked bash's error handling)
+		}
+		else 
+		{
+			t_launch_result launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
+			assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
+
+			int status;
+			int options = 0;
+			assert(launch_res.pids != NULL);
+			waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
+			res = (t_command_result){.error = NO_ERROR, .status_code = status}; // bad, might err
+		}
 	}
-	else if (command.type == PIPELINE_CMD)
+	else if (command.type == CMD_PIPELINE)
 	{
 		t_launch_result launch_res;
 		launch_res = launch_pipeline(state, command.pipeline, io_default());
@@ -179,9 +243,9 @@ t_command_result execute_command(t_state *state, t_command command) {
 		int status = wait_pipeline(launch_res.pids);
 		res = (t_command_result){.error = NO_ERROR, .status_code = status};
 	}
-	else if (command.type == CONDITIONAL_CMD)
+	else if (command.type == CMD_CONDITIONAL)
 		res = execute_conditional(state, command.conditional);
-	else if (command.type == SUBSHELL_CMD)
+	else if (command.type == CMD_SUBSHELL)
 		res = execute_subshell(state, command.subshell);
 	else
 		assert(!"unknown command type");

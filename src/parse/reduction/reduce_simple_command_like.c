@@ -1,12 +1,23 @@
-#include "parse/tokenize/t_token_list/t_token_list.h"
-#include "reduction_internals.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   reduce_simple_command_like.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/11/12 14:25:48 by poss              #+#    #+#             */
+/*   Updated: 2024/11/12 19:44:47 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../tokenize/t_token.h"
 #include "io/t_redir_list/t_redir_list.h"
-
-#include <stdlib.h>
+#include "parse/tokenize/t_token_list/t_token_list.h"
+#include "reduction_internals.h"
 #include <assert.h> // temporarily
+#include <stdlib.h>
 
-static t_redir_kind redir_kind_from_angle_bracket(t_token_type bracket)
+static t_redir_kind	redir_kind_from_angle_bracket(t_token_type bracket)
 {
 	if (bracket == L_ANGLE_BRACKET)
 		return (FROM_FILE);
@@ -33,8 +44,37 @@ static t_redirect	redir_from_tokens(t_token bracket, t_token word)
 	return (redir);
 }
 
-t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
-							t_redir_list **redirections)
+t_error	process_word_or_redir(t_token_list **leaves, t_word_list **words,
+		t_redir_list **redirections)
+{
+	t_error			err;
+	t_token_list	*current;
+
+	current = *leaves;
+	if (current->token.type == WORD)
+	{
+		err = wl_push_back(words, current->token.literal);
+		if (err != NO_ERROR)
+		{
+			return (E_OOM);
+		}
+		*leaves = current->next;
+	}
+	else
+	{
+		err = rdl_push_back(redirections, redir_from_tokens(current->token,
+					current->next->token));
+		if (err != NO_ERROR)
+		{
+			return (E_OOM);
+		}
+		*leaves = current->next->next;
+	}
+	return (NO_ERROR);
+}
+
+t_error	reduce_simple_command_like(t_symbol *symbol, t_word_list **words,
+		t_redir_list **redirections)
 {
 	t_token_list	*head;
 	t_token_list	*leaves;
@@ -43,29 +83,15 @@ t_error reduce_simple_command_like(t_symbol *symbol, t_word_list **words, \
 	leaves = NULL;
 	err = gather_leaves(symbol, &leaves);
 	if (err != NO_ERROR)
-		return err;
+		return (err);
 	head = leaves;
 	while (leaves)
 	{
-		if (leaves->token.type == WORD)
+		err = process_word_or_redir(&leaves, words, redirections);
+		if (err != NO_ERROR)
 		{
-			err = wl_push_back(words, leaves->token.literal);
-			if (err != NO_ERROR)
-			{
-				tkl_clear(&leaves, free);
-				return E_OOM;
-			}
-			leaves = leaves->next;
-		}
-		else
-		{
-			err = rdl_push_back(redirections, redir_from_tokens(leaves->token, leaves->next->token));
-			if (err != NO_ERROR)
-			{
-				tkl_clear(&leaves, free);
-				return E_OOM;
-			}
-			leaves = leaves->next->next;
+			tkl_clear(&leaves, free);
+			return (err);
 		}
 	}
 	tkl_clear(&head, NULL);

@@ -11,6 +11,8 @@ set(parser_source
 	parse/reduction/reduce_command.c
 	parse/reduction/reduce_subshell.c
 	parse/reduction/invert_conditional_associativity.c
+	parse/reduction/associativity_inversal_internals.h
+	parse/reduction/conditional_command_data.c
 	parse/reduction/reduction_internals.h
 	parse/reduction/reduction.h
 	parse/productions/produce_simple_command.c
@@ -40,7 +42,10 @@ set(parser_source
 	parse/t_command/properties.c
 	parse/t_command/t_command.h
 	parse/t_command/empty.c
-	parse/t_command/constructor.c
+	parse/t_command/subshell_constructor.c
+	parse/t_command/pipeline_constructor.c
+	parse/t_command/simple_command_constructor.c
+	parse/t_command/conditional_command_constructor.c
 	parse/tokenize/tokenize.h
 	parse/tokenize/token_repr.c
 	parse/tokenize/t_lexer/lexer_scan_metachar_operator.c
@@ -62,6 +67,7 @@ set(parser_source
 	parse/tokenize/tokenize.c
 	parse/parse.c
 	parse/t_parser/t_parser.c
+	parse/t_parser/parser_push.c
 	parse/t_parser/t_parser.h
 	parse/t_symbol/t_symbol.c
 	parse/t_symbol/t_symbol.h

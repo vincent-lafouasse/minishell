@@ -11,7 +11,7 @@ t_word_list *wl_new(char *contents)
 	out = malloc(sizeof(*out));
 	if (out == NULL)
 		return NULL;
-	*out = (t_word_list){.contents = contents, .next = NULL};
+	*out = (t_word_list){.contents = contents, .next = NULL, .prev = NULL};
 	return out;
 }
 
@@ -32,6 +32,7 @@ void wl_push_back_link(t_word_list **words, t_word_list *link)
 		last = last->next;
 
 	last->next = link;
+	link->prev = last;
 }
 
 t_error wl_push_back(t_word_list **words, char *contents)
@@ -46,15 +47,20 @@ t_error wl_push_back(t_word_list **words, char *contents)
 
 void wl_delone(t_word_list **words, t_destructor del)
 {
-	t_word_list *buffer;
-
 	if (!words || !*words)
 		return;
-	buffer = (*words)->next;
+
+	t_word_list* next = (*words)->next;
+	t_word_list* prev = (*words)->prev;
 	if (del)
 		del((*words)->contents);
 	free(*words);
-	*words = buffer;
+
+	if (next)
+		next->prev = prev;
+	if (prev)
+		prev->next = next;
+	*words = next;
 	return;
 }
 
