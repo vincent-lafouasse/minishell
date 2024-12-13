@@ -1,7 +1,7 @@
 #include "t_redir_list.h"
 #include "parse/t_command/t_command.h"
 #include "word/expansions/expand.h"
-//#include "word/t_string/t_string.h"
+#include "word/t_string/t_string.h"
 #include "signal/signal.h"
 
 #include "libft/string.h"
@@ -23,35 +23,12 @@ static void warn_for_unexpected_eof(void)
 	ft_putendl_fd(message, STDERR_FILENO);
 }
 
-static char *join_delimited(const char *s1, char delim, const char *s2)
+static t_error	here_doc_append(t_string **out, const char *str)
 {
-	size_t	len1;
-	size_t	len2;
-	char	*out;
-
-	if (!s1 || !s2)
-		return (NULL);
-	len1 = ft_strlen(s1);
-	len2 = ft_strlen(s2);
-	out = malloc(len1 + 1 + len2 + 1);
-	if (!out)
-		return (NULL);
-	ft_memcpy(out, s1, len1);
-	out[len1] = delim;
-	ft_memcpy(out + len1 + 1, s2, len2);
-	out[len1 + 1 + len2] = '\0';
-	return (out);
-}
-
-static t_error	string_append(char **output, const char *str)
-{
-	char	*result;
-
-	result = join_delimited(*output, '\n', str);
-	if (!result)
+	if (string_extend(out, str))
 		return (E_OOM);
-	free(*output);
-	*output = result;
+	if (string_push(out, '\n'))
+		return (E_OOM);
 	return (NO_ERROR);
 }
 
@@ -63,12 +40,7 @@ static bool delimiter_matches_line(const char *delimiter, const char *line)
 	return (ft_strncmp(line, delimiter, delimiter_len + 1) == 0);
 }
 
-// heredoc: bad! the here document should have a trailing newline. this is due
-// to the fact that bash makes readline add a trailing newline to every line
-// read, but we aren't able to do the same. possible solutions include:
-//   - wrap readline and simply add a newline at the end of the string -> more error handling
-//   - modify `string_append` to make a string big enough to fit a newline in the middle, and at the end -> more code
-static t_error	read_here_document_internal(const char *delimiter, char **document_out)
+static t_error	read_here_document_internal(const char *delimiter, t_string **document_out)
 {
 	char *line;
 
@@ -91,7 +63,7 @@ static t_error	read_here_document_internal(const char *delimiter, char **documen
 			free(line);
 			break;
 		}
-		if (string_append(document_out, line) != NO_ERROR)
+		if (here_doc_append(document_out, line) != NO_ERROR)
 		{
 			free(line);
 			return (E_OOM);
@@ -105,20 +77,24 @@ static t_error	read_here_document(const char *raw_delimiter, char **document_out
 {
 	char *delimiter;
 	t_error err;
+	t_string *str;
 
 	err = quote_removed_word(raw_delimiter, &delimiter);
 	if (err != NO_ERROR)
 		return (err);
-	*document_out = ft_strdup("");
-	if (*document_out == NULL)
+	str = string_new();
+	if (!str)
 		return (free(delimiter), E_OOM);
-	err = read_here_document_internal(delimiter, document_out);
+	err = read_here_document_internal(delimiter, &str);
 	if (err != NO_ERROR)
 	{
-		free(*document_out);
-		*document_out = NULL;
+		free(delimiter);
+		string_destroy(str);
+		return (E_OOM);
 	}
+	err = string_make_c_string(str, document_out);
 	free(delimiter);
+	string_destroy(str);
 	return (err);
 }
 
