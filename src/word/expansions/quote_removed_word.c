@@ -1,15 +1,20 @@
-#include "expand.h"
-#include "word/word.h"
+#include "./expand.h"
+#include "./expand_internals.h"
 
-#include <stdlib.h>
+#include "error/t_error.h"
 
-char *quote_removed_word(const char *word) // bad, dummy implementation
+t_error quote_removed_word(const char *word, char **out)
 {
 	t_error err;
-	char *out;
+	t_word_quotes_list *parts;
+	char *res;
 
-	err = word_clone(word, &out);
+	err = wql_parse(word, &parts);
 	if (err != NO_ERROR)
-		return (NULL);
-	return (out);
+		return (err);
+	wql_remove_outer_quotes(parts);
+	err = wql_make_joined(parts, &res);
+	wql_clear(&parts);
+	*out = res;
+	return (err);
 }

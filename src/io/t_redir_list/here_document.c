@@ -1,6 +1,7 @@
 #include "t_redir_list.h"
 #include "parse/t_command/t_command.h"
 #include "word/expansions/expand.h"
+//#include "word/t_string/t_string.h"
 #include "signal/signal.h"
 
 #include "libft/string.h"
@@ -105,9 +106,9 @@ static t_error	read_here_document(const char *raw_delimiter, char **document_out
 	char *delimiter;
 	t_error err;
 
-	delimiter = quote_removed_word(raw_delimiter);
-	if (!delimiter)
-		return (E_OOM);
+	err = quote_removed_word(raw_delimiter, &delimiter);
+	if (err != NO_ERROR)
+		return (err);
 	*document_out = ft_strdup("");
 	if (*document_out == NULL)
 		return (free(delimiter), E_OOM);
