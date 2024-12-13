@@ -152,12 +152,7 @@ t_error	gather_here_documents(t_command cmd)
 	if (cmd.type == CMD_SIMPLE)
 		return read_here_documents_in_rdl(cmd.simple->redirections);
 	else if (cmd.type == CMD_SUBSHELL)
-	{
-		err = gather_here_documents(cmd.subshell->cmd);
-		if (err != NO_ERROR)
-			return err;
-		return read_here_documents_in_rdl(cmd.subshell->redirections);
-	}
+		return gather_here_documents(cmd.subshell->cmd); // redirections ignored!
 	else if (cmd.type == CMD_PIPELINE)
 	{
 		err = gather_here_documents(cmd.pipeline->first);
