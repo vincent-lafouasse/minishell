@@ -22,7 +22,7 @@ setup() {
         exit 1
     fi
 
-    mkdir -p "$BUILD"mainsh
+    mkdir -p "$BUILD"
 }
 
 setup_test() {
