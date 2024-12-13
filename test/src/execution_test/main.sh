@@ -387,7 +387,7 @@ main() {
     compare_with_bash 'Expansion58' 'echo '\'''\''h'\''o'\''la'\'''\'''
     compare_with_bash 'Expansion59' 'echo "'\'''\''h'\''o'\''la'\'''\''"'
     compare_with_bash 'Expansion60' 'echo "'\''"h'\''o'\''la"'\''"'
-    refute 'Expansion61_command_not_found' 'echo"'\''hola'\''"' 2 'command not found'
+    refute 'Expansion61_command_not_found' 'echo"'\''hola'\''"' 127 'command not found'
     # 180
     compare_with_bash 'Expansion62' 'echo "'\''hola'\''"'
     compare_with_bash 'Expansion63' 'echo '\''"hola"'\'''
@@ -396,8 +396,8 @@ main() {
     compare_with_bash 'Expansion66' 'echo hola"'\'''\'''\'''\'''\'''\'''\'''\'''\'''\''"'
     compare_with_bash 'Expansion67' 'echo hola'\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''\'''
     compare_with_bash 'Expansion68' 'echo hola'\''""""""""""'\'''
-    compare_with_bash 'Expansion69_CommandNotFound' 'e"cho hola"'
-    compare_with_bash 'Expansion70_CommandNotFound' 'e'\''cho hola'\'''
+    refute 'Expansion69_CommandNotFound' 'e"cho hola"' 127 'command not found'
+    refute 'Expansion70_CommandNotFound' 'e'\''cho hola'\''' 127 'command not found'
     compare_with_bash 'Expansion71' 'echo "hola     " | cat -e'
     # 190
     compare_with_bash 'Expansion72' 'echo ""hola'
@@ -407,7 +407,7 @@ main() {
     compare_with_bash 'Expansion76' 'echo "" hola'
     compare_with_bash 'Expansion77' 'echo hola""bonjour'
     compare_with_bash 'Expansion78' '"e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r'
-    compare_with_bash 'Expansion79_CommandNotFound' '""e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r"'
+    refute 'Expansion79_CommandNotFound' '""e"'\''c'\''ho '\''b'\''"o"nj"o"'\''u'\''r"' 127 'command not found'
     compare_with_bash 'Expansion80' 'echo "$DONTEXIST"Makefile'
     compare_with_bash 'Expansion81' 'echo "$DONTEXIST""Makefile"'
     # 200
