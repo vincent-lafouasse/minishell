@@ -31,7 +31,7 @@ t_error apply_redirections(t_redir_list *redirections)
 		err = expand(redir.filename, &expanded_filename); // TODO: check for ambiguous redirections, i.e. when expansion expands to either zero or more than one word
 		*/
 
-		fd = open(redir.filename, O_CLOEXEC | open_flags_for_redir_kind(redir.kind), 0666);
+		fd = open(redir.filename, O_CLOEXEC | open_flags_for_redir_kind(redir.kind), 0666); // XXX: why tf are we O_CLOEXECing
 		if (fd == -1)
 			return E_DUMMY; // bad, should short circuit command evaluation if file does not exist
 		if (redir.kind == FROM_FILE || redir.kind == HERE_DOCUMENT)
