@@ -53,14 +53,14 @@ t_command_result execute_pwd(t_state *state, t_simple *builtin)
 	else if (err == E_GETCWD)
 	{
 		perror("minishell: pwd: getcwd");
-		return (t_command_result){.error = NO_ERROR, .status_code = 1};
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	}
 	write_status = write_cwd_with_newline(working_directory);
 	free(working_directory);
 	if (write_status < 0)
 	{
 		perror("minishell: pwd: write");
-		return (t_command_result){.error = NO_ERROR, .status_code = 1};
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	}
 	return (t_command_result){.error = NO_ERROR, .status_code = 0};
 }

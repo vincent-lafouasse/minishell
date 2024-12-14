@@ -5,6 +5,7 @@
 #include "libft/string.h"
 #include "execute/t_env/t_env.h"
 
+#include <stdlib.h>
 #include <stdbool.h>
 #include <unistd.h>
 
@@ -56,6 +57,6 @@ t_command_result execute_unset(t_state *state, t_simple *builtin)
 		var = var->next;
 	}
 	if (got_invalid_identifier)
-		return (t_command_result){.error = NO_ERROR, .status_code = 1};
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	return (t_command_result){.error = NO_ERROR, .status_code = 0};
 }

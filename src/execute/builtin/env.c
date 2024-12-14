@@ -45,7 +45,7 @@ t_command_result execute_env(t_state *state, t_simple *builtin)
 	{
 		const char *error = "minishell: env: too many arguments\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return (t_command_result){.error = NO_ERROR, .status_code = EX_BADUSAGE};
 	}
 
 	env = string_new();
