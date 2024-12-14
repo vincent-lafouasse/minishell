@@ -68,13 +68,13 @@ t_command_result execute_exit(t_state *state, t_simple *builtin)
 	{
 		const char *error = "minishell: exit: too many arguments\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return (t_command_result){.error = NO_ERROR, .status_code = EX_BADUSAGE};
 	}
 	if (!parse_status_code(args->contents, &exit_status))
 	{
 		const char *error = "minishell: exit: numeric argument required\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
-		exit_and_cleanup(state, EX_BUILTIN_BAD_USAGE);
+		exit_and_cleanup(state, EX_BADUSAGE);
 	}
 	exit_and_cleanup(state, exit_status);
 }

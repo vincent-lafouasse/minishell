@@ -20,7 +20,7 @@ t_command_result execute_cd(t_state *state, t_simple *builtin)
 	if (!arguments || arguments->next != NULL)
 	{
 		write(STDERR_FILENO, USAGE_MESSAGE, ft_strlen(USAGE_MESSAGE));
-		return (t_command_result){.error = NO_ERROR, .status_code = EX_BUILTIN_BAD_USAGE};
+		return (t_command_result){.error = NO_ERROR, .status_code = EX_BADUSAGE};
 	}
 
 	if (chdir(arguments->contents) < 0)

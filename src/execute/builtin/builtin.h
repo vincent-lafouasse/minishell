@@ -4,7 +4,7 @@
 #include "../execute.h"
 #include <stdbool.h>
 
-#define EX_BUILTIN_BAD_USAGE 2
+#define EX_BADUSAGE 2
 
 bool is_builtin_command(const t_simple* simple);
 
