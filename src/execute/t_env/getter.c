@@ -45,7 +45,7 @@ char	**env_make_path_or_empty(const t_env *env)
 	const t_env_entry *path_entry;
 
 	path_entry = env_get(env, "PATH");
-	if (!path_entry && !path_entry->value)
+	if (!path_entry || !path_entry->value)
 		return (empty_array());
 	return (ft_split(path_entry->value, ':'));
 }
