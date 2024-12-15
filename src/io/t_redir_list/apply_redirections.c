@@ -64,7 +64,6 @@ static t_error redirect_here_document(t_redir redir);
 t_error apply_redirections(t_redir_list *redirections)
 {
 	t_redirect redir;
-	int fd;
 	t_error err;
 
 	while (redirections)
