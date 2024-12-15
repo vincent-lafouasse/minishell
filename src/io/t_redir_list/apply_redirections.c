@@ -1,6 +1,8 @@
 #include "t_redir_list.h"
 #include "error/t_error.h"
 
+#include "libft/string.h"
+
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
@@ -60,7 +62,71 @@ static t_error redirect_regular_file(t_redirect redir)
 	return (NO_ERROR);
 }
 
-static t_error redirect_here_document(t_redirect redir);
+#define HEREDOC_FILE_PATH "/tmp/minishell-heredoc-XXXXXX"
+
+// some concerns/error cases (ranked by severity):
+// - here we error out if the file already exists, this technically enables the
+//   user to make minishell error out if they create the file. we do this using
+//   the `O_EXCL` flag so we can ensure we are the ones creating the file, this
+//   in turns ensures that we have both read and write permissions. simply
+//   truncating and not using `O_EXCL` theoretically enables a data race, and is
+//   prone to failure if we do not have both write and read permissions on the
+//   file that already existed but may be preferable as it is easier to justify
+//   during defense.
+// - no random filename, as all of the allowed functions are
+//   deterministic/filesystem related, and calling `/dev/random` just seems
+//   weird (what if you can't open it?)
+// - real bash errors out and sets errno to `ENOSPC` if `write` couldn't write
+//   the entire document
+static t_error redirect_here_document(t_redirect redir)
+{
+	int tmpfile_writable;
+	int tmpfile_read_only;
+
+	assert(redir.kind == HERE_DOCUMENT);
+
+	tmpfile_writable = open(HEREDOC_FILE_PATH, O_RDWR | O_CREAT | O_TRUNC | O_EXCL, S_IRUSR | S_IWUSR);
+	if (tmpfile_writable < 0) /* the file is already taken if errno == EEXIST */
+		return (E_OPEN);
+	tmpfile_read_only = open(HEREDOC_FILE_PATH, O_RDONLY, S_IRUSR);
+	if (tmpfile_read_only < 0)
+	{
+		int err = errno;
+		close(tmpfile_writable);
+		errno = err;
+		return (E_OPEN);
+	}
+	if (unlink(HEREDOC_FILE_PATH) < 0)
+	{
+		int err = errno;
+		close(tmpfile_writable);
+		close(tmpfile_read_only);
+		errno = err;
+		return (E_UNLINK);
+	}
+	if (write(tmpfile_writable, redir.doc.contents, ft_strlen(redir.doc.contents)) < 0)
+	{
+		int err = errno;
+		close(tmpfile_writable);
+		close(tmpfile_read_only);
+		errno = err;
+		return (E_WRITE);
+	}
+	close(tmpfile_writable);
+	int redirectee = redirectee_fd_for_redir_kind(redir.kind);
+	if (tmpfile_read_only != redirectee)
+	{
+		if (dup2(tmpfile_read_only, redirectee) < 0)
+		{
+			int err = errno;
+			close(tmpfile_read_only);
+			errno = err;
+			return (E_DUP2);
+		}
+		close(tmpfile_read_only);
+	}
+	return (NO_ERROR);
+}
 
 t_error apply_redirections(t_redir_list *redirections)
 {
