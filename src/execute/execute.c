@@ -194,7 +194,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 
 #if 1 // exit here if command is null!
 	if (!simple->words)
-		graceful_exit_from_child(/* EXIT_SUCCESS */);
+		graceful_exit_from_child(EXIT_SUCCESS);
 #endif
 
 	char *command_path;
