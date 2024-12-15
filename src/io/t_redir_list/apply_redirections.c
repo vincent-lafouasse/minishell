@@ -20,7 +20,7 @@ static int open_flags_for_redir_kind(t_redir_kind kind)
 
 static int redirectee_fd_for_redir_kind(t_redir_kind kind)
 {
-	if (kind == FROM_FILE)
+	if (kind == FROM_FILE || kind == HERE_DOCUMENT)
 		return STDIN_FILENO;
 	else if (kind == INTO_FILE || kind == APPEND_INTO_FILE)
 		return STDOUT_FILENO;
