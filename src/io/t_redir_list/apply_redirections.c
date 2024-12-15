@@ -16,8 +16,7 @@ static int open_flags_for_redir_kind(t_redir_kind kind)
 		return O_CREAT | O_WRONLY | O_TRUNC;
 	else if (kind == APPEND_INTO_FILE)
 		return O_CREAT | O_WRONLY | O_APPEND;
-	else
-		return -1;
+	return -1;
 }
 
 static int redirectee_fd_for_redir_kind(t_redir_kind kind)
@@ -26,8 +25,7 @@ static int redirectee_fd_for_redir_kind(t_redir_kind kind)
 		return STDIN_FILENO;
 	else if (kind == INTO_FILE || kind == APPEND_INTO_FILE)
 		return STDOUT_FILENO;
-	else
-		return -1;
+	return -1;
 }
 
 static t_error redirect_regular_file(t_redirect redir)
