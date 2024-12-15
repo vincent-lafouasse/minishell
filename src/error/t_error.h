@@ -20,6 +20,7 @@ typedef enum e_error
     E_ACCESS,
     E_GETCWD,
     E_WRITE,
+    E_OPEN,
     E_DUMMY,
     E_INTERRUPTED, // XXX this does not refer to the errno value `EINTR`, rename?
 } t_error;
