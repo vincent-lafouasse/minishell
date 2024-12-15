@@ -70,7 +70,7 @@ t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io
 		if (err != NO_ERROR)
 			return (t_launch_result){.error = err, .pids = NULL};
 
-		if (is_builtin_command(command.simple))
+		if (/* command.simple->words && */ is_builtin_command(command.simple))
 		{
 			t_command subshell = command_new_subshell(command, NULL);
 			if (!subshell.subshell)
@@ -192,6 +192,11 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	if (err != NO_ERROR) /* exit with status EXIT_FAILURE after logging error (execute_cmd.c:797) */
 		graceful_exit_from_child(EXIT_FAILURE);
 
+#if 1 // exit here if command is null!
+	if (!simple->words)
+		graceful_exit_from_child(/* EXIT_SUCCESS */);
+#endif
+
 	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
 	if (err == E_COMMAND_NOT_FOUND && command_path == NULL)
@@ -259,7 +264,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 		if (err != NO_ERROR)
 			return (t_command_result){.error = err};
 
-		if (is_builtin_command(command.simple))
+		if (/* command.simple->words && */ is_builtin_command(command.simple))
 		{
 			int io_backup[2]; // TODO: make sure all files are properly closed and messages are printed in case of errors
 
