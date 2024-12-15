@@ -90,7 +90,7 @@ run_memcheck: build
 	valgrind $(VALGRIND_FLAGS) ./$(NAME)
 
 .PHONY: update
-update: fclean
+update: clean
 	mkdir -p build
 	bear  --output build/compile_commands.json -- make build
 
