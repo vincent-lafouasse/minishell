@@ -76,6 +76,15 @@ t_error apply_redirections(t_redir_list *redirections)
 		else
 			err = redirect_regular_file(redir);
 
+		// we would undo the redirections, but the only case where that matters
+		// is when running a builtin, since there's no fork. we already take care of
+		// that case by saving stdin and stdout (we don't care to redirect other
+		// streams than 0 and 1). otherwise, since we're in a child process, we
+		// will exit right after. although this now means that there are open
+		// file descriptors when the process exits...
+		if (err != NO_ERROR)
+			return (err);
+
 		redirections = redirections->next;
 	}
 	return (NO_ERROR);
