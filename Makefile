@@ -48,10 +48,11 @@ re: fclean build
 
 .PHONY: clean
 clean:
-	rm -rf build
+	rm -rf build/src
 
 .PHONY: fclean
 fclean: clean
+	rm -rf build
 	rm -rf $(NAME)
 
 .PHONY: test
