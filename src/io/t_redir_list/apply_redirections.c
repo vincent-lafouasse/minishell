@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+#include <assert.h>
 
 static int open_flags_for_redir_kind(t_redir_kind kind)
 {
@@ -27,14 +28,14 @@ static int redirectee_fd_for_redir_kind(t_redir_kind kind)
 		return -1;
 }
 
-static t_error redirect_regular_file(t_redir redir)
+static t_error redirect_regular_file(t_redirect redir)
 {
 	int fd;
 	int redirectee;
 	int errno_backup;
 
-	assert(kind == FROM_FILE || kind == INTO_FILE \
-		   || kind == APPEND_INTO_FILE);
+	assert(redir.kind == FROM_FILE || redir.kind == INTO_FILE \
+		   || redir.kind == APPEND_INTO_FILE);
 
 	/*
 	err = expand(redir.filename, &expanded_filename); // TODO: check for ambiguous redirections, i.e. when expansion expands to either zero or more than one word
@@ -59,7 +60,7 @@ static t_error redirect_regular_file(t_redir redir)
 	return (NO_ERROR);
 }
 
-static t_error redirect_here_document(t_redir redir);
+static t_error redirect_here_document(t_redirect redir);
 
 t_error apply_redirections(t_redir_list *redirections)
 {
