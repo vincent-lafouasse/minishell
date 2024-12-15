@@ -90,7 +90,7 @@ static t_error	read_here_document(const char *raw_delimiter, char **document_out
 	{
 		free(delimiter);
 		string_destroy(str);
-		return (E_OOM);
+		return (err);
 	}
 	err = string_make_c_string(str, document_out);
 	free(delimiter);
