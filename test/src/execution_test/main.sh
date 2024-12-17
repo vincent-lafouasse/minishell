@@ -10,6 +10,8 @@ MINISHELL="${MINISHELL_ROOT}/minishell"
 BUILD="${MINISHELL_ROOT}/build/exec_test"
 INFILE_DIR="${MINISHELL_ROOT}/aux/infiles"
 
+IGNORE_STDERR=0
+
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 YELLOW='\033[0;33m'
@@ -62,6 +64,62 @@ compare_with_bash() {
     else
         echo -e "${YELLOW}Testing $test_name$NC"
         echo -e "    ${YELLOW}For command:$NC $command"
+        echo -e "  ${YELLOW}expected${NC}"
+        for file in "$bash_output/"*; do
+            echo -ne "$PURPLE"
+            basename "$file"
+            echo -ne "$NC"
+            cat "$file"
+        done
+        echo -e "  ${YELLOW}was${NC}"
+        for file in "$minishell_output/"*; do
+            echo -ne "$PURPLE"
+            basename "$file"
+            echo -ne "$NC"
+            cat "$file"
+        done
+        echo -e "${RED}✓   ${test_name} failed${NC}"
+        ((N_FAILED++))
+        FAILED_TESTS+=("${test_name}")
+    fi
+}
+
+compare_script_with_bash() {
+    local test_name="$1"
+    local script_path="$2"
+
+    setup_test "$test_name"
+
+    local script_path="$EXEC_TEST_ROOT/$script_path"
+    local bash_output="${BUILD}/${test_name}/bash"
+    local minishell_output="${BUILD}/${test_name}/minishell"
+
+    if [ ! -f "$script_path" ]; then
+        echo -e "${RED}    Input file ${script_path} does not exist${NC}"
+        ((N_FAILED++))
+        return
+    fi
+
+    if [ IGNORE_STDERR == 0 ]; then
+        <"$script_path" "$MINISHELL" >"${minishell_output}/stdout" 2>"${minishell_output}/stderr"
+        echo $? >"${minishell_output}/status"
+
+        <"$script_path" bash >"${bash_output}/stdout" 2>"${bash_output}/stderr"
+        echo $? >"${bash_output}/status"
+    else
+        <"$script_path" "$MINISHELL" >"${minishell_output}/stdout" 2>/dev/null
+        echo $? >"${minishell_output}/status"
+
+        <"$script_path" bash >"${bash_output}/stdout" 2>/dev/null
+        echo $? >"${bash_output}/status"
+    fi
+
+    if diff "$minishell_output" "$bash_output" >"${BUILD}/${test_name}/log"; then
+        echo -e "${GREEN}✓   ${test_name} passed${NC}"
+        ((N_PASSED++))
+    else
+        echo -e "${YELLOW}Testing $test_name$NC"
+        echo -e "    ${YELLOW}For command list at:$NC $script_path"
         echo -e "  ${YELLOW}expected${NC}"
         for file in "$bash_output/"*; do
             echo -ne "$PURPLE"
@@ -164,6 +222,16 @@ test_success() {
     fi
 }
 
+test_here_documents() {
+    # we can't prevent readline from outputting whatever it reads to standard
+    # error in non interactive mode (we need forbidden function `fopen`)
+    IGNORE_STDERR=1
+
+    compare_script_with_bash "HereDocument_SingleLine" "./tests/doc/SingleLine"
+
+    IGNORE_STDERR=0
+}
+
 test_builtins() {
     # echo
     compare_with_bash 'Echo_Nothing' 'echo'
@@ -250,6 +318,7 @@ main() {
     setup
 
     test_builtins
+    test_here_documents
 
     compare_with_bash 'Simple_HelloWorld' 'echo hello world'
     compare_with_bash 'Simple_PrintWhitespace' 'echo "         " | cat -e'
