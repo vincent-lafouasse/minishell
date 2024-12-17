@@ -33,6 +33,8 @@ typedef struct s_redir_list
 	t_redirect redirect;
 } t_redir_list;
 
+// TODO(optional): move here documents into their own module to fix circular
+// include without using forward declarators
 typedef struct s_command t_command;
 t_error	gather_here_documents(t_command cmd);
 
