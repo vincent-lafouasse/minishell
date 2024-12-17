@@ -104,7 +104,6 @@ void run_interpreter(t_state* state)
 		// should just continue interpreting commands
 		err = run_and_parse_command(input, state); // bad, error should be handled
 		free(input);
-		printf("command status: %s\n", error_repr(err));
 	}
 	rl_clear_history();
 	// TODO: call `exit` builtin on Ctrl-D
@@ -141,7 +140,6 @@ void run_non_interactive_loop(t_state *state)
 
 		err = run_and_parse_command(input, state);
 		free(input);
-		printf("command status: %s\n", error_repr(err));
 	}
 }
 
