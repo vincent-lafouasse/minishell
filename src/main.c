@@ -143,7 +143,7 @@ void run_non_interactive_loop(t_state *state)
 	}
 }
 
-t_error state_init(char *envp[], t_state *state_out)
+t_error shell_init(char *envp[], t_state *state_out)
 {
 	t_error		err;
 
@@ -161,7 +161,7 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	t_state		state;
 	t_error		err;
 
-	err = state_init(envp, &state);
+	err = shell_init(envp, &state);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
 	
