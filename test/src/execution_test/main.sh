@@ -227,7 +227,28 @@ test_here_documents() {
     # error in non interactive mode (we need forbidden function `fopen`)
     IGNORE_STDERR=1
 
-    compare_script_with_bash "HereDocument_SingleLine" "./tests/doc/SingleLine"
+    # "Unterminated" tests should output a message to standard error when in
+    # interactive mode
+
+    compare_script_with_bash "HereDocumentCat_Empty" "./tests/doc/Empty"
+    compare_script_with_bash "HereDocumentCat_EmptyUnterminated" "./tests/doc/EmptyUnterminated"
+    compare_script_with_bash "HereDocumentCat_SingleLine" "./tests/doc/SingleLine"
+    compare_script_with_bash "HereDocumentCat_MultiLine" "./tests/doc/MultiLine"
+    compare_script_with_bash "HereDocumentCat_UnterminatedMultiLine" "./tests/doc/UnterminatedMultiLine"
+    compare_script_with_bash "HereDocumentCat_DelimiterIsEntirelyMatched" "./tests/doc/DelimiterIsEntirelyMatched"
+    compare_script_with_bash "HereDocumentCat_AllEmptyLines" "./tests/doc/AllEmptyLines"
+    compare_script_with_bash "HereDocumentCat_AllEmptyLinesUnterminated" "./tests/doc/AllEmptyLinesUnterminated"
+    compare_script_with_bash "HereDocumentCat_WithSomeEmptyLines" "./tests/doc/WithSomeEmptyLines"
+    compare_script_with_bash "HereDocumentCat_WithSomeEmptyLinesUnterminated" "./tests/doc/WithSomeEmptyLinesUnterminated"
+    compare_script_with_bash "HereDocumentCat_DelimiterIsQuoteRemoved" "./tests/doc/DelimiterIsQuoteRemoved"
+    compare_script_with_bash "HereDocumentCat_DelimiterIsQuoteRemovedAndConcatenated" "./tests/doc/DelimiterIsQuoteRemovedAndConcatenated"
+    compare_script_with_bash "HereDocument_InDifferentCommandWithArguments" "./tests/doc/InDifferentCommandWithArguments"
+    compare_script_with_bash "HereDocument_ManyDocuments" "./tests/doc/ManyDocuments"
+    compare_script_with_bash "HereDocument_ManyDocumentsUnterminated" "./tests/doc/ManyDocumentsUnterminated"
+    compare_script_with_bash "HereDocument_ManyDocumentsInSubshell" "./tests/doc/ManyDocumentsInSubshell"
+    compare_script_with_bash "HereDocument_ManyDocumentsInNestedSubshell" "./tests/doc/ManyDocumentsInNestedSubshell"
+    compare_script_with_bash "HereDocument_ManyDocumentsInConditional" "./tests/doc/ManyDocumentsInConditional"
+    compare_script_with_bash "HereDocument_InPipeline" "./tests/doc/InPipeline"
 
     IGNORE_STDERR=0
 }

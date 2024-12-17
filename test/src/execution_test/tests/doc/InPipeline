@@ -1,0 +1,5 @@
+<< eof sort | head -n 1 | cut -c1
+charlie
+bob
+alice
+eof
