@@ -147,6 +147,7 @@ t_error shell_init(char *envp[], t_state *state_out)
 {
 	t_error		err;
 
+	rl_outstream = stderr;
 	*state_out = (t_state){0};
 	err = from_envp((const char **)envp, &state_out->env);
 	if (err != NO_ERROR)
