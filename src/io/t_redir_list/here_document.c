@@ -116,7 +116,6 @@ static t_error	read_here_documents_in_rdl(t_redir_list *rdl)
 		if (err != NO_ERROR)
 			return err;
 		current_doc->contents = document;
-		printf("here document (%s) contents: %s\n", current_doc->here_doc_eof, document);
 		rdl = rdl->next;
 	}
 	return (NO_ERROR);
