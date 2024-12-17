@@ -1,5 +1,6 @@
 #include "error/t_error.h"
 #include "execute/t_env/t_env.h"
+#include "word/word.h"
 #include "libft/ft_string.h"
 #include "libft/string.h"
 
@@ -86,17 +87,6 @@ static t_error find_command_in_path_list(char **path, const char *word, char **o
 	return (NO_ERROR);
 }
 
-static t_error copy_word(const char *word, char **out)
-{
-	char *dup;
-
-	dup = ft_strdup(word);
-	if (!dup)
-		return (E_OOM);
-	*out = dup;
-	return (NO_ERROR);
-}
-
 static bool is_absolute_pathname(const char *word)
 {
 	return (ft_strchr(word, '/') != (char *)NULL);
@@ -111,7 +101,7 @@ t_error path_expanded_word(const t_env *env, const char *word, char **out)
 	if (!path)
 		return (E_OOM);
 	if (is_absolute_pathname(word))
-		err = copy_word(word, out);
+		err = word_clone(word, out);
 	else
 	{
 		err = find_command_in_path_list(path, word, out);

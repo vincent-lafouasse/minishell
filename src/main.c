@@ -16,6 +16,7 @@
 #include "libft/ft_io.h"
 #include "parse/t_command/t_command.h"
 #include "signal/signal.h"
+#include "io/t_redir_list/t_redir_list.h"
 
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"
@@ -31,6 +32,13 @@ t_error run_and_parse_command(const char* input, t_state* state)
 		ft_putendl_fd(error_repr(err), STDERR_FILENO);
 		state->last_status = parse_error_exit_code(err);
 		return err;
+	}
+
+	err = gather_here_documents(cmd);
+	if (err != NO_ERROR)
+	{
+		command_destroy(cmd);
+		return (err);
 	}
 
 	state->root = cmd;
@@ -92,9 +100,10 @@ void run_interpreter(t_state* state)
 			break; /* eof or read error */
 		//install_execution_handlers();
 
-		err = run_and_parse_command(input, state);
+		// NOTE: E_INTERRUPTED is non fatal, and is used to signify that we
+		// should just continue interpreting commands
+		err = run_and_parse_command(input, state); // bad, error should be handled
 		free(input);
-		printf("command status: %s\n", error_repr(err));
 	}
 	rl_clear_history();
 	// TODO: call `exit` builtin on Ctrl-D
@@ -131,14 +140,14 @@ void run_non_interactive_loop(t_state *state)
 
 		err = run_and_parse_command(input, state);
 		free(input);
-		printf("command status: %s\n", error_repr(err));
 	}
 }
 
-t_error state_init(char *envp[], t_state *state_out)
+t_error shell_init(char *envp[], t_state *state_out)
 {
 	t_error		err;
 
+	rl_outstream = stderr;
 	*state_out = (t_state){0};
 	err = from_envp((const char **)envp, &state_out->env);
 	if (err != NO_ERROR)
@@ -153,7 +162,7 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	t_state		state;
 	t_error		err;
 
-	err = state_init(envp, &state);
+	err = shell_init(envp, &state);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
 	
