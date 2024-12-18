@@ -15,6 +15,7 @@
 #define ACCESS_REPR "Access error"
 #define GETCWD_REPR "Getcwd error"
 #define WRITE_REPR "Write error"
+#define WAIT_REPR "Wait error"
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
@@ -50,5 +51,7 @@ const char *error_repr(t_error err)
         return GETCWD_REPR;
     if (err == E_WRITE)
         return WRITE_REPR;
+    if (err == E_WAIT)
+        return WAIT_REPR;
     return UNKNOWN_ERROR_REPR;
 }
