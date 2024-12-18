@@ -2,6 +2,7 @@
 #include "error/t_error.h"
 #include "execute/t_env/t_env.h"
 #include "execute/t_pid_list/t_pid_list.h"
+#include "execute/process/process.h"
 #include "parse/t_command/t_command.h"
 #include "io/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
@@ -13,7 +14,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/wait.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <assert.h> // bad
@@ -282,11 +282,11 @@ t_command_result execute_command(t_state *state, t_command command) {
 			t_launch_result launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
 			assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
-			int status;
-			int options = 0;
-			assert(launch_res.pids != NULL);
-			waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
-			res = (t_command_result){.error = NO_ERROR, .status_code = WEXITSTATUS(status)}; // bad, might err; and make sure waitpid worked before checking WEXITSTATUS
+			int exit_status;
+			err = wait_for_process(launch_res.pids->pid, &exit_status);
+			if (err != NO_ERROR)
+				return (/* kill(pid, SIGKILL), */ (t_command_result) {.error = err});
+			res = (t_command_result){.error = NO_ERROR, .status_code = exit_status};
 		}
 	}
 	else if (command.type == CMD_PIPELINE)
