@@ -21,9 +21,6 @@ t_error wait_for_process(pid_t pid, int *exit_status_out)
 		if (WTERMSIG(status) != SIGINT && WTERMSIG(status) != SIGPIPE)
 			report_signal_related_exit(status);
 		else if (WTERMSIG(status) == SIGINT)
-			// this is normally only done when job control is enabled for bash
-			// but do it anyway since it's cleaner and easier to justify in
-			// defense
 			ft_putchar_fd('\n', STDOUT_FILENO);
 	}
 	*exit_status_out = get_exit_status(status);
