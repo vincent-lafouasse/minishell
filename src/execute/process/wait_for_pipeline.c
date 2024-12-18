@@ -20,7 +20,7 @@ static t_error wait_until_no_children_left(pid_t pid, int *status_out)
 	while (children_remain)
 	{
 		waited_for_pid = wait_through_signals(-1, &status);
-		if (pid < 0)
+		if (waited_for_pid < 0)
 		{
 			if (errno == ECHILD) // pid < 0 && errno == ECHILD after `wait(-1)`: we have no more children
 				children_remain = false;
