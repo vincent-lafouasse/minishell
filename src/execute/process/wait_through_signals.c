@@ -8,16 +8,17 @@
 pid_t wait_through_signals(pid_t pid, int *status_out)
 {
 	pid_t waited_for_pid;
+	int status;
 
 	while (true)
 	{
-		waited_for_pid = waitpid(pid, status_out, 0);
+		waited_for_pid = waitpid(pid, &status, 0);
 		if (waited_for_pid < 0 && errno == EINTR)
 			continue;
 		if (waited_for_pid >= 0)
 		{
 			// an event other than a process exiting occured, we don't care for it
-			if ((!WIFEXITED(*status_out) && !WIFSIGNALED(*status_out)))
+			if ((!WIFEXITED(status) && !WIFSIGNALED(status)))
 				continue;
 			// we have caught the termination of a different process than the
 			// one we were looking for; bash would save this to its global job
@@ -29,5 +30,7 @@ pid_t wait_through_signals(pid_t pid, int *status_out)
 		}
 		break;
 	}
+	if (status_out)
+		*status_out = status;
 	return (waited_for_pid);
 }
