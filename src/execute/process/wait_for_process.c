@@ -4,51 +4,9 @@
 
 #include "libft/ft_io.h"
 
-#include <stdlib.h>
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <errno.h>
-
-static pid_t wait_through_signals(pid_t pid, int *status_out)
-{
-	pid_t waited_for_pid;
-
-	while (true)
-	{
-		waited_for_pid = waitpid(pid, status_out, 0);
-		if (waited_for_pid < 0 && errno == EINTR)
-			continue;
-		// an event other than the process exiting occured, we don't care for it
-		if (waited_for_pid >= 0 && \
-			(!WIFEXITED(*status_out) && !WIFSIGNALED(*status_out)))
-			continue;
-		break;
-	}
-	return (waited_for_pid);
-}
-
-static int get_exit_status(int status)
-{
-	if (WIFSIGNALED (status))
-		return (128 + WTERMSIG (status));
-	else if (WIFEXITED(status))
-		return (WEXITSTATUS (status));
-	else
-		return (EXIT_SUCCESS);
-}
-
-void report_signal_related_exit(int status)
-{
-	int signal_id;
-
-	signal_id = WTERMSIG(status);
-	ft_putstr_fd("minishell: process killed by signal #", STDERR_FILENO);
-	ft_putnbr_fd(signal_id, STDERR_FILENO);
-	if (WCOREDUMP(status))
-		ft_putstr_fd(" (core dumped)", STDERR_FILENO);
-	ft_putchar_fd('\n', STDERR_FILENO);
-}
 
 t_error wait_for_process(pid_t pid, int *exit_status_out)
 {
