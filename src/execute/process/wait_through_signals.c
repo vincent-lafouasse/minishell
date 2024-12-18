@@ -18,7 +18,7 @@ pid_t wait_through_signals(pid_t pid, int *status_out)
 		if (waited_for_pid >= 0)
 		{
 			// an event other than a process exiting occured, we don't care for it
-			if ((!WIFEXITED(status) && !WIFSIGNALED(status)))
+			if (!WIFEXITED(status) && !WIFSIGNALED(status))
 				continue;
 			// we have caught the termination of a different process than the
 			// one we were looking for; bash would save this to its global job
