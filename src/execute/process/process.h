@@ -18,6 +18,8 @@ t_error fork_process(bool *is_inside_of_child, int *pid_out);
 t_error wait_for_process(pid_t pid, int *exit_status_out);
 t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out);
 
+t_error kill_pipeline(t_pid_list *pids);
+
 // internals
 void report_signal_related_exit(int status);
 pid_t wait_through_signals(pid_t pid, int *status_out);
