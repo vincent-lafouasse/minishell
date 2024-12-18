@@ -15,7 +15,7 @@ t_error wait_for_process(pid_t pid, int *exit_status_out)
 
 	waited_for_pid = wait_through_signals(pid, &status);
 	if (waited_for_pid < 0)
-		return (E_WAIT);
+		return (E_WAIT); // caller is now in charge of killing this process
 	if (WIFSIGNALED(status))
 	{
 		if (WTERMSIG(status) != SIGINT && WTERMSIG(status) != SIGPIPE)
