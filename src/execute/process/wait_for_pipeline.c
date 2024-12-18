@@ -8,18 +8,27 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <stdbool.h>
 
-t_error reap_remaining_pipeline_processes(void)
+static t_error wait_until_no_children_left(pid_t pid, int *status_out)
 {
-	while (true)
+	pid_t waited_for_pid;
+	bool children_remain;
+	int status;
+
+	children_remain = true;
+	while (children_remain)
 	{
-		pid_t pid = wait_through_signals(-1, NULL);
-		if (pid >= 0)
-			continue;
-		if (errno != ECHILD)
-			return (E_WAIT);
-		// pid < 0 && errno == ECHILD after `wait(-1)`: we have no more children
-		break;
+		waited_for_pid = wait_through_signals(-1, &status);
+		if (pid < 0)
+		{
+			if (errno == ECHILD) // pid < 0 && errno == ECHILD after `wait(-1)`: we have no more children
+				children_remain = false;
+			else
+				return (E_WAIT);
+		}
+		if (waited_for_pid == pid)
+			*status_out = status;
 	}
 	return (NO_ERROR);
 }
@@ -28,6 +37,7 @@ t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out)
 {
 	pid_t last_pid;
 	int last_status;
+	t_error err;
 
 	if (!pids)
 	{
@@ -35,9 +45,10 @@ t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out)
 		return (NO_ERROR);
 	}
 	last_pid = pidl_last(pids)->pid;
-	if (wait_through_signals(last_pid, &last_status) < 0)
-		// remaining child processes should be killed by the caller, THOUGH:
-		return (E_WAIT); // BAD: `kill(2)` has no effect on zombie processes, so `wait(pid, WNOHANG)` them first
+	err = wait_and_exhaust_children(last_pid, &last_status);
+	if (err != NO_ERROR)
+		// E_WAIT occured, remaining child processes should be killed by the caller, THOUGH:
+		return (err); // BAD: `kill(2)` has no effect on zombie processes, so `wait(pid, WNOHANG)` them first
 	if (WIFSIGNALED(last_status))
 	{
 		if (WTERMSIG(last_status) != SIGINT && WTERMSIG(last_status) != SIGPIPE)
@@ -46,5 +57,5 @@ t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out)
 			ft_putchar_fd('\n', STDOUT_FILENO);
 	}
 	*last_exit_status_out = get_exit_status(last_status);
-	return (reap_remaining_pipeline_processes());
+	return (NO_ERROR);
 }
