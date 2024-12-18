@@ -15,6 +15,10 @@
 
 t_error fork_process(bool *is_inside_of_child, int *pid_out);
 
+// BAD(wait_for): a child process may change tty options (vim for example), and
+// if it doesn't exit properly (say for example SIGKILL'd), then the tty options
+// will never be reset to what they used to be. try: `vim` then in another
+// terminal `pkill -KILL vim` in both minishell and bash
 t_error wait_for_process(pid_t pid, int *exit_status_out);
 t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out);
 
