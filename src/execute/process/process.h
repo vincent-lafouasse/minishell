@@ -1,6 +1,13 @@
 #ifndef PROCESS_H
 # define PROCESS_H
 
+// turns out implementing even minishell's reduced subset of job control is a
+// mess without global variables!
+//
+// all functions try to reap all zombies and leave no child process unwaited
+// for. though, all bets are off if a child process somehow remains. it is
+// preferred to have no processes under you before calling `wait_for`s.
+
 #include <sys/types.h>
 
 #include "../t_pid_list/t_pid_list.h"
