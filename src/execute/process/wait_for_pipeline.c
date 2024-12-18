@@ -28,7 +28,7 @@ static t_error wait_until_no_children_left(pid_t pid, int *status_out)
 				return (E_WAIT);
 		}
 		if (waited_for_pid == pid)
-			*status_out = status;
+			*status_out = status; // BAD: uninitialized read if this is never reached
 	}
 	return (NO_ERROR);
 }
