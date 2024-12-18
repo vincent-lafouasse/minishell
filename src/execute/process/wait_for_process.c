@@ -10,11 +10,6 @@
 #include <sys/wait.h>
 #include <errno.h>
 
-static void compensate_for_lack_of_newline(void)
-{
-	ft_putchar_fd('\n', STDOUT_FILENO);
-}
-
 static pid_t wait_through_signals(pid_t pid, int *status_out)
 {
 	pid_t waited_for_pid;
@@ -71,7 +66,7 @@ t_error wait_for_process(pid_t pid, int *exit_status_out)
 			// this is normally only done when job control is enabled for bash
 			// but do it anyway since it's cleaner and easier to justify in
 			// defense
-			compensate_for_lack_of_newline();
+			ft_putchar_fd('\n', STDOUT_FILENO);
 	}
 	*exit_status_out = get_exit_status(status);
 	return (NO_ERROR);
