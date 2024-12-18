@@ -45,19 +45,6 @@ static void graceful_exit_from_child(int with_status) // bad dummy
 	exit(with_status); // bad, should clean up all allocations before exiting from child process
 }
 
-int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
-{
-	t_pid_list* current = pids;
-	int status;
-
-	while (current)
-	{
-		waitpid(current->pid, &status, 0); // hack, should not wait sequentially?
-		current = current->next;
-	}
-	return (status);
-}
-
 // either simple or subshell or maybe builtin
 t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
 	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
@@ -295,8 +282,12 @@ t_command_result execute_command(t_state *state, t_command command) {
 		launch_res = launch_pipeline(state, command.pipeline, io_default());
 		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
-		int status = wait_pipeline(launch_res.pids);
-		res = (t_command_result){.error = NO_ERROR, .status_code = status};
+		assert(launch_res.pids != NULL);
+		int last_exit_status;
+		err = wait_for_pipeline(launch_res.pids, &last_exit_status);
+		if (err != NO_ERROR)
+			return /* kill_pipeline(launch_res.pids), */ (t_command_result){.error = err};
+		res = (t_command_result){.error = NO_ERROR, .status_code = last_exit_status};
 	}
 	else if (command.type == CMD_CONDITIONAL)
 		res = execute_conditional(state, command.conditional);
