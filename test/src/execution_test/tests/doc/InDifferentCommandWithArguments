@@ -1,0 +1,5 @@
+awk '{print $2}' << eof
+x        specialty is_fed_up
+jamar    execution yes
+vlafouas parsing   yes
+eof

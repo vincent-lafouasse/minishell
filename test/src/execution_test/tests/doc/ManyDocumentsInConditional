@@ -1,0 +1,17 @@
+cat << a || cat << b && cat << b
+hello
+world
+b
+a
+--
+a
+a
+a
+a
+a
+hello
+b
+--
+hello
+world
+b
