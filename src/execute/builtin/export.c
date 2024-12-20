@@ -123,6 +123,7 @@ static t_command_result do_assignments(t_env **env, t_word_list *assignments)
 	t_assignment assignment;
 	t_error err;
 
+	any_failed = false;
 	while (assignments)
 	{
 		err = parse_assignment(assignments->contents, &assignment);
