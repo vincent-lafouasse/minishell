@@ -139,6 +139,7 @@ void run_non_interactive_loop(t_state *state)
 			break; /* no more bytes to read on stdin or read error */
 		//install_execution_handlers();
 
+		// NOTE: here, E_INTERRUPTED should make the script halt
 		err = run_and_parse_command(input, state);
 		free(input);
 	}
