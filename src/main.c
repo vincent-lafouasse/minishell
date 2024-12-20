@@ -146,6 +146,10 @@ void run_non_interactive_loop(t_state *state)
 
 void init_interactive(t_state *state_out)
 {
+	int ret;
+
+	ret = tcgetattr(STDERR_FILENO, &state_out->tty_properties);
+	state_out->tty_properties_initialized = ret == 0;
 	state_out->is_interactive = true;
 }
 
@@ -160,6 +164,8 @@ t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
 		return (err);
 	if (!dash_c && isatty(STDIN_FILENO) && isatty(STDERR_FILENO))
 		init_interactive(state_out);
+	else
+		state_out->is_interactive = false;
 	return (NO_ERROR);
 }
 
