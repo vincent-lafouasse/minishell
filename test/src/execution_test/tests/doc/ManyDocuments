@@ -1,0 +1,23 @@
+cat << one << two << three << four << five
+three
+1
+one
+three
+five
+2
+two
+five
+four
+3
+three
+4
+two
+two
+five
+four
+5
+5
+two
+5
+5
+five

@@ -1,0 +1,6 @@
+cat << EOF
+hello
+world
+abcdef
+ghiklm
+EOF

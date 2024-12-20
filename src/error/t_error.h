@@ -21,7 +21,10 @@ typedef enum e_error
     E_GETCWD,
     E_WRITE,
     E_WAIT,
+    E_OPEN,
+    E_UNLINK,
     E_DUMMY,
+    E_INTERRUPTED, // XXX this does not refer to the errno value `EINTR`, rename?
 } t_error;
 
 const char *error_repr(t_error err);

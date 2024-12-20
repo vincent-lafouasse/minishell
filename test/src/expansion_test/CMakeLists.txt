@@ -25,6 +25,7 @@ set(env_module
 set(word_module
 	word/t_word_list/t_word_list.h
 	word/t_word_list/t_word_list.c
+	word/word_clone.c
 )
 
 

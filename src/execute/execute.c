@@ -62,6 +62,7 @@ t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io
 			t_command subshell = command_new_subshell(command, NULL);
 			if (!subshell.subshell)
 				return (t_launch_result){.error = E_OOM, .pids = NULL};
+			// BAD: produces unreachable leak if the builtin we're calling is `exit` (cannot access `subshell` variable)
 			t_launch_result res = launch_subshell(state, subshell.subshell, io, fd_to_close);
 			free(subshell.subshell);
 			return res;
