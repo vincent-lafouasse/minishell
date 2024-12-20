@@ -13,8 +13,11 @@
 #define FORK_REPR "Fork error"
 #define DUP2_REPR "Dup2 error"
 #define ACCESS_REPR "Access error"
+#define INTERRUPTED_REPR "Command was interrupted pre-execution"
 #define GETCWD_REPR "Getcwd error"
 #define WRITE_REPR "Write error"
+#define OPEN_REPR "Open error"
+#define UNLINK_REPR "Unlink error"
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
@@ -46,9 +49,15 @@ const char *error_repr(t_error err)
         return DUMMY_REPR;
     if (err == E_ACCESS)
         return ACCESS_REPR;
+    if (err == E_INTERRUPTED)
+        return INTERRUPTED_REPR;
     if (err == E_GETCWD)
         return GETCWD_REPR;
     if (err == E_WRITE)
         return WRITE_REPR;
+    if (err == E_OPEN)
+        return OPEN_REPR;
+    if (err == E_UNLINK)
+        return UNLINK_REPR;
     return UNKNOWN_ERROR_REPR;
 }
