@@ -10,7 +10,7 @@
 #include <sys/wait.h>
 #include <stdbool.h>
 
-static t_error wait_until_no_children_left(pid_t pid, int *status_out)
+static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 {
 	pid_t waited_for_pid;
 	bool children_remain;
@@ -45,7 +45,7 @@ t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out)
 		return (NO_ERROR);
 	}
 	last_pid = pidl_last(pids)->pid;
-	err = wait_until_no_children_left(last_pid, &last_status);
+	err = waitpid_and_exhaust_children(last_pid, &last_status);
 	if (err != NO_ERROR)
 		// E_WAIT occured, remaining child processes should be killed by the caller, THOUGH:
 		return (err); // BAD: `kill(2)` has no effect on zombie processes, so `wait(pid, WNOHANG)` them first
