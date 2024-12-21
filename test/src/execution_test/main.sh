@@ -514,6 +514,11 @@ main() {
     refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found'
 
     refute 'Export_NotAValidIdentifier01' 'export ""' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier02' 'export =' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier03' 'export %' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier04' 'export $?' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier05' 'export ?=2' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier06' 'export 9HOLA=2' 1 'not a valid identifier'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
