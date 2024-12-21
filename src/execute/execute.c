@@ -271,7 +271,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 			assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
 			int exit_status;
-			err = wait_for_process(launch_res.pids->pid, &exit_status);
+			err = wait_for_process(state, launch_res.pids->pid, &exit_status);
 			if (err != NO_ERROR)
 				return (/* kill(pid, SIGKILL), */ (t_command_result) {.error = err});
 			res = (t_command_result){.error = NO_ERROR, .status_code = exit_status};
@@ -285,7 +285,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 
 		assert(launch_res.pids != NULL);
 		int last_exit_status;
-		err = wait_for_pipeline(launch_res.pids, &last_exit_status);
+		err = wait_for_pipeline(state, launch_res.pids, &last_exit_status);
 		if (err != NO_ERROR)
 			return /* kill_pipeline(launch_res.pids), */ (t_command_result){.error = err};
 		res = (t_command_result){.error = NO_ERROR, .status_code = last_exit_status};

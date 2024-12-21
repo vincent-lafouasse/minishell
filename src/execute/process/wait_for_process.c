@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-t_error wait_for_process(pid_t pid, int *exit_status_out)
+t_error wait_for_process(t_state *state, pid_t pid, int *exit_status_out)
 {
 	int status;
 	pid_t waited_for_pid;
@@ -18,6 +18,8 @@ t_error wait_for_process(pid_t pid, int *exit_status_out)
 		return (E_WAIT); // caller is now in charge of killing this process
 	if (WIFSIGNALED(status))
 	{
+		if (state->is_interactive && state->tty_properties_initialized)
+			reset_tty_properties(STDERR_FILENO, &state->tty_properties);
 		if (WTERMSIG(status) != SIGINT && WTERMSIG(status) != SIGPIPE)
 			report_signal_related_exit(status);
 		else if (WTERMSIG(status) == SIGINT)

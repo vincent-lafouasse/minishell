@@ -12,21 +12,21 @@
 
 #include "../t_pid_list/t_pid_list.h"
 #include "error/t_error.h"
+#include "execute/execute.h"
 
 t_error fork_process(bool *is_inside_of_child, int *pid_out);
 
-// BAD(wait_for): a child process may change tty options (vim for example), and
-// if it doesn't exit properly (say for example SIGKILL'd), then the tty options
-// will never be reset to what they used to be. try: `vim` then in another
-// terminal `pkill -KILL vim` in both minishell and bash
-t_error wait_for_process(pid_t pid, int *exit_status_out);
-t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out);
+t_error wait_for_process(t_state *state, pid_t pid, int *exit_status_out);
+t_error wait_for_pipeline(t_state *state, t_pid_list *pids, int *last_exit_status_out);
 
-t_error kill_pipeline(t_pid_list *pids);
+// DUMMY: ensure this resets tty settings after killing all pids if we are interactive
+t_error kill_pipeline(t_state *state, t_pid_list *pids);
 
 // internals
 void report_signal_related_exit(int status);
 pid_t wait_through_signals(pid_t pid, int *status_out);
 int get_exit_status(int status);
+struct termios;
+void reset_tty_properties(int tty_fd, struct termios *tty_properties);
 
 #endif // PROCESS_H

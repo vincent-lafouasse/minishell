@@ -58,7 +58,7 @@ t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 	pid_t pid = launch_result.pids->pid;
 
 	int exit_status;
-	t_error err = wait_for_process(pid, &exit_status);
+	t_error err = wait_for_process(state, pid, &exit_status);
 	if (err != NO_ERROR)
 		return /* kill(pid, SIGKILL), */ (t_command_result){.error = err};
 

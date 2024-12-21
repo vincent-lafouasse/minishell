@@ -33,7 +33,7 @@ static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 	return (NO_ERROR);
 }
 
-t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out)
+t_error wait_for_pipeline(t_state *state, t_pid_list *pids, int *last_exit_status_out)
 {
 	pid_t last_pid;
 	int last_status;
@@ -51,6 +51,8 @@ t_error wait_for_pipeline(t_pid_list *pids, int *last_exit_status_out)
 		return (err); // BAD: `kill(2)` has no effect on zombie processes, so `wait(pid, WNOHANG)` them first
 	if (WIFSIGNALED(last_status))
 	{
+		if (state->is_interactive && state->tty_properties_initialized)
+			reset_tty_properties(STDERR_FILENO, &state->tty_properties);
 		if (WTERMSIG(last_status) != SIGINT && WTERMSIG(last_status) != SIGPIPE)
 			report_signal_related_exit(last_status);
 		else if (WTERMSIG(last_status) == SIGINT)
