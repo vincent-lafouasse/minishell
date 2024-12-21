@@ -513,6 +513,8 @@ main() {
     refute 'Expansion91_CommandNotFound' '$DONTEXIST' 127 'command not found'
     refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found' foobar
 
+    refute 'Export_NotAValidIdentifier01' 'export ""' 1 'not a valid identifier'
+
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
     else
