@@ -26,7 +26,7 @@ typedef struct s_assignment
 static void report_invalid_identifier(char *identifier_name)
 {
 	(void)identifier_name;
-	const char *message = "minishell: export: invalid identifier\n";
+	const char *message = "minishell: export: not a valid identifier\n";
 	write(STDERR_FILENO, message, ft_strlen(message));
 }
 
