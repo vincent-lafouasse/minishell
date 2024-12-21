@@ -519,6 +519,13 @@ main() {
     refute 'Export_NotAValidIdentifier04' 'export $?' 1 'not a valid identifier'
     refute 'Export_NotAValidIdentifier05' 'export ?=2' 1 'not a valid identifier'
     refute 'Export_NotAValidIdentifier06' 'export 9HOLA=2' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier07' 'export HOLA@' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier08' 'export HOLA~' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier09' 'export --HOLA' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier10' 'export -HOLA' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier11' 'export HO-LA' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier12' 'export HO.LA' 1 'not a valid identifier'
+    refute 'Export_NotAValidIdentifier13' 'export HO+LA' 1 'not a valid identifier'
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
