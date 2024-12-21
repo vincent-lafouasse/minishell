@@ -511,7 +511,7 @@ main() {
     refute 'Expansion89_CommandNotFound' '"$HOMEdskjhfkdshfsd"' 127 'command not found'
     refute 'Expansion90_CommandNotFound' ''\''$HOMEdskjhfkdshfsd'\''' 127 'command not found'
     refute 'Expansion91_CommandNotFound' '$DONTEXIST' 127 'command not found'
-    refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found' foobar
+    refute 'Expansion92_CommandNotFound' '$LESS$VAR' 127 'command not found'
 
     refute 'Export_NotAValidIdentifier01' 'export ""' 1 'not a valid identifier'
 
