@@ -285,13 +285,13 @@ test_builtins() {
 
     # export
     refute 'Export_NoArguments' 'export' 420 'unimplemented'
-    refute 'Export_InvalidIdentifier1' 'export 1abc=oneabc' 1 'invalid identifier'
-    refute 'Export_InvalidIdentifier2' 'export 1=one' 1 'invalid identifier'
-    refute 'Export_InvalidIdentifier3' 'export 1GREETING=hello' 1 'invalid identifier'
-    refute 'Export_InvalidIdentifier4' 'export lol%%lol' 1 'invalid identifier'
+    refute 'Export_InvalidIdentifier1' 'export 1abc=oneabc' 1 'not a valid identifier'
+    refute 'Export_InvalidIdentifier2' 'export 1=one' 1 'not a valid identifier'
+    refute 'Export_InvalidIdentifier3' 'export 1GREETING=hello' 1 'not a valid identifier'
+    refute 'Export_InvalidIdentifier4' 'export lol%%lol' 1 'not a valid identifier'
 
     refute 'ExportEcho_InvalidIdentifierTriggersErrorButContinues' \
-        'export 1GREETING=hello GREETING=hello NAME=world || echo $GREETING $NAME' 1 'invalid identifier' 'hello world'
+        'export 1GREETING=hello GREETING=hello NAME=world || echo $GREETING $NAME' 1 'not a valid identifier' 'hello world'
 
     compare_with_bash 'ExportEcho_NullVariable' 'export NULL && echo $NULL'
     compare_with_bash 'ExportEcho_ManyAssignments' 'export GREETING=hello NAME=world && echo $GREETING $NAME'
