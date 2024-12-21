@@ -16,6 +16,7 @@
 #define INTERRUPTED_REPR "Command was interrupted pre-execution"
 #define GETCWD_REPR "Getcwd error"
 #define WRITE_REPR "Write error"
+#define WAIT_REPR "Wait error"
 #define OPEN_REPR "Open error"
 #define UNLINK_REPR "Unlink error"
 
@@ -55,6 +56,8 @@ const char *error_repr(t_error err)
         return GETCWD_REPR;
     if (err == E_WRITE)
         return WRITE_REPR;
+    if (err == E_WAIT)
+        return WAIT_REPR;
     if (err == E_OPEN)
         return OPEN_REPR;
     if (err == E_UNLINK)

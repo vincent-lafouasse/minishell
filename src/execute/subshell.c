@@ -1,4 +1,6 @@
 #include "execute.h"
+#include "execute/process/process.h"
+#include "error/t_error.h"
 #include "libft/string.h"
 #include "parse/t_command/t_command.h"
 #include <unistd.h>
@@ -53,11 +55,12 @@ t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 	if (launch_result.error != NO_ERROR) {
 		return (t_command_result){.error = launch_result.error};
 	}
-	pid_t to_wait = launch_result.pids->pid;
+	pid_t pid = launch_result.pids->pid;
 
-	int status;
-	int options = 0;
-	waitpid(to_wait, &status, options);
+	int exit_status;
+	t_error err = wait_for_process(state, pid, &exit_status);
+	if (err != NO_ERROR)
+		return /* kill(pid, SIGKILL), */ (t_command_result){.error = err};
 
-	return (t_command_result){.error = NO_ERROR, .status_code = status};
+	return (t_command_result){.error = NO_ERROR, .status_code = exit_status};
 }

@@ -20,6 +20,7 @@ typedef enum e_error
     E_ACCESS,
     E_GETCWD,
     E_WRITE,
+    E_WAIT,
     E_OPEN,
     E_UNLINK,
     E_DUMMY,
