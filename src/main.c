@@ -5,6 +5,7 @@
 
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <unistd.h>
 
 #include "error/t_error.h"
 #include "execute/execute.h"
@@ -138,12 +139,22 @@ void run_non_interactive_loop(t_state *state)
 			break; /* no more bytes to read on stdin or read error */
 		//install_execution_handlers();
 
+		// NOTE: here, E_INTERRUPTED should make the script halt
 		err = run_and_parse_command(input, state);
 		free(input);
 	}
 }
 
-t_error shell_init(char *envp[], t_state *state_out)
+void init_interactive(t_state *state_out)
+{
+	int ret;
+
+	ret = tcgetattr(STDERR_FILENO, &state_out->tty_properties);
+	state_out->tty_properties_initialized = ret == 0;
+	state_out->is_interactive = true;
+}
+
+t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
 {
 	t_error		err;
 
@@ -152,8 +163,10 @@ t_error shell_init(char *envp[], t_state *state_out)
 	err = from_envp((const char **)envp, &state_out->env);
 	if (err != NO_ERROR)
 		return (err);
-	if (isatty(STDIN_FILENO))
-		state_out->is_interactive = true;
+	if (!dash_c && isatty(STDIN_FILENO) && isatty(STDERR_FILENO))
+		init_interactive(state_out);
+	else
+		state_out->is_interactive = false;
 	return (NO_ERROR);
 }
 
@@ -162,7 +175,8 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	t_state		state;
 	t_error		err;
 
-	err = shell_init(envp, &state);
+	bool executing_arg_command = argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0;
+	err = shell_init(envp, executing_arg_command, &state);
 	if (err != NO_ERROR)
 		return EXIT_FAILURE;
 	
@@ -170,7 +184,7 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 		run_interpreter(&state);
 	else if (argc == 1 && !state.is_interactive)
 		run_non_interactive_loop(&state);
-	else if (argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0)
+	else if (executing_arg_command)
 	{
 		state.is_interactive = false;
 		run_and_parse_command(argv[2], &state);

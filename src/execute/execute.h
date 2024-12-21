@@ -7,6 +7,8 @@
 #include "parse/t_command/t_command.h"
 #include "io/t_io/t_io.h"
 
+#include <termios.h>
+
 #define CLOSE_NOTHING -1
 
 typedef struct s_state {
@@ -15,6 +17,8 @@ typedef struct s_state {
 	int last_status;
 	bool is_interactive;
 	char* line;
+	bool tty_properties_initialized;
+	struct termios tty_properties;
 } t_state;
 
 typedef struct s_launch_result {
