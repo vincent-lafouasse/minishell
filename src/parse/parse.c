@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:42 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 13:43:43 by poss             ###   ########.fr       */
+/*   Updated: 2024/12/23 22:04:58 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,12 @@ t_error	parse(const char *input, t_command *out)
 	err = tokenize(input, &tokens);
 	if (err != NO_ERROR)
 		return (err);
+	if (tokens->token.type == EOF_TOKEN)
+	{
+		tkl_clear(&tokens, free);
+		*out = (t_command){0};
+		return (NO_ERROR);
+	}
 	err = parse_command(tokens, &parse_tree);
 	if (err != NO_ERROR)
 	{
