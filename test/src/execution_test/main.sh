@@ -424,7 +424,8 @@ main() {
     compare_with_bash 'Expansion04_DollarBang' 'echo $? | echo $? | echo $?'
     compare_with_bash 'Expansion05' 'echo $:$= | cat -e'
     compare_with_bash 'Expansion06' 'echo " $ " | cat -e'
-    compare_with_bash 'Expansion07' 'echo ' $ ' | cat -e'
+    # effectively: 'echo \' $ \' | cat -e', we use string concatenation to escape single quotes
+    compare_with_bash 'Expansion07' 'echo '"'"' $ '"'"' | cat -e'
     compare_with_bash 'Expansion08' 'echo $HOME'
     # no escape, compare_with_bash 'Expansion09' 'echo \$HOME'
     compare_with_bash 'Expansion10' 'echo my shit terminal is [$TERM]'
