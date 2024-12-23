@@ -33,7 +33,7 @@ static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 	return (NO_ERROR);
 }
 
-t_error wait_for_pipeline(t_state *state, t_pid_list *pids, int *last_exit_status_out)
+t_error wait_for_pipeline(t_state *state, const t_pid_list *pids, int *last_exit_status_out)
 {
 	pid_t last_pid;
 	int last_status;
