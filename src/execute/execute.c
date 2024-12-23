@@ -2,6 +2,7 @@
 #include "error/t_error.h"
 #include "execute/t_env/t_env.h"
 #include "execute/t_pid_list/t_pid_list.h"
+#include "execute/process/process.h"
 #include "parse/t_command/t_command.h"
 #include "io/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
@@ -13,7 +14,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/wait.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <assert.h> // bad
@@ -43,19 +43,6 @@ _Noreturn
 static void graceful_exit_from_child(int with_status) // bad dummy
 {
 	exit(with_status); // bad, should clean up all allocations before exiting from child process
-}
-
-int wait_pipeline(t_pid_list* pids) // bad, should handle EINTR
-{
-	t_pid_list* current = pids;
-	int status;
-
-	while (current)
-	{
-		waitpid(current->pid, &status, 0); // hack, should not wait sequentially?
-		current = current->next;
-	}
-	return (status);
 }
 
 // either simple or subshell or maybe builtin
@@ -283,11 +270,11 @@ t_command_result execute_command(t_state *state, t_command command) {
 			t_launch_result launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
 			assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
-			int status;
-			int options = 0;
-			assert(launch_res.pids != NULL);
-			waitpid(launch_res.pids->pid, &status, options); // bad, `waitpid` errors should be handled
-			res = (t_command_result){.error = NO_ERROR, .status_code = WEXITSTATUS(status)}; // bad, might err; and make sure waitpid worked before checking WEXITSTATUS
+			int exit_status;
+			err = wait_for_process(state, launch_res.pids->pid, &exit_status);
+			if (err != NO_ERROR)
+				return (/* kill(pid, SIGKILL), */ (t_command_result) {.error = err});
+			res = (t_command_result){.error = NO_ERROR, .status_code = exit_status};
 		}
 	}
 	else if (command.type == CMD_PIPELINE)
@@ -296,8 +283,12 @@ t_command_result execute_command(t_state *state, t_command command) {
 		launch_res = launch_pipeline(state, command.pipeline, io_default());
 		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
-		int status = wait_pipeline(launch_res.pids);
-		res = (t_command_result){.error = NO_ERROR, .status_code = status};
+		assert(launch_res.pids != NULL);
+		int last_exit_status;
+		err = wait_for_pipeline(state, launch_res.pids, &last_exit_status);
+		if (err != NO_ERROR)
+			return /* kill_pipeline(launch_res.pids), */ (t_command_result){.error = err};
+		res = (t_command_result){.error = NO_ERROR, .status_code = last_exit_status};
 	}
 	else if (command.type == CMD_CONDITIONAL)
 		res = execute_conditional(state, command.conditional);
