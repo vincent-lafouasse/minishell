@@ -35,6 +35,9 @@ t_error run_and_parse_command(const char* input, t_state* state)
 		return err;
 	}
 
+	if (!command_is_initialized(cmd))
+		return NO_ERROR;
+
 	err = gather_here_documents(cmd);
 	if (err != NO_ERROR)
 	{
