@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:42 by poss              #+#    #+#             */
-/*   Updated: 2024/12/23 21:25:27 by poss             ###   ########.fr       */
+/*   Updated: 2024/12/23 21:44:10 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ t_error	parse_command(const t_token_list *tokens, t_symbol *out)
 	return (NO_ERROR);
 }
 
+t_error	return_empty_command(t_command *out)
+{
+	*out = (t_command){0};
+	return (NO_ERROR);
+}
+
 t_error	parse(const char *input, t_command *out)
 {
 	t_token_list	*tokens;
@@ -49,11 +55,7 @@ t_error	parse(const char *input, t_command *out)
 	if (err != NO_ERROR)
 		return (err);
 	if (tokens->token.type == EOF_TOKEN)
-	{
-		tkl_clear(&tokens, free);
-		*out = (t_command){0};
-		return NO_ERROR;
-	}
+		return (tkl_clear(&tokens, free), return_empty_command(out));
 	err = parse_command(tokens, &parse_tree);
 	if (err != NO_ERROR)
 	{
