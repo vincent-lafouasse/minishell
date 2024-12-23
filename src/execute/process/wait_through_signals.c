@@ -12,7 +12,7 @@ pid_t wait_through_signals(pid_t pid, int *status_out)
 
 	while (true)
 	{
-		waited_for_pid = waitpid(pid, &status, 0);
+		waited_for_pid = waitpid(-1, &status, 0);
 		if (waited_for_pid < 0 && errno == EINTR)
 			continue;
 		if (waited_for_pid >= 0)
