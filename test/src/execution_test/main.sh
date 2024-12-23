@@ -403,14 +403,19 @@ main() {
     refute 'UnexpectedToken_HangingPipe06' '|||||||||||||' 2 'unexpected token'
     refute 'UnexpectedToken_MixedPipeRedir' '>>|><' 2 'unexpected token'
     refute 'UnexpectedToken_HangingCond01' '&&' 2 'unexpected token'
-    refute 'UnexpectedToken_HangingCond02' '&&&&&' 2 'unexpected token'
-    refute 'UnexpectedToken_HangingCond03' '&&&&&&&&&&&&&&' 2 'unexpected token'
+    refute 'UnexpectedToken_HangingCond02' '&&&&&&&&&&&&&&' 2 'unexpected token'
     refute 'CommandNotFoundSemiColon01' ';;' 127 'command not found'
     refute 'CommandNotFoundSemiColon02' ';;;;;' 127 'command not found'
     refute 'CommandNotFoundSemiColon03' ';;;;;;;;;;;;;;;' 127 'command not found'
     refute 'UnexpectedToken_EmptySubshell01' '()' 2 'unexpected token'
     refute 'UnexpectedToken_EmptySubshell02' '( ( ) )' 2 'unexpected token'
     refute 'UnexpectedToken_EmptySubshell03' '( ( ( ( ) ) ) )' 2 'unexpected token'
+    # a hanging ampersand is the only case that qualifies as being an
+    # unrecognized token, since it is a shell metacharacter but we only
+    # interpret two ampersands, meaning it hits a fallthrough case
+    refute 'UnrecognizedToken_HangingAmpersand01' '&' 2 'unrecognized token'
+    refute 'UnrecognizedToken_HangingAmpersand02' '&&&&&' 2 'unrecognized token'
+    refute 'UnrecognizedToken_HangingAmpersand03' 'hello || world &' 2 'unrecognized token'
 
     # 110-132
     compare_with_bash 'Expansion01' 'echo $'
