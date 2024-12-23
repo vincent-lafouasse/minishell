@@ -30,7 +30,7 @@ pid_t wait_through_signals(pid_t pid, int *status_out)
 		}
 		break;
 	}
-	if (status_out)
+	if (waited_for_pid >= 0 && status_out)
 		*status_out = status;
 	return (waited_for_pid);
 }
