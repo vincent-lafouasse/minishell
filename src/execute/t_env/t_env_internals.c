@@ -96,7 +96,7 @@ void	env_delone(t_env **env, t_destructor del)
 
 void	env_clear(t_env **env, t_destructor del)
 {
-	if (!env)
+	if (!env || !*env)
 		return;
 	while ((*env)->prev)
 		*env = (*env)->prev;
