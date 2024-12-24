@@ -1,19 +1,17 @@
-#include "builtin.h"
+#include "../builtin.h"
 
-#include "../execute.h"
-
-#include "error/t_error.h"
-#include "libft/ctype.h"
-#include "libft/ft_string.h"
-#include "libft/string.h"
+#include "execute/execute.h"
 #include "execute/t_env/t_env.h"
 
-#include <stdlib.h>
+#include "error/t_error.h"
+#include "libft/string.h"
+#include "libft/ft_string.h"
+#include "libft/ctype.h"
+
 #include <stdbool.h>
-#include <stddef.h>
+#include <stdlib.h>
 #include <unistd.h>
 
-#include <stdio.h> // temporarily
 #include <assert.h> // temporarily
 
 typedef struct s_assignment
@@ -117,7 +115,7 @@ static t_error assign_variable(t_env **env, t_assignment assignment)
 	return (NO_ERROR);
 }
 
-static t_command_result do_assignments(t_env **env, t_word_list *assignments)
+t_command_result do_assignments(t_env **env, t_word_list *assignments)
 {
 	bool any_failed;
 	t_assignment assignment;
@@ -147,23 +145,4 @@ static t_command_result do_assignments(t_env **env, t_word_list *assignments)
 	}
 	return (t_command_result) {.error = NO_ERROR, .status_code = any_failed ?
 								EXIT_FAILURE : EXIT_SUCCESS};
-}
-
-t_command_result print_all_variables(t_state *state)
-{
-	(void)state;
-	printf("print all variables\n");
-	return (t_command_result) {0};
-}
-
-t_command_result execute_export(t_state *state, t_simple *builtin)
-{
-	t_word_list *assignments;
-
-	assignments = builtin->words->next;
-
-	if (assignments)
-		return do_assignments(&state->env, assignments);
-	else
-		return print_all_variables(state);
 }
