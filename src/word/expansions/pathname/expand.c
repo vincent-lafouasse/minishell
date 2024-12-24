@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 static void ft_split_destroy(char *data[])
 {
@@ -46,8 +47,13 @@ typedef struct s_command_properties {
 	bool	is_executable;
 } t_command_properties;
 
-// from execute.c
-bool file_is_directory(const char *command_path);
+static bool file_is_directory(const char *command_path)
+{
+	struct stat command_stats;
+	if (stat(command_path, &command_stats) < 0)
+		return false;
+	return (S_ISDIR(command_stats.st_mode));
+}
 
 static t_error find_command_in_path(const char *path, const char *filename, t_command_properties *out)
 {
