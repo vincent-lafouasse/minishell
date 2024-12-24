@@ -112,7 +112,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 #define COMMAND_NOT_FOUND_EXIT_CODE 127
 #define NOT_EXECUTABLE_EXIT_CODE 126
 
-bool file_is_directory(const char *command_path)
+static bool file_is_directory(const char *command_path)
 {
 	struct stat command_stats;
 	if (stat(command_path, &command_stats) < 0)
