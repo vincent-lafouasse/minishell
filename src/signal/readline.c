@@ -1,6 +1,8 @@
 #include "signal.h"
+#include "libft/ft_io.h"
 #include <stdio.h>
 #include <readline/readline.h>
+#include <unistd.h>
 
 static int do_nothing(void)
 {
@@ -17,6 +19,7 @@ void install_noop_rl_event_hook(void)
 static void reject_readline_current_line(void)
 {
 	rl_done = 1;
+	ft_putchar_fd('\n', STDOUT_FILENO);
 }
 
 void save_interrupt_and_reject_line(int signal)
