@@ -114,5 +114,5 @@ t_env	*env_remove(t_env **env, const char *key)
 
 void	env_destroy(t_env **env)
 {
-	env_clear(env, NULL); // bad, should destroy key and value
+	env_clear(env, NULL); // bad ? not sure if keys and values should be freed or not
 }
