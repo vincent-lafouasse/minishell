@@ -329,7 +329,9 @@ test_builtins() {
     compare_with_bash 'Exit_ExitsWithArgumentModulo255' 'exit 42069'
     compare_with_bash 'Exit_AcceptsNegativeArgument' 'exit -42069'
     compare_with_bash 'Exit_FollowsAtoiRules' 'exit "       +42069"'
-    refute 'Exit_TakesOnlyOneArgument' 'exit 123 456' 1 'too many arguments'
+    # bash returns 1 in this case but it calls an odd code path to get there
+    # with more implications than just returning 1, so we set it to EX_BADUSAGE
+    refute 'Exit_TakesOnlyOneArgument' 'exit 123 456' 2 'too many arguments'
     refute 'Exit_TakesNumericArgument' 'exit abc' 2 'numeric argument required'
     refute 'Exit_CodeMustFitInLongLong' 'exit 19782908472398572398572398738409389' 2 'numeric argument required'
     refute 'Exit_BadCode1' 'exit +-1' 2 'numeric argument required'
