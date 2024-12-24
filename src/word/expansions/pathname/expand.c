@@ -46,6 +46,9 @@ typedef struct s_command_properties {
 	bool	is_executable;
 } t_command_properties;
 
+// from execute.c
+bool file_is_directory(const char *command_path);
+
 static t_error find_command_in_path(const char *path, const char *filename, t_command_properties *out)
 {
 	char *candidate;
@@ -55,7 +58,7 @@ static t_error find_command_in_path(const char *path, const char *filename, t_co
 	if (!candidate)
 		return (E_OOM);
 	p = (t_command_properties){0};
-	p.is_executable = access(candidate, X_OK) == 0;
+	p.is_executable = (access(candidate, X_OK) == 0) && !file_is_directory(candidate);
 	p.full_path = candidate;
 	*out = p;
 	return (NO_ERROR);
