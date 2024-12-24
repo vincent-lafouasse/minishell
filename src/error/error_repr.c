@@ -19,6 +19,7 @@
 #define WAIT_REPR "Wait error"
 #define OPEN_REPR "Open error"
 #define UNLINK_REPR "Unlink error"
+#define AMBIGUOUS_REDIRECT_REPR "Ambiguous redirection"
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
@@ -62,5 +63,7 @@ const char *error_repr(t_error err)
         return OPEN_REPR;
     if (err == E_UNLINK)
         return UNLINK_REPR;
+    if (err == E_AMBIGUOUS_REDIRECT)
+        return AMBIGUOUS_REDIRECT_REPR;
     return UNKNOWN_ERROR_REPR;
 }
