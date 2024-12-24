@@ -334,7 +334,7 @@ test_builtins() {
     refute 'Exit_CodeMustFitInLongLong' 'exit 19782908472398572398572398738409389' 2 'numeric argument required'
     refute 'Exit_BadCode1' 'exit +-1' 2 'numeric argument required'
     refute 'Exit_BadCode2' 'exit ++++' 2 'numeric argument required'
-    refute 'Exit_BadCode3' 'exit "       +++++++++42069"'
+    refute 'Exit_BadCode3' 'exit "       +++++++++42069"' 2 'numeric argument required'
 }
 
 main() {
