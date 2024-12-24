@@ -78,20 +78,28 @@ t_env	*env_pop_key(t_env **env, const char *key)
 
 void	env_delone(t_env **env, t_destructor del)
 {
-	(void)env;
-	(void)del;
-	return; // bad, filler `env_delone`
+	if (!env || !*env)
+		return;
+
+	t_env* new_head = (*env)->next;
+	if (new_head)
+		new_head->prev = NULL;
+
+	if (del)
+	{
+		del((void*)(*env)->entry.key);
+		del((void*)(*env)->entry.value);
+	}
+	free(*env);
+	*env = new_head;
 }
 
-void	env_clear(t_env **env, t_destructor del) // bad dummy implementation
+void	env_clear(t_env **env, t_destructor del)
 {
-	/*
-	if (!env || !(*env))
-		return ;
+	if (!env || !*env)
+		return;
 	while ((*env)->prev)
 		*env = (*env)->prev;
-	while ((*env))
+	while (*env)
 		env_delone(env, del);
-	*/
-	return;
 }

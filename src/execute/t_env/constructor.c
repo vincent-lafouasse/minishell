@@ -48,14 +48,14 @@ t_error	from_envp(const char *values[], t_env **out)
 		err = decompose_envp_value(values[i], &entry);
 		if (err != NO_ERROR)
 		{
-			env_clear(out, NULL); // bad, should destroy entry key and value
+			env_destroy(out);
 			return (err);
 		}
 		err = env_push_front(out, entry);
 		if (err != NO_ERROR)
 		{
 			env_entry_destroy(&entry);
-			env_clear(out, NULL); // bad, should destroy entry key and value
+			env_destroy(out);
 			return (err);
 		}
 		i++;
