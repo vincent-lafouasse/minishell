@@ -328,12 +328,13 @@ test_builtins() {
     compare_with_bash 'Exit_WithArgument' 'exit 69'
     compare_with_bash 'Exit_ExitsWithArgumentModulo255' 'exit 42069'
     compare_with_bash 'Exit_AcceptsNegativeArgument' 'exit -42069'
-    compare_with_bash 'Exit_FollowsAtoiRules' 'exit "       +++++++++42069"'
+    compare_with_bash 'Exit_FollowsAtoiRules' 'exit "       +42069"'
     refute 'Exit_TakesOnlyOneArgument' 'exit 123 456' 1 'too many arguments'
     refute 'Exit_TakesNumericArgument' 'exit abc' 2 'numeric argument required'
     refute 'Exit_CodeMustFitInLongLong' 'exit 19782908472398572398572398738409389' 2 'numeric argument required'
     refute 'Exit_BadCode1' 'exit +-1' 2 'numeric argument required'
     refute 'Exit_BadCode2' 'exit ++++' 2 'numeric argument required'
+    refute 'Exit_BadCode3' 'exit "       +++++++++42069"'
 }
 
 main() {
