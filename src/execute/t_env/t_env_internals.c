@@ -98,6 +98,8 @@ void	env_clear(t_env **env, t_destructor del)
 {
 	if (!env)
 		return;
+	while ((*env)->prev)
+		*env = (*env)->prev;
 	while (*env)
 		env_delone(env, del);
 }
