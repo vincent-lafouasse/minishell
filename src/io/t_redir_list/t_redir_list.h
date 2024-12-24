@@ -37,8 +37,8 @@ typedef struct s_redir_list
 // include without using forward declarators
 typedef struct s_command t_command;
 t_error	gather_here_documents(t_command cmd);
-
-t_error apply_redirections(t_redir_list *redirections);
+typedef struct s_state t_state;
+t_error apply_redirections(t_state *state, t_redir_list *redirections);
 
 void redirect_clear(t_redirect *redir, t_destructor del);
 

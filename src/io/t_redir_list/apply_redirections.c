@@ -2,8 +2,11 @@
 #include "error/t_error.h"
 
 #include "libft/string.h"
+#include "word/expansions/expand.h"
+#include "execute/execute.h" // TODO: move t_state out of this header
 
 #include <fcntl.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <errno.h>
 #include <assert.h>
@@ -28,22 +31,35 @@ static int redirectee_fd_for_redir_kind(t_redir_kind kind)
 	return -1;
 }
 
-static t_error redirect_regular_file(t_redirect redir)
+static t_error redirect_expand(t_expansion_variables vars, const char *word, char **out)
+{
+	t_error err;
+
+	err = variable_expand_word(vars, word, out);
+	if (err != NO_ERROR)
+		return (err);
+	if (*out == NULL)
+		return (E_AMBIGUOUS_REDIRECT);
+	return (NO_ERROR);
+}
+
+static t_error redirect_regular_file(t_expansion_variables vars, t_redirect redir)
 {
 	int fd;
 	int redirectee;
 	int errno_backup;
+	char *expanded_filename;
+	t_error err;
 
 	assert(redir.kind == FROM_FILE || redir.kind == INTO_FILE \
 		   || redir.kind == APPEND_INTO_FILE);
 
-	/*
-	err = expand(redir.filename, &expanded_filename); // TODO: check for ambiguous redirections, i.e. when expansion expands to either zero or more than one word
-	*/
-
-	fd = open(redir.filename, open_flags_for_redir_kind(redir.kind), 0666);
+	err = redirect_expand(vars, redir.filename, &expanded_filename);
+	if (err != NO_ERROR)
+		return (err);
+	fd = open(expanded_filename, open_flags_for_redir_kind(redir.kind), 0666);
 	if (fd < 0)
-		return (/* free(expanded_filename), */ E_OPEN);
+		return (free(expanded_filename), E_OPEN);
 	redirectee = redirectee_fd_for_redir_kind(redir.kind);
 	if (fd != redirectee)
 	{
@@ -52,11 +68,11 @@ static t_error redirect_regular_file(t_redirect redir)
 			errno_backup = errno;
 			close(fd);
 			errno = errno_backup;
-			return (/* free(expanded_filename), */ E_DUP2);
+			return (free(expanded_filename), E_DUP2);
 		}
 		close(fd);
 	}
-	// free(expanded_filename);
+	free(expanded_filename);
 	return (NO_ERROR);
 }
 
@@ -126,11 +142,13 @@ static t_error redirect_here_document(t_redirect redir)
 	return (NO_ERROR);
 }
 
-t_error apply_redirections(t_redir_list *redirections)
+t_error apply_redirections(t_state *state, t_redir_list *redirections)
 {
 	t_redirect redir;
 	t_error err;
+	t_expansion_variables vars;
 
+	vars = (t_expansion_variables){.env = state->env, .last_status = state->last_status};
 	while (redirections)
 	{
 		redir = redirections->redirect;
@@ -138,7 +156,7 @@ t_error apply_redirections(t_redir_list *redirections)
 		if (redir.kind == HERE_DOCUMENT)
 			err = redirect_here_document(redir);
 		else
-			err = redirect_regular_file(redir);
+			err = redirect_regular_file(vars, redir);
 
 		// we would undo the redirections, but the only case where that matters
 		// is when running a builtin, since there's no fork. we already take care of

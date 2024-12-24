@@ -176,7 +176,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	if (err != NO_ERROR)
 		perror("dup2");
 
-	err = apply_redirections(simple->redirections);
+	err = apply_redirections(state, simple->redirections);
 	if (err != NO_ERROR) /* exit with status EXIT_FAILURE after logging error (execute_cmd.c:797) */
 		graceful_exit_from_child(EXIT_FAILURE);
 
@@ -258,7 +258,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 
 			if (save_standard_input_and_output(io_backup) != NO_ERROR)
 				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
-			err = apply_redirections(command.simple->redirections);
+			err = apply_redirections(state, command.simple->redirections);
 			if (err != NO_ERROR)
 				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
 			res = execute_builtin(state, command.simple);
