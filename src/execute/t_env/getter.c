@@ -97,12 +97,15 @@ char	**env_make_envp(const t_env *env)
 	i = 0;
 	while (env) // TODO: does environment entry order matter?
 	{
-		joined_entry = join_delimited(env->entry.key, '=', env->entry.value);
-		if (!joined_entry)
-			__builtin_trap(); // bad, should free `out` in case of malloc error
-		out[i] = joined_entry;
+		if (env->entry.value)
+		{
+			joined_entry = join_delimited(env->entry.key, '=', env->entry.value);
+			if (!joined_entry)
+				__builtin_trap(); // bad, should free `out` in case of malloc error
+			out[i] = joined_entry;
+			i++;
+		}
 		env = env->next;
-		i++;
 	}
 	return (out);
 }
