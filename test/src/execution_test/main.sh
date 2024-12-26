@@ -284,7 +284,8 @@ test_builtins() {
     refute 'Pwd_FromUnlinkedDirectory' 'mkdir -p OUTFILE_DIR/a/b && cd OUTFILE_DIR/a/b && rm -rf OUTFILE_DIR/a && pwd' 1 'pwd: getcwd'
 
     # export
-    refute 'Export_NoArguments' 'export' 420 'unimplemented'
+    compare_with_bash 'Export_WithNoArgumentsShowsNewlyAddedEntries' \
+        'export TEST && export | grep TEST | sed -i "s/^declare -x/export/"'
     refute 'Export_InvalidIdentifier1' 'export 1abc=oneabc' 1 'not a valid identifier'
     refute 'Export_InvalidIdentifier2' 'export 1=one' 1 'not a valid identifier'
     refute 'Export_InvalidIdentifier3' 'export 1GREETING=hello' 1 'not a valid identifier'
