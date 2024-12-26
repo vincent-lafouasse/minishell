@@ -21,7 +21,7 @@ static t_error decompose_envp_value(const char *value, t_env_entry *entry)
 	char	*equals;
 
 	equals = ft_strchr(value, '=');
-	if (!equals)
+	if (!equals || value == equals)
 		return (E_MALFORMED_ENVP);
 	entry->key = ft_substr(value, 0, equals - value);
 	if (!entry->key)
