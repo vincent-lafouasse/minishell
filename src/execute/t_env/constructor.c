@@ -16,16 +16,16 @@ static void env_entry_destroy(t_env_entry *entry)
 	entry->value = NULL;
 }
 
-static t_error append_envp_value(t_env **env, const char *value)
+static t_error assign_envp_value(t_env **env, const char *assignment)
 {
 	char	*equals;
 	t_error	err;
 
-	equals = ft_strchr(value, '=');
-	if (!equals || value == equals)
+	equals = ft_strchr(assignment, '=');
+	if (!equals || assignment == equals)
 		return (E_MALFORMED_ENVP);
 	*equals = '\0';
-	err = env_insert(env, value, equals + 1);
+	err = env_insert(env, assignment, equals + 1);
 	*equals = '=';
 	return (err);
 }
@@ -39,7 +39,7 @@ t_error	from_envp(const char *values[], t_env **out)
 	i = 0;
 	while (values[i])
 	{
-		err = append_envp_value(out, values[i]);
+		err = assign_envp_value(out, values[i]);
 		if (err != NO_ERROR)
 		{
 			env_destroy(out);
