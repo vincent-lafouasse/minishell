@@ -330,6 +330,7 @@ test_builtins() {
     compare_with_bash 'Exit_ExitsWithArgumentModulo255' 'exit 42069'
     compare_with_bash 'Exit_AcceptsNegativeArgument' 'exit -42069'
     compare_with_bash 'Exit_FollowsAtoiRules' 'exit "       +42069"'
+    compare_with_bash 'Exit_SkipsLeadingWhitespaces' $'exit "\t\v+42069"'
     # bash returns 1 in this case but it calls an odd code path to get there
     # with more implications than just returning 1, so we set it to EX_BADUSAGE
     refute 'Exit_TakesOnlyOneArgument' 'exit 123 456' 2 'too many arguments'
