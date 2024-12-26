@@ -1,3 +1,4 @@
+#include "libft/ctype.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -12,7 +13,7 @@ bool    checked_atoi(const char *s, int32_t *out)
 	int8_t    sign;
 
 	sign = 1;
-	while (*s == ' ')
+	while (ft_isspace(*s))
 		s++;
 	if (*s == '-')
 	{
