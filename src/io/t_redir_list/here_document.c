@@ -44,7 +44,7 @@ static t_error	read_here_document_internal(const char *delimiter, t_string **doc
 {
 	char *line;
 
-	last_signal = 0; // TODO: ensure that SIGINTs before this point were addressed
+	last_signal = 0;
 	while (1)
 	{
 		line = readline(HERE_DOCUMENT_PROMPT);

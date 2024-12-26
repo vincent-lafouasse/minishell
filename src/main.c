@@ -38,6 +38,12 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	if (!command_is_initialized(cmd))
 		return NO_ERROR;
 
+	if (last_signal == SIGINT)
+	{
+		command_destroy(cmd);
+		return E_INTERRUPTED;
+	}
+
 	err = gather_here_documents(cmd);
 	if (err != NO_ERROR)
 	{
