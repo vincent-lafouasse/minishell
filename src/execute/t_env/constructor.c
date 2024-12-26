@@ -16,45 +16,32 @@ static void env_entry_destroy(t_env_entry *entry)
 	entry->value = NULL;
 }
 
-static t_error decompose_envp_value(const char *value, t_env_entry *entry)
+static t_error append_envp_value(t_env **env, const char *value)
 {
 	char	*equals;
+	t_error	err;
 
 	equals = ft_strchr(value, '=');
 	if (!equals || value == equals)
 		return (E_MALFORMED_ENVP);
-	entry->key = ft_substr(value, 0, equals - value);
-	if (!entry->key)
-		return (E_OOM);
-	entry->value = ft_strdup(equals + 1);
-	if (!entry->value)
-	{
-		env_entry_destroy(entry);
-		return (E_OOM);
-	}
-	return (NO_ERROR);
+	*equals = '\0';
+	err = env_insert(env, value, equals + 1);
+	*equals = '=';
+	return (err);
 }
 
 t_error	from_envp(const char *values[], t_env **out)
 {
 	size_t	i;
 	t_error	err;
-	t_env_entry	entry;
 
 	*out = NULL;
 	i = 0;
 	while (values[i])
 	{
-		err = decompose_envp_value(values[i], &entry);
+		err = append_envp_value(out, values[i]);
 		if (err != NO_ERROR)
 		{
-			env_destroy(out);
-			return (err);
-		}
-		err = env_push_front(out, entry);
-		if (err != NO_ERROR)
-		{
-			env_entry_destroy(&entry);
 			env_destroy(out);
 			return (err);
 		}
