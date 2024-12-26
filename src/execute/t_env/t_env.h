@@ -13,7 +13,7 @@ typedef struct s_env {
 	struct s_env	*prev;
 } t_env;
 
-t_error				from_envp(const char *values[], t_env **out);
+t_error				from_envp(char *values[], t_env **out);
 
 const t_env_entry	*env_get(const t_env *env, const char *key);
 t_env_entry			*env_get_mut(t_env *env, const char *key);

@@ -16,7 +16,7 @@ static void env_entry_destroy(t_env_entry *entry)
 	entry->value = NULL;
 }
 
-static t_error assign_envp_value(t_env **env, const char *assignment)
+static t_error assign_envp_value(t_env **env, char *assignment)
 {
 	char	*equals;
 	t_error	err;
@@ -30,7 +30,7 @@ static t_error assign_envp_value(t_env **env, const char *assignment)
 	return (err);
 }
 
-t_error	from_envp(const char *values[], t_env **out)
+t_error	from_envp(char *values[], t_env **out)
 {
 	size_t	i;
 	t_error	err;
