@@ -1,6 +1,6 @@
-#include "builtin.h"
+#include "../builtin.h"
 
-#include "../execute.h"
+#include "execute/execute.h"
 #include "error/t_error.h"
 #include "word/t_word_list/t_word_list.h"
 #include "libft/string.h"
