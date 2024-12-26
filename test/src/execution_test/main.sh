@@ -368,9 +368,9 @@ main() {
     # minishell map
 
     # 25-27
-    compare_with_bash "JustANewLine" $(printf "\n")
+    compare_with_bash "JustANewLine" $'\n'
     compare_with_bash "BunchaSpace" "         "
-    compare_with_bash "BunchaTabs" $(printf "\t\t\t\t\t")
+    compare_with_bash "BunchaTabs" $'\t\t\t\t\t'
 
     # 28-41
     refute 'CommandNotFoundColon' ':' 127 'command not found'
