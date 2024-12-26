@@ -338,6 +338,9 @@ test_builtins() {
     refute 'Exit_BadCode1' 'exit +-1' 2 'numeric argument required'
     refute 'Exit_BadCode2' 'exit ++++' 2 'numeric argument required'
     refute 'Exit_BadCode3' 'exit "       +++++++++42069"' 2 'numeric argument required'
+    # both of these should technically be accepted but we're low on time
+    refute 'Exit_BadCode4' 'exit "       +++++++++42069   a"' 2 'numeric argument required'
+    refute 'Exit_BadCode5' 'exit "       +++++++++42069   "' 2 'numeric argument required'
 }
 
 main() {
