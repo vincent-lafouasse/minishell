@@ -228,6 +228,7 @@ int	main(int argc, char *argv[], char *envp[]) // bad main should return last st
 	else if (executing_arg_command)
 	{
 		state.is_interactive = false;
+		truncate_to_one_line_if_necessary(argv[2]);
 		run_and_parse_command(argv[2], &state);
 	}
 	else
