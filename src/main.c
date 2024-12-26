@@ -68,9 +68,7 @@ void truncate_to_one_line_if_necessary(char *input)
 char *interactive_read_line(void)
 {
 	char *input;
-	int old_last_signal; // XXX is this necessary?
 
-	old_last_signal = last_signal;
 	while (1)
 	{
 		last_signal = 0;
@@ -87,7 +85,6 @@ char *interactive_read_line(void)
 		add_history(input);
 
 	truncate_to_one_line_if_necessary(input);
-	last_signal = old_last_signal;
 	return (input);
 }
 
