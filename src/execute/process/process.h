@@ -15,7 +15,7 @@
 #include "error/t_error.h"
 #include "execute/execute.h"
 
-t_error fork_process(bool *is_inside_of_child, int *pid_out);
+t_error fork_process(bool *in_child, int *pid_out);
 t_error fork_and_push_pid(bool *in_child, t_pid_list **pidl_out);
 
 t_error wait_for_process(t_state *state, pid_t pid, int *exit_status_out);
