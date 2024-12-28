@@ -271,7 +271,10 @@ t_command_result execute_command(t_state *state, t_command command) {
 			int exit_status;
 			err = wait_for_process(state, launch_res.pids->pid, &exit_status);
 			if (err != NO_ERROR)
-				return (/* kill(pid, SIGKILL), pidl_clear(&launch_res.pids), */ (t_command_result) {.error = err});
+			{
+				exit_status = EXIT_FAILURE;
+				perror("minishell: wait_for_pipeline");
+			}
 			pidl_clear(&launch_res.pids);
 			res = (t_command_result){.error = NO_ERROR, .status_code = exit_status};
 		}
@@ -285,8 +288,15 @@ t_command_result execute_command(t_state *state, t_command command) {
 		assert(launch_res.pids != NULL);
 		int last_exit_status;
 		err = wait_for_pipeline(state, launch_res.pids, &last_exit_status);
+		// the only errors `waitpid` can return to us are EINVAL and ECHILD, the
+		// first being a programming error and the other one signifying that the
+		// process was somehow never launched or does not belong to us anymore.
+		// meaning they are effectively unreachable, only warn for them in this case
 		if (err != NO_ERROR)
-			return /* kill_pipeline(launch_res.pids), pidl_clear(&launch_res.pids), */ (t_command_result){.error = err};
+		{
+			last_exit_status = EXIT_FAILURE;
+			perror("minishell: wait_for_pipeline");
+		}
 		pidl_clear(&launch_res.pids);
 		res = (t_command_result){.error = NO_ERROR, .status_code = last_exit_status};
 	}

@@ -60,7 +60,9 @@ t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 	int exit_status;
 	t_error err = wait_for_process(state, pid, &exit_status);
 	if (err != NO_ERROR)
-		return /* kill(pid, SIGKILL), */ (t_command_result){.error = err};
-
+	{
+		exit_status = EXIT_FAILURE;
+		perror("minishell: wait_for_process");
+	}
 	return (t_command_result){.error = NO_ERROR, .status_code = exit_status};
 }
