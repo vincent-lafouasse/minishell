@@ -25,9 +25,8 @@
 t_error run_and_parse_command(const char* input, t_state* state)
 {
 	t_error err;
-	t_command cmd;
 
-	err = parse(input, &cmd);
+	err = parse(input, &state->root);
 	if (err != NO_ERROR)
 	{
 		ft_putendl_fd(error_repr(err), STDERR_FILENO);
@@ -35,24 +34,24 @@ t_error run_and_parse_command(const char* input, t_state* state)
 		return err;
 	}
 
-	if (!command_is_initialized(cmd))
+	if (!command_is_initialized(state->root))
 		return NO_ERROR;
 
 	if (last_signal == SIGINT)
 	{
-		command_destroy(cmd);
+		command_destroy_and_clear(&state->root);
 		return E_INTERRUPTED;
 	}
 
-	err = gather_here_documents(cmd);
+	err = gather_here_documents(state->root);
 	if (err != NO_ERROR)
 	{
-		command_destroy(cmd);
+		command_destroy_and_clear(&state->root);
 		return (err);
 	}
 
-	state->root = cmd;
-	t_command_result res = execute_command(state, cmd); // bad, should probablue check err value maybe
+	t_command_result res = execute_command(state, state->root); // bad, should probablue check err value maybe
+	command_destroy_and_clear(&state->root);
 	/*
 	switch (res.error) {
 		// status_code = whatever
@@ -95,21 +94,20 @@ char *interactive_read_line(void)
 
 void run_interpreter(t_state* state)
 {
-	char		*input;
 	t_error err;
 
 	while (1)
 	{
 		install_interactive_handlers();
-		input = interactive_read_line();
-		if (!input)
+		state->line = interactive_read_line();
+		if (!state->line)
 			break; /* eof or read error */
 		//install_execution_handlers();
 
 		// NOTE: E_INTERRUPTED is non fatal, and is used to signify that we
 		// should just continue interpreting commands
-		err = run_and_parse_command(input, state); // bad, error should be handled
-		free(input);
+		err = run_and_parse_command(state->line, state); // bad, error should be handled
+		free(state->line);
 	}
 	rl_clear_history();
 	// TODO: call `exit` builtin on Ctrl-D
@@ -133,20 +131,19 @@ char *non_interactive_read_line(void)
 
 void run_non_interactive_loop(t_state *state)
 {
-	char		*input;
 	t_error err;
 
 	while (1)
 	{
 		install_non_interactive_handlers();
-		input = non_interactive_read_line();
-		if (!input)
+		state->line = non_interactive_read_line();
+		if (!state->line)
 			break; /* no more bytes to read on stdin or read error */
 		//install_execution_handlers();
 
 		// NOTE: here, E_INTERRUPTED should make the script halt
-		err = run_and_parse_command(input, state);
-		free(input);
+		err = run_and_parse_command(state->line, state);
+		free(state->line);
 	}
 }
 
