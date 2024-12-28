@@ -18,8 +18,8 @@
 #include <errno.h>
 #include <assert.h> // bad
 
-#define READ 0
-#define WRITE 1
+#define PIPE_READ 0
+#define PIPE_WRITE 1
 
 _Noreturn
 static void graceful_exit_from_child(int with_status) // bad dummy
@@ -69,14 +69,14 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		// last status to `EXIT_FAILURE | 128` (execute_cmd.c:2522 and sig.c:418)
 		pipe(pipe_fd);
 
-		t_io current_io = io_new(ends.input, pipe_fd[WRITE]);
-		ends.input = pipe_fd[READ];
+		t_io current_io = io_new(ends.input, pipe_fd[PIPE_WRITE]);
+		ends.input = pipe_fd[PIPE_READ];
 
 		// bad, should handle fork error by killing all jobs thus far and setting
 		// last status to `EXIT_FAILURE | (EX_NOEXEC = 126)` (execute_cmd.c:4443
 		// and jobs.c:4443)
 		t_launch_result launch_result = launch_pipeline_inner(state, current.pipeline->first,
-													  current_io, pipe_fd[READ]);
+													  current_io, pipe_fd[PIPE_READ]);
 
 		io_close(current_io);
 
