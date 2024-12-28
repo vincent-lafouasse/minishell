@@ -15,6 +15,38 @@ static void warn_non_empty_redirs(const t_subshell* s) {
 		write(STDERR_FILENO, msg, ft_strlen(msg));
 }
 
+t_launch_result launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close) {
+	t_error err;
+	t_pid_list* pids = pidl_new(0);
+	if (pids == NULL)
+	{
+		free(pids);
+		return (t_launch_result){.error = E_OOM, .pids = NULL};
+	}
+
+	pid_t pid = fork();
+	if (pid == -1)
+	{
+		free(pids);
+		return (t_launch_result){.error = E_FORK, .pids = NULL};
+	}
+	if (pid != 0)
+	{
+		pids->pid = pid;
+		return (t_launch_result){.error = NO_ERROR, .pids = pids};
+	}
+
+	err = do_piping(io);
+	if (err != NO_ERROR)
+		perror("minishell: do_piping: dup2");
+
+	if (fd_to_close != CLOSE_NOTHING)
+		close(fd_to_close);
+
+	t_command_result inner_res = execute_command(state, cmd); // bad?, log err ?
+	exit(inner_res.status_code); // bad. dont know what status to return yet
+}
+
 t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {
 	t_error err;
 	t_pid_list* pids = pidl_new(0);

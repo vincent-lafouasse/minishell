@@ -35,6 +35,7 @@ typedef struct s_command_result {
 
 t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
 t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close);
+t_launch_result launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close);
 t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close);
 
 // public

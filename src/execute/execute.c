@@ -58,15 +58,7 @@ t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io
 			return (t_launch_result){.error = err, .pids = NULL};
 
 		if (/* command.simple->words && */ is_builtin_command(command.simple))
-		{
-			t_command subshell = command_new_subshell(command, NULL);
-			if (!subshell.subshell)
-				return (t_launch_result){.error = E_OOM, .pids = NULL};
-			// BAD: produces unreachable leak if the builtin we're calling is `exit` (cannot access `subshell` variable)
-			t_launch_result res = launch_subshell(state, subshell.subshell, io, fd_to_close);
-			free(subshell.subshell);
-			return res;
-		}
+			return (launch_cmd_in_subshell(state, command, io, fd_to_close));
 		return launch_simple_command(state, command.simple, io, fd_to_close);
 	}
 	else // subshell
