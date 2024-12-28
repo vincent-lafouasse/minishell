@@ -9,12 +9,14 @@
 // preferred to have no processes under you before calling `wait_for`s.
 
 #include <sys/types.h>
+#include <stdbool.h>
 
 #include "../t_pid_list/t_pid_list.h"
 #include "error/t_error.h"
 #include "execute/execute.h"
 
 t_error fork_process(bool *is_inside_of_child, int *pid_out);
+t_error fork_and_push_pid(bool *in_child, t_pid_list **pidl_out);
 
 t_error wait_for_process(t_state *state, pid_t pid, int *exit_status_out);
 t_error wait_for_pipeline(t_state *state, const t_pid_list *pids, int *last_exit_status_out);
