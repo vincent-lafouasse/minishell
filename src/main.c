@@ -207,6 +207,14 @@ t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
 	return (NO_ERROR);
 }
 
+void shell_cleanup(t_state *state)
+{
+	command_destroy_and_clear(&state->root);
+	free(state->line);
+	rl_clear_history();
+	env_destroy(&state->env);
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_state		state;
@@ -229,6 +237,6 @@ int	main(int argc, char *argv[], char *envp[])
 	}
 	else
 		printf("%s\n", USAGE);
-	// env_destroy(&state.env); bad, env destroyer is not implemented
+	shell_cleanup(&state);
 	exit(state.last_status);
 }
