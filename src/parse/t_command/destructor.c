@@ -51,6 +51,12 @@ void	simple_destroy(t_simple *simple)
 	free(simple);
 }
 
+void	command_destroy_and_clear(t_command *command)
+{
+	command_destroy(*command);
+	*command = (t_command){0};
+}
+
 void	command_destroy(t_command command)
 {
 	if (!command_is_initialized(command))
