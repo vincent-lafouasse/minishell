@@ -78,7 +78,7 @@ char *interactive_read_line(void)
 	while (1)
 	{
 		last_signal = 0;
-		input = readline(SHELL_PROMPT); // TODO: make readline output the prompt (and heredoc prompt) to stderr
+		input = readline(SHELL_PROMPT);
 		if (input == NULL)
 			return (NULL);
 		if (last_signal != SIGINT)
@@ -86,7 +86,6 @@ char *interactive_read_line(void)
 		free(input); /* we've caught a C-c signal; repeat */
 	}
 
-	// TODO: double check that bash really does behaves like this
 	if (*input != '\0')
 		add_history(input);
 
@@ -211,7 +210,7 @@ t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
 	return (NO_ERROR);
 }
 
-int	main(int argc, char *argv[], char *envp[]) // bad main should return last status
+int	main(int argc, char *argv[], char *envp[])
 {
 	t_state		state;
 	t_error		err;

@@ -36,8 +36,8 @@ static size_t	current_word_part_len(const char *start)
 	if (*start == '"' || *start == '\'')
 	{
 		next_quote = ft_strchr(start + 1, *start);
-		if (!next_quote) /* xxx - unreachable: no matching quote for some reason? */
-			return (next_quote - start); // TODO: return error instead
+		if (!next_quote)
+			return (next_quote - start);
 		len = next_quote + 1 - start;
 	}
 	else

@@ -7,11 +7,11 @@ static int do_nothing(void)
 	return (0);
 }
 
-// HACK: `readline` does not respond to changes done to the `rl_done` variable
-// unless `rl_event_hook` is non-NULL
+// `readline` does not respond to changes done to the `rl_done` variable unless
+// `rl_event_hook` is non-NULL
 void install_noop_rl_event_hook(void)
 {
-	rl_event_hook = do_nothing; // XXX: this makes readline keep trying to read in a loop if stdin is not a tty and closes
+	rl_event_hook = do_nothing;
 }
 
 static void reject_readline_current_line(void)

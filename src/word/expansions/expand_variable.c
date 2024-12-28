@@ -100,7 +100,7 @@ static t_error variable_expand_word_quote(t_expansion_variables vars, \
 t_error wql_variable_expand(t_expansion_variables vars, t_word_quotes_list *wql)
 {
 	t_string *expanded;
-	char *expanded_c_string; // XXX: this variable name is kinda goofy
+	char *expanded_c_string;
 	t_error err;
 
 	while (wql)

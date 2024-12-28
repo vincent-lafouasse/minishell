@@ -95,7 +95,7 @@ char	**env_make_envp(const t_env *env)
 	if (!out)
 		return (NULL);
 	i = 0;
-	while (env) // TODO: does environment entry order matter?
+	while (env)
 	{
 		if (env->entry.value)
 		{

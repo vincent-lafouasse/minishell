@@ -25,7 +25,7 @@ typedef enum e_error
     E_UNLINK,
     E_DUMMY,
     E_AMBIGUOUS_REDIRECT,
-    E_INTERRUPTED, // XXX this does not refer to the errno value `EINTR`, rename?
+    E_INTERRUPTED,
 } t_error;
 
 const char *error_repr(t_error err);

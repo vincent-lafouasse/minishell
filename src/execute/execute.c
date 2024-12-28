@@ -195,9 +195,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 	if (err != NO_ERROR)
 		graceful_exit_from_child(EXIT_FAILURE); // bad, only possible error here is OOM, handle accordingly
 
-	// temporarily? where exactly in the code should signal handlers be reset?
-	// what happens if we've caught one up until this point? exit(128 + signal)?
-	// what about inside of built-in functions?
+	// exit here instead of executing if last_signal is SIGINT
 	reset_signal_handlers();
 
 	char** argv = wl_into_word_array(&simple->words);
