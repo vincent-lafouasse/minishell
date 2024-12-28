@@ -24,6 +24,9 @@ LIBS = $(LIBFT)
 .PHONY: all
 all: build
 
+.PHONY: bonus
+bonus: build
+
 .PHONY: build
 build: $(NAME)
 
