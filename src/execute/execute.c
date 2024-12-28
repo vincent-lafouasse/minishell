@@ -127,7 +127,10 @@ static void execve_and_exit(t_state* state, const char* command_path, char **arg
 	int error = errno;
 
 	// ???? (execute_cmd.c:5967)
-	state->last_status = error == ENOENT ? COMMAND_NOT_FOUND_EXIT_CODE : NOT_EXECUTABLE_EXIT_CODE;
+	if (error == ENOENT)
+		state->last_status = COMMAND_NOT_FOUND_EXIT_CODE;
+	else
+		state->last_status = NOT_EXECUTABLE_EXIT_CODE;
 
 	if (file_is_directory(command_path)) { // maybe we should check S_ISREG aswell
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
