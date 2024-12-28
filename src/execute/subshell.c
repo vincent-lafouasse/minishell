@@ -38,7 +38,7 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, i
 
 	err = do_piping(io);
 	if (err != NO_ERROR)
-		perror("dup2");
+		perror("minishell: do_piping: dup2");
 
 	warn_non_empty_redirs(subshell);
 

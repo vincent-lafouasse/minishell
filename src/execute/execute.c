@@ -182,7 +182,7 @@ t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io,
 
 	err = do_piping(io);
 	if (err != NO_ERROR)
-		perror("dup2");
+		perror("minishell: do_piping: dup2");
 
 	err = apply_redirections(state, simple->redirections);
 	if (err != NO_ERROR) /* exit with status EXIT_FAILURE after logging error (execute_cmd.c:797) */
