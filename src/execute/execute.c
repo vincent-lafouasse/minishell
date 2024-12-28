@@ -21,24 +21,6 @@
 #define READ 0
 #define WRITE 1
 
-// ? perform expansion on all words -> malloc
-// ? expand_path on first word -> malloc,access
-// ? generate argv, envp -> malloc
-// ? fork
-//  ---->   parent
-//   |      return
-//   |
-//   |----> child
-//           ? apply t_io redirections -> dup2
-//		     ? apply all simple->redirections -> open,dup2 NOT close
-//		     ? execute command execve
-//           ---->   fails
-//            |      unwind all local allocations
-//            |      close local fds
-//            |      signal `must_exit`
-//            |
-//            |----> succeeds
-
 _Noreturn
 static void graceful_exit_from_child(int with_status) // bad dummy
 {
