@@ -96,7 +96,22 @@ pid_t pidl_pop_front(t_pid_list** pidl)
 	return out;
 }
 
-void pidl_clear(t_pid_list** pidl) // bad dummy
+void pidl_delone(t_pid_list** pidl)
 {
-	(void)pidl;
+	t_pid_list *buffer;
+
+	if (!pidl || !*pidl)
+		return;
+	buffer = (*pidl)->next;
+	free(*pidl);
+	*pidl = buffer;
+	return;
+}
+
+void pidl_clear(t_pid_list** pidl)
+{
+	if (!pidl)
+		return;
+	while (*pidl)
+		pidl_delone(pidl);
 }
