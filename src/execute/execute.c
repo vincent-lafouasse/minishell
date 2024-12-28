@@ -83,18 +83,26 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	{
 		int pipe_fd[2];
 
-		// bad, should handle pipe error by killing all jobs thus far and setting
-		// last status to `EXIT_FAILURE | 128` (execute_cmd.c:2522 and sig.c:418)
-		pipe(pipe_fd);
+		if (pipe(pipe_fd) < 0)
+		{
+			// BAD: should close pipe related file descriptors where necessary
+			kill_pipeline(state, pids_to_wait);
+			pidl_clear(&pids_to_wait);
+			return (t_launch_result) {.pids = NULL , .error = E_PIPE};
+		}
 
 		t_io current_io = io_new(ends.input, pipe_fd[WRITE]);
 		ends.input = pipe_fd[READ];
 
-		// bad, should handle fork error by killing all jobs thus far and setting
-		// last status to `EXIT_FAILURE | (EX_NOEXEC = 126)` (execute_cmd.c:4443
-		// and jobs.c:4443)
 		t_launch_result launch_result = launch_pipeline_inner(state, current.pipeline->first,
 													  current_io, pipe_fd[READ]);
+		if (launch_result.error != NO_ERROR)
+		{
+			// BAD: should close pipe related file descriptors where necessary
+			kill_pipeline(state, pids_to_wait);
+			pidl_clear(&pids_to_wait);
+			return (t_launch_result) {.pids = NULL , .error = launch_result.error};
+		}
 
 		io_close(current_io);
 
@@ -102,7 +110,7 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 
 		current = current.pipeline->second;
 	}
-	t_launch_result last = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING);
+	t_launch_result last = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
 	io_close(ends);
 
 	pidl_push_back_link(&pids_to_wait, last.pids); // bad may oom
@@ -283,6 +291,9 @@ t_command_result execute_command(t_state *state, t_command command) {
 	{
 		t_launch_result launch_res;
 		launch_res = launch_pipeline(state, command.pipeline, io_default());
+		// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2522 and sig.c:418)
+		// E_FORK -> `last_status = EXIT_FAILURE | (EX_NOEXEC = 126)` (execute_cmd.c:4443 and jobs.c:4443)
+		// E_OOM -> propagate
 		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
 		assert(launch_res.pids != NULL);
