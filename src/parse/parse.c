@@ -65,7 +65,7 @@ t_error	parse(const char *input, t_command *out)
 	if (err != NO_ERROR)
 	{
 		symbol_clear(parse_tree);
-		command_destroy(*out);
+		command_destroy_and_clear(out);
 		return (err);
 	}
 	symbol_clear(parse_tree);
