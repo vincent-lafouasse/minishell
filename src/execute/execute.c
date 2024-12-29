@@ -5,6 +5,7 @@
 #include "execute/process/process.h"
 #include "parse/t_command/t_command.h"
 #include "io/t_redir_list/t_redir_list.h"
+#include "t_pid_list/t_pid_list.h"
 #include "word/t_word_list/t_word_list.h"
 #include "word/expansions/expand.h"
 #include "signal/signal.h"
@@ -153,24 +154,15 @@ static void log_command_not_found(const char *pathname) // bad? input may be spl
 t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
 {
 	t_error err;
-	t_pid_list* pids = pidl_new(0);
-	if (pids == NULL)
-	{
-		free(pids);
-		return (t_launch_result){.error = E_OOM, .pids = NULL};
-	}
+	t_pid_list* pids = NULL;
+	bool in_child;
 
-	pid_t pid = fork();
-	if (pid == -1)
-	{
-		free(pids);
-		return (t_launch_result){.error = E_FORK, .pids = NULL};
-	}
-	if (pid != 0)
-	{
-		pids->pid = pid;
+	err = fork_and_push_pid(&in_child, &pids);
+	if (err != NO_ERROR)
+		return (t_launch_result){.error = err, .pids = NULL};
+
+	if (!in_child)
 		return (t_launch_result){.error = NO_ERROR, .pids = pids};
-	}
 
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close);
