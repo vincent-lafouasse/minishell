@@ -239,8 +239,9 @@ t_command_result execute_command(t_state *state, t_command command) {
 		else 
 		{
 			err = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
-			assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
-			assert(state->our_children != NULL); // bad, should handle launch error gracefully
+			if (err != NO_ERROR)
+				return (t_command_result){.error = err};
+			assert(state->our_children != NULL);
 
 			int exit_status;
 			err = wait_for_process(state, state->our_children->pid, &exit_status);
@@ -259,9 +260,10 @@ t_command_result execute_command(t_state *state, t_command command) {
 		// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2522 and sig.c:418)
 		// E_FORK -> `last_status = EXIT_FAILURE | (EX_NOEXEC = 126)` (execute_cmd.c:4443 and jobs.c:4443)
 		// E_OOM -> propagate
-		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
-
+		if (err != NO_ERROR)
+			return (t_command_result){.error = err};
 		assert(state->our_children != NULL);
+
 		int last_exit_status;
 		err = wait_for_pipeline(state, state->our_children, &last_exit_status);
 		// the only errors `waitpid` can return to us are EINVAL and ECHILD, the
