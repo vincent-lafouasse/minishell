@@ -16,7 +16,7 @@ t_error fork_process(bool *in_child, pid_t *pid_out)
 		return E_FORK;
 	if (in_child != NULL)
 		*in_child = pid == 0;
-	if (pid_out != NULL && pid == 0)
+	if (pid_out != NULL && pid != 0)
 		*pid_out = pid;
 	return (NO_ERROR);
 }
