@@ -83,6 +83,20 @@ size_t env_entry_count(const t_env *env)
 	return (i);
 }
 
+static char **destroy_envp_array(char **array, size_t len)
+{
+	size_t i;
+
+	i = 0;
+	while (i < len)
+	{
+		free(array[i]);
+		i++;
+	}
+	free(array);
+	return (NULL);
+}
+
 char	**env_make_envp(const t_env *env)
 {
 	size_t entry_count;
@@ -101,7 +115,7 @@ char	**env_make_envp(const t_env *env)
 		{
 			joined_entry = join_delimited(env->entry.key, '=', env->entry.value);
 			if (!joined_entry)
-				__builtin_trap(); // bad, should free `out` in case of malloc error
+				return destroy_envp_array(out, i);
 			out[i] = joined_entry;
 			i++;
 		}
