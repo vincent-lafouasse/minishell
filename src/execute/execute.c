@@ -19,26 +19,8 @@
 #include <errno.h>
 #include <assert.h> // bad
 
-#define READ 0
-#define WRITE 1
-
-// ? perform expansion on all words -> malloc
-// ? expand_path on first word -> malloc,access
-// ? generate argv, envp -> malloc
-// ? fork
-//  ---->   parent
-//   |      return
-//   |
-//   |----> child
-//           ? apply t_io redirections -> dup2
-//		     ? apply all simple->redirections -> open,dup2 NOT close
-//		     ? execute command execve
-//           ---->   fails
-//            |      unwind all local allocations
-//            |      close local fds
-//            |      signal `must_exit`
-//            |
-//            |----> succeeds
+#define PIPE_READ 0
+#define PIPE_WRITE 1
 
 _Noreturn
 static void graceful_exit_from_child(int with_status) // bad dummy
@@ -84,11 +66,11 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 			return (t_launch_result) {.pids = NULL , .error = E_PIPE};
 		}
 
-		t_io current_io = io_new(ends.input, pipe_fd[WRITE]);
-		ends.input = pipe_fd[READ];
+		t_io current_io = io_new(ends.input, pipe_fd[PIPE_WRITE]);
+		ends.input = pipe_fd[PIPE_READ];
 
 		t_launch_result launch_result = launch_pipeline_inner(state, current.pipeline->first,
-													  current_io, pipe_fd[READ]);
+													  current_io, pipe_fd[PIPE_READ]);
 		if (launch_result.error != NO_ERROR)
 		{
 			// BAD: should close pipe related file descriptors where necessary

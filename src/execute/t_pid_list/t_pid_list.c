@@ -12,12 +12,12 @@ t_pid_list* pidl_new(pid_t pid)
 	return out;
 }
 
-t_pid_list *pidl_last(t_pid_list* pidl)
+t_pid_list *pidl_last(const t_pid_list* pidl)
 {
 	if (pidl == NULL)
 		return NULL;
 
-	t_pid_list* last = pidl;
+	t_pid_list* last = (t_pid_list *)pidl;
 	while (last->next)
 		last = last->next;
 	return (last);

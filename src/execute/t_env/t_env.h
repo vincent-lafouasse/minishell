@@ -3,8 +3,8 @@
 #include "error/t_error.h"
 
 typedef struct s_env_entry {
-	const char	*key;
-	const char	*value;
+	char	*key;
+	char	*value;
 } t_env_entry;
 
 typedef struct s_env {
