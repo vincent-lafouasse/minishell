@@ -15,17 +15,18 @@ static void warn_non_empty_redirs(const t_subshell* s) {
 		write(STDERR_FILENO, msg, ft_strlen(msg));
 }
 
-t_launch_result launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close) {
+t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close) {
 	t_error err;
-	t_pid_list* pids = NULL;
 	bool in_child;
 
-	err = fork_and_push_pid(&in_child, &pids);
+	err = fork_and_push_pid(&in_child, &state->our_children);
 	if (err != NO_ERROR)
-		return (t_launch_result){.error = err, .pids = NULL};
+		return err;
 
 	if (!in_child)
-		return (t_launch_result){.error = NO_ERROR, .pids = pids};
+		return NO_ERROR;
+	else
+		pidl_clear(&state->our_children);
 
 	err = do_piping(io);
 	if (err != NO_ERROR)
@@ -38,17 +39,18 @@ t_launch_result launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, i
 	exit(inner_res.status_code); // bad. dont know what status to return yet
 }
 
-t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {
+t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {
 	t_error err;
-	t_pid_list* pids = NULL;
 	bool in_child;
 
-	err = fork_and_push_pid(&in_child, &pids);
+	err = fork_and_push_pid(&in_child, &state->our_children);
 	if (err != NO_ERROR)
-		return (t_launch_result){.error = err, .pids = NULL};
+		return err;
 
 	if (!in_child)
-		return (t_launch_result){.error = NO_ERROR, .pids = pids};
+		return NO_ERROR;
+	else
+		pidl_clear(&state->our_children);
 
 	err = do_piping(io);
 	if (err != NO_ERROR)
@@ -65,18 +67,19 @@ t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, i
 
 t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 {
-	t_launch_result launch_result = launch_subshell(state, subshell, io_default(), CLOSE_NOTHING);
-	if (launch_result.error != NO_ERROR) {
-		return (t_command_result){.error = launch_result.error};
+	t_error err = launch_subshell(state, subshell, io_default(), CLOSE_NOTHING);
+	if (err != NO_ERROR) {
+		return (t_command_result){.error = err};
 	}
-	pid_t pid = launch_result.pids->pid;
+	pid_t pid = state->our_children->pid;
 
 	int exit_status;
-	t_error err = wait_for_process(state, pid, &exit_status);
+	err = wait_for_process(state, pid, &exit_status);
 	if (err != NO_ERROR)
 	{
 		exit_status = EXIT_FAILURE;
 		perror("minishell: wait_for_process");
 	}
+	pidl_clear(&state->our_children);
 	return (t_command_result){.error = NO_ERROR, .status_code = exit_status};
 }

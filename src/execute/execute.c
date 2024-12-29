@@ -1,11 +1,9 @@
 #include "execute.h"
 #include "error/t_error.h"
 #include "execute/t_env/t_env.h"
-#include "execute/t_pid_list/t_pid_list.h"
 #include "execute/process/process.h"
 #include "parse/t_command/t_command.h"
 #include "io/t_redir_list/t_redir_list.h"
-#include "t_pid_list/t_pid_list.h"
 #include "word/t_word_list/t_word_list.h"
 #include "word/expansions/expand.h"
 #include "signal/signal.h"
@@ -29,7 +27,7 @@ static void graceful_exit_from_child(int with_status) // bad dummy
 }
 
 // either simple or subshell or maybe builtin
-t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
+t_error launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
 	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
 
 	t_error err;
@@ -38,7 +36,7 @@ t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io
 		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
 		err = variable_expand_words(vars, &command.simple->words);
 		if (err != NO_ERROR)
-			return (t_launch_result){.error = err, .pids = NULL};
+			return err;
 
 		if (/* command.simple->words && */ is_builtin_command(command.simple))
 			return (launch_cmd_in_subshell(state, command, io, fd_to_close));
@@ -48,10 +46,10 @@ t_launch_result launch_pipeline_inner(t_state* state, t_command command, t_io io
 		return launch_subshell(state, command.subshell, io, fd_to_close);
 }
 
-t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
+t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 {
 	t_command current;
-	t_pid_list* pids_to_wait = NULL;
+	t_error err;
 
 	current = command_from_pipeline(pipeline);
 	while (current.type == CMD_PIPELINE)
@@ -61,35 +59,32 @@ t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		if (pipe(pipe_fd) < 0)
 		{
 			// BAD: should close pipe related file descriptors where necessary
-			kill_pipeline(state, pids_to_wait);
-			pidl_clear(&pids_to_wait);
-			return (t_launch_result) {.pids = NULL , .error = E_PIPE};
+			kill_pipeline(state, state->our_children);
+			pidl_clear(&state->our_children);
+			return E_PIPE;
 		}
 
 		t_io current_io = io_new(ends.input, pipe_fd[PIPE_WRITE]);
 		ends.input = pipe_fd[PIPE_READ];
 
-		t_launch_result launch_result = launch_pipeline_inner(state, current.pipeline->first,
+		err = launch_pipeline_inner(state, current.pipeline->first,
 													  current_io, pipe_fd[PIPE_READ]);
-		if (launch_result.error != NO_ERROR)
+		if (err != NO_ERROR)
 		{
 			// BAD: should close pipe related file descriptors where necessary
-			kill_pipeline(state, pids_to_wait);
-			pidl_clear(&pids_to_wait);
-			return (t_launch_result) {.pids = NULL , .error = launch_result.error};
+			kill_pipeline(state, state->our_children);
+			pidl_clear(&state->our_children);
+			return err;
 		}
 
 		io_close(current_io);
 
-		pidl_push_back_link(&pids_to_wait, launch_result.pids); // bad might oom
-
 		current = current.pipeline->second;
 	}
-	t_launch_result last = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
+	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
 	io_close(ends);
 
-	pidl_push_back_link(&pids_to_wait, last.pids); // bad may oom
-	return (t_launch_result){.error = NO_ERROR, .pids = pids_to_wait};
+	return NO_ERROR;
 }
 
 #define COMMAND_NOT_FOUND_EXIT_CODE 127
@@ -133,18 +128,19 @@ static void log_command_not_found(const char *pathname) // bad? input may be spl
 	ft_putstr_fd(": command not found\n", STDERR_FILENO);
 }
 
-t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
+t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
 {
 	t_error err;
-	t_pid_list* pids = NULL;
 	bool in_child;
 
-	err = fork_and_push_pid(&in_child, &pids);
+	err = fork_and_push_pid(&in_child, &state->our_children);
 	if (err != NO_ERROR)
-		return (t_launch_result){.error = err, .pids = NULL};
+		return err;
 
 	if (!in_child)
-		return (t_launch_result){.error = NO_ERROR, .pids = pids};
+		return NO_ERROR;
+	else
+		pidl_clear(&state->our_children);
 
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close);
@@ -242,32 +238,32 @@ t_command_result execute_command(t_state *state, t_command command) {
 		}
 		else 
 		{
-			t_launch_result launch_res = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
+			err = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
 			assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
+			assert(state->our_children != NULL); // bad, should handle launch error gracefully
 
 			int exit_status;
-			err = wait_for_process(state, launch_res.pids->pid, &exit_status);
+			err = wait_for_process(state, state->our_children->pid, &exit_status);
 			if (err != NO_ERROR)
 			{
 				exit_status = EXIT_FAILURE;
 				perror("minishell: wait_for_pipeline");
 			}
-			pidl_clear(&launch_res.pids);
+			pidl_clear(&state->our_children);
 			res = (t_command_result){.error = NO_ERROR, .status_code = exit_status};
 		}
 	}
 	else if (command.type == CMD_PIPELINE)
 	{
-		t_launch_result launch_res;
-		launch_res = launch_pipeline(state, command.pipeline, io_default());
+		err = launch_pipeline(state, command.pipeline, io_default());
 		// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2522 and sig.c:418)
 		// E_FORK -> `last_status = EXIT_FAILURE | (EX_NOEXEC = 126)` (execute_cmd.c:4443 and jobs.c:4443)
 		// E_OOM -> propagate
 		assert(launch_res.error == NO_ERROR); // bad, should handle launch error gracefully
 
-		assert(launch_res.pids != NULL);
+		assert(state->our_children != NULL);
 		int last_exit_status;
-		err = wait_for_pipeline(state, launch_res.pids, &last_exit_status);
+		err = wait_for_pipeline(state, state->our_children, &last_exit_status);
 		// the only errors `waitpid` can return to us are EINVAL and ECHILD, the
 		// first being a programming error and the other one signifying that the
 		// process was somehow never launched or does not belong to us anymore.
@@ -277,7 +273,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 			last_exit_status = EXIT_FAILURE;
 			perror("minishell: wait_for_pipeline");
 		}
-		pidl_clear(&launch_res.pids);
+		pidl_clear(&state->our_children);
 		res = (t_command_result){.error = NO_ERROR, .status_code = last_exit_status};
 	}
 	else if (command.type == CMD_CONDITIONAL)

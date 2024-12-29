@@ -19,12 +19,8 @@ typedef struct s_state {
 	char* line;
 	bool tty_properties_initialized;
 	struct termios tty_properties;
+	t_pid_list *our_children;
 } t_state;
-
-typedef struct s_launch_result {
-	t_error error;
-	t_pid_list* pids;
-} t_launch_result;
 
 typedef struct s_command_result {
 	t_error error;
@@ -33,10 +29,10 @@ typedef struct s_command_result {
 
 // internals
 
-t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
-t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close);
-t_launch_result launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close);
-t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close);
+t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
+t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close);
+t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close);
+t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close);
 
 // public
 
