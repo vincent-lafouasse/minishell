@@ -217,6 +217,13 @@ numeric_argument_required() {
     refute "$test_name" "$command" 2 'numeric argument required'
 }
 
+too_many_arguments() {
+    local test_name="$1"
+    local command="$2"
+
+    refute "$test_name" "$command" 1 'too many arguments'
+}
+
 test_success() {
     local n_passed="$1"
     local n_failed="$2"
@@ -369,6 +376,29 @@ test_map_460_() {
 
     compare_with_bash 'exit' 'exit'
     numeric_argument_required 'exit_non_numeric01' 'exit exit'
+    numeric_argument_required 'exit_non_numeric02' 'exit hola'
+    numeric_argument_required 'exit_non_numeric03' 'exit hola que tal'
+    too_many_arguments 'exit_too_many_1' 'exit 1 1'
+    compare_with_bash 'exit_ok1' 'exit 42'
+    compare_with_bash 'exit_ok_leading0' 'exit 000042'
+    compare_with_bash 'exit_ok_666' 'exit 666'
+    too_many_arguments 'exit_too_many_2' 'exit 666 666'
+    too_many_arguments 'exit_too_many_3' 'exit -666 666'
+    numeric_argument_required 'exit_non_numeric04' 'exit hola 666'
+    too_many_arguments 'exit_too_many_2' 'exit 666 666 666'
+    too_many_arguments 'exit_too_many_3' 'exit 666 hola 666'
+    numeric_argument_required 'exit_non_numeric05' 'exit hola 666 666'
+
+    compare_with_bash 'exit_ok_259' 'exit 259'
+    compare_with_bash 'exit_ok_min_4' 'exit -4'
+    compare_with_bash 'exit_ok_min_42' 'exit -42'
+    compare_with_bash 'exit_ok_min_42_leading0' 'exit -00000042'
+    compare_with_bash 'exit_ok_min_259' 'exit -259'
+    compare_with_bash 'exit_ok_min_666' 'exit -666'
+    compare_with_bash 'exit_ok_plus_666' 'exit +555'
+    compare_with_bash 'exit_ok_0' 'exit 0'
+    compare_with_bash 'exit_ok_plus_0' 'exit +0'
+    compare_with_bash 'exit_ok_min_0' 'exit -0'
 }
 
 main() {
