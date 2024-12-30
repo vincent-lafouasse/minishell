@@ -26,7 +26,7 @@ void kill_pid_list(const t_pid_list *pids)
 	curr = pids;
 	while (curr)
 	{
-		kill(curr->pid, SIGKILL);
+		kill(curr->pid, SIGKILL); // BAD: bash kills with SIGTERM followed by SIGCONT
 		curr = curr->next;
 	}
 }
