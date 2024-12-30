@@ -356,6 +356,7 @@ test_builtins() {
     # with more implications than just returning 1, so we set it to EX_BADUSAGE
     refute 'Exit_TakesOnlyOneArgument' 'exit 123 456' 2 'too many arguments'
     refute 'Exit_TakesNumericArgument' 'exit abc' 2 'numeric argument required'
+    refute 'Exit_NumericArgumentCheckedBeforeTooManyArguments' 'exit one two' 2 'numeric argument required'
     refute 'Exit_CodeMustFitInLongLong' 'exit 19782908472398572398572398738409389' 2 'numeric argument required'
     refute 'Exit_BadCode1' 'exit +-1' 2 'numeric argument required'
     refute 'Exit_BadCode2' 'exit ++++' 2 'numeric argument required'
