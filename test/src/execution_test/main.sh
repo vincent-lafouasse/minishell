@@ -399,6 +399,7 @@ test_map_460_() {
     compare_with_bash 'exit_ok_0' 'exit 0'
     compare_with_bash 'exit_ok_plus_0' 'exit +0'
     compare_with_bash 'exit_ok_min_0' 'exit -0'
+    # ^ 495
 }
 
 main() {
