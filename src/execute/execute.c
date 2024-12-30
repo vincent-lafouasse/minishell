@@ -2,6 +2,7 @@
 #include "error/t_error.h"
 #include "execute/t_env/t_env.h"
 #include "execute/process/process.h"
+#include "execute/t_env/t_env_internals.h"
 #include "parse/t_command/t_command.h"
 #include "io/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
@@ -102,11 +103,25 @@ static bool file_is_directory(const char *command_path)
 	return (S_ISDIR(command_stats.st_mode));
 }
 
+static void free_null_terminated_str_array(char *arr[])
+{
+	size_t i;
+
+	if (!arr)
+		return ;
+	i = 0;
+	while (arr[i] != NULL)
+		free(arr[i]);
+	free(arr);
+}
+
 _Noreturn
-static void execve_and_exit(t_state* state, const char* command_path, char **argv, char **envp)
+static void execve_and_exit(t_state* state, char* command_path, char **argv, char **envp)
 {
 	execve(command_path, argv, envp);
 	int error = errno;
+	free_null_terminated_str_array(argv);
+	free_null_terminated_str_array(envp);
 
 	if (error == ENOENT) // (execute_cmd.c:5967)
 		state->last_status = COMMAND_NOT_FOUND_EXIT_CODE;
@@ -117,10 +132,12 @@ static void execve_and_exit(t_state* state, const char* command_path, char **arg
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(command_path, STDERR_FILENO);
 		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
+		free(command_path);
 		cleanup_and_die(state, state->last_status);
 	}
 
 	perror("minishell: execve");
+	free(command_path);
 	cleanup_and_die(state, state->last_status);
 }
 
@@ -193,9 +210,18 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	reset_signal_handlers();
 
 	char** argv = wl_into_word_array(&simple->words);
+	if (!argv)
+	{
+		ft_putstr_fd("minishell: Out of memory\n", STDERR_FILENO);
+		cleanup_and_die(state, EXIT_FAILURE);
+	}
 	char** envp = env_make_envp(state->env);
-
-	assert(argv && envp);
+	if (!envp)
+	{
+		free_null_terminated_str_array(argv);
+		ft_putstr_fd("minishell: Out of memory\n", STDERR_FILENO);
+		cleanup_and_die(state, EXIT_FAILURE);
+	}
 
 	execve_and_exit(state, command_path, argv, envp);
 }
