@@ -429,6 +429,8 @@ main() {
     refute 'Refute_UnexpectedToken' '>' 2 'unexpected token'
     refute 'Refute_IsADirectory' '/' 126 'is a directory'
 
+    compare_with_bash 'empty_outfile' '> OUTFILE_DIR/a | ls > OUTFILE_DIR/ls || echo not created > not_created'
+
     # minishell map
 
     # 25-27
