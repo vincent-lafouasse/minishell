@@ -158,7 +158,7 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	{
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(error_repr(err), STDERR_FILENO);
-		if (err != E_AMBIGUOUS_REDIRECT)
+		if (is_syscall_related(err))
 		{
 			ft_putstr_fd(": ", STDERR_FILENO);
 			ft_putstr_fd(strerror(errno), STDERR_FILENO);
