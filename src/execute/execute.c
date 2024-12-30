@@ -177,7 +177,17 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 		cleanup_and_die(state, COMMAND_NOT_FOUND_EXIT_CODE);
 	}
 	if (err != NO_ERROR)
-		cleanup_and_die(state, EXIT_FAILURE); // bad, only possible error here is OOM, handle accordingly
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(error_repr(err), STDERR_FILENO);
+		if (is_syscall_related(err))
+		{
+			ft_putstr_fd(": ", STDERR_FILENO);
+			ft_putstr_fd(strerror(errno), STDERR_FILENO);
+		}
+		ft_putchar_fd('\n', STDERR_FILENO);
+		cleanup_and_die(state, EXIT_FAILURE);
+	}
 
 	// exit here instead of executing if last_signal is SIGINT
 	reset_signal_handlers();
