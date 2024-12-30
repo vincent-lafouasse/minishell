@@ -351,6 +351,16 @@ test_builtins() {
     refute 'Exit_BadCode5' 'exit "       +++++++++42069   "' 2 'numeric argument required'
 }
 
+test_map_460_() {
+    refute 'ls_DNE_file' 'ls hola' 1 'no such file or directory'
+    refute 'permission_denied__makefile' './Makefile' 126 'Permission denied'
+    refute 'permission_denied_touch_hola' 'touch OUTFILE_DIR/hola && OUTFILE_DIR/hola' 126 'Permission denied'
+    compare_with_bash 'env_number_of_lines' 'env | "wc" -l'
+    command_not_found 'env_number_of_lines_bad' 'env | "wc "-l'
+    compare_with_bash 'expr_sum_1_plus_1' 'expr 1 + 1'
+    compare_with_bash 'expr_sum_status_plus_status' 'expr $? + $?'
+}
+
 main() {
     N_PASSED=0
     N_FAILED=0
@@ -560,6 +570,8 @@ main() {
     refute 'Export_NotAValidIdentifier11' 'export HO-LA' 1 'not a valid identifier'
     refute 'Export_NotAValidIdentifier12' 'export HO.LA' 1 'not a valid identifier'
     refute 'Export_NotAValidIdentifier13' 'export HO+LA' 1 'not a valid identifier'
+
+    test_map_460_
 
     if test_success "$N_PASSED" "$N_FAILED"; then
         exit 0
