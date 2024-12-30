@@ -210,6 +210,13 @@ command_not_found() {
     refute "$test_name" "$command" 127 'command not found'
 }
 
+numeric_argument_required() {
+    local test_name="$1"
+    local command="$2"
+
+    refute "$test_name" "$command" 2 'numeric argument required'
+}
+
 test_success() {
     local n_passed="$1"
     local n_failed="$2"
@@ -359,6 +366,9 @@ test_map_460_() {
     command_not_found 'env_number_of_lines_bad' 'env | "wc "-l'
     compare_with_bash 'expr_sum_1_plus_1' 'expr 1 + 1'
     compare_with_bash 'expr_sum_status_plus_status' 'expr $? + $?'
+
+    compare_with_bash 'exit' 'exit'
+    numeric_argument_required 'exit_non_numeric01' 'exit exit'
 }
 
 main() {
