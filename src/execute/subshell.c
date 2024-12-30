@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
+void shell_cleanup(t_state *state); // bad, should be #include "shell.h"
+
 static void warn_non_empty_redirs(const t_subshell* s) {
 	const char* msg = "minishell: warning: ignored redirs in subshell\n";
 	if (s->redirections != NULL)
@@ -36,6 +38,7 @@ t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to
 		close(fd_to_close);
 
 	t_command_result inner_res = execute_command(state, cmd); // bad?, log err ?
+	shell_cleanup(state);
 	exit(inner_res.status_code); // bad. dont know what status to return yet
 }
 
@@ -62,6 +65,7 @@ t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to
 		close(fd_to_close);
 
 	t_command_result inner_res = execute_command(state, subshell->cmd); // bad?, log err ?
+	shell_cleanup(state);
 	exit(inner_res.status_code); // bad. dont know what status to return yet
 }
 
