@@ -108,8 +108,7 @@ static void execve_and_exit(t_state* state, const char* command_path, char **arg
 	execve(command_path, argv, envp);
 	int error = errno;
 
-	// ???? (execute_cmd.c:5967)
-	if (error == ENOENT)
+	if (error == ENOENT) // (execute_cmd.c:5967)
 		state->last_status = COMMAND_NOT_FOUND_EXIT_CODE;
 	else
 		state->last_status = NOT_EXECUTABLE_EXIT_CODE;
