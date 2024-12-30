@@ -30,17 +30,17 @@ t_command_result execute_exit(t_state *state, t_simple *builtin)
 	args = builtin->words->next;
 	if (!args)
 		exit_and_cleanup(state, state->last_status);
-	if (args->next != NULL)
-	{
-		const char *error = "minishell: exit: too many arguments\n";
-		write(STDERR_FILENO, error, ft_strlen(error));
-		return (t_command_result){.error = NO_ERROR, .status_code = EX_BADUSAGE};
-	}
 	if (!checked_atoi(args->contents, &exit_status))
 	{
 		const char *error = "minishell: exit: numeric argument required\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
 		exit_and_cleanup(state, EX_BADUSAGE);
+	}
+	if (args->next != NULL)
+	{
+		const char *error = "minishell: exit: too many arguments\n";
+		write(STDERR_FILENO, error, ft_strlen(error));
+		return (t_command_result){.error = NO_ERROR, .status_code = EX_BADUSAGE};
 	}
 	exit_and_cleanup(state, exit_status);
 }
