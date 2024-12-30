@@ -203,6 +203,13 @@ refute() {
     fi
 }
 
+command_not_found() {
+    local test_name="$1"
+    local command="$2"
+
+    refute "$test_name" "$command" 127 'command not found'
+}
+
 test_success() {
     local n_passed="$1"
     local n_failed="$2"
@@ -362,7 +369,7 @@ main() {
 
     compare_with_bash 'EnvStuff' 'export COOL_NUMBER=420 && echo $COOL_NUMBER'
 
-    refute 'Refute_NonExistantCommand' 'man_i_sure_hope_this_command_doesnt_exist' 127 'command not found'
+    command_not_found 'Refute_NonExistantCommand' 'man_i_sure_hope_this_command_doesnt_exist'
     refute 'Refute_UnexpectedToken' '>' 2 'unexpected token'
     refute 'Refute_IsADirectory' '/' 126 'is a directory'
 
