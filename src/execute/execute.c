@@ -117,11 +117,11 @@ static void execve_and_exit(t_state* state, const char* command_path, char **arg
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(command_path, STDERR_FILENO);
 		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
-		exit(state->last_status); // bad no cleanup
+		cleanup_and_die(state, state->last_status);
 	}
 
 	perror("minishell: execve");
-	exit(state->last_status); // bad no cleanup
+	cleanup_and_die(state, state->last_status);
 }
 
 static void log_command_not_found(const char *pathname) // bad? input may be split by other processes writing to stderr
