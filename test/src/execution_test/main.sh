@@ -221,7 +221,11 @@ too_many_arguments() {
     local test_name="$1"
     local command="$2"
 
-    refute "$test_name" "$command" 1 'too many arguments'
+    # NOTE: consider this: bash exits with 1 (EXIT_FAILURE) when too many
+    # arguments are given but not 2 (EX_BADUSAGE). returning 2 makes more sense
+    # as it is matches more closely the error that occured
+    local exit_too_many_arguments_ret=2
+    refute "$test_name" "$command" $exit_too_many_arguments_ret 'too many arguments'
 }
 
 test_success() {
