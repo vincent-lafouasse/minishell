@@ -25,7 +25,7 @@ bool    checked_atoi(const char *s, int32_t *out)
 	if (str_is_all_zeros(s))
 	{
 		*out = 0;
-		return (0);
+		return (true);
 	}
 	while (*s == '0')
 		s++;
