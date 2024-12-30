@@ -20,10 +20,13 @@
 #define PIPE_READ 0
 #define PIPE_WRITE 1
 
+void shell_cleanup(t_state *state); // BAD: this should be #include "shell.h"
+
 _Noreturn
-static void graceful_exit_from_child(int with_status) // bad dummy
+static void cleanup_and_die(t_state *state, int with_status)
 {
-	exit(with_status); // bad, should clean up all allocations before exiting from child process
+	shell_cleanup(state);
+	exit(with_status);
 }
 
 // either simple or subshell or maybe builtin
@@ -151,11 +154,11 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 
 	err = apply_redirections(state, simple->redirections);
 	if (err != NO_ERROR) /* exit with status EXIT_FAILURE after logging error (execute_cmd.c:797) */
-		graceful_exit_from_child(EXIT_FAILURE);
+		cleanup_and_die(state, EXIT_FAILURE);
 
 #if 1 // exit here if command is null!
 	if (!simple->words)
-		graceful_exit_from_child(EXIT_SUCCESS);
+		cleanup_and_die(state, EXIT_SUCCESS);
 #endif
 
 	char *command_path;
@@ -163,10 +166,10 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	if (err == E_COMMAND_NOT_FOUND && command_path == NULL)
 	{
 		log_command_not_found(simple->words->contents);
-		graceful_exit_from_child(COMMAND_NOT_FOUND_EXIT_CODE);
+		cleanup_and_die(state, COMMAND_NOT_FOUND_EXIT_CODE);
 	}
 	if (err != NO_ERROR)
-		graceful_exit_from_child(EXIT_FAILURE); // bad, only possible error here is OOM, handle accordingly
+		cleanup_and_die(state, EXIT_FAILURE); // bad, only possible error here is OOM, handle accordingly
 
 	// exit here instead of executing if last_signal is SIGINT
 	reset_signal_handlers();
