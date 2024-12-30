@@ -41,8 +41,8 @@ t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)
 	assert(pipeline->kind == SYM_PIPELINE);
 	if (pipeline->production->data[1].production->len == 0)
 		return (reduce_command(&pipeline->production->data[0], out));
-	out->pipeline = pipeline_new((t_command){0}, (t_command){0});
-	if (!out->pipeline)
+	*out = command_new_pipeline((t_command){0}, (t_command){0});
+	if (!command_is_initialized(*out))
 		return (E_OOM);
 	err = reduce_command(&pipeline->production->data[0], &out->pipeline->first);
 	if (err != NO_ERROR)
@@ -51,6 +51,5 @@ t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)
 			&out->pipeline->second);
 	if (err != NO_ERROR)
 		return (err);
-	*out = command_from_pipeline(out->pipeline);
 	return (NO_ERROR);
 }

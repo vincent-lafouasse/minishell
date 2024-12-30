@@ -59,8 +59,8 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 	assert(root->kind == SYM_COMPLETE_CMD);
 	if (root->production->data[1].production->len == 0)
 		return (reduce_pipeline(&root->production->data[0], out));
-	out->conditional = conditional_new(0, (t_command){0}, (t_command){0});
-	if (!out->conditional)
+	*out = command_new_conditional(0, (t_command){0}, (t_command){0});
+	if (!command_is_initialized(*out))
 		return (E_OOM);
 	out->conditional->op = operator_from_token_type(
 			root->production->data[1].production->data[0].token.type);
@@ -74,6 +74,5 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 	err = invert_conditional_associativity(&out->conditional);
 	if (err != NO_ERROR)
 		return (err);
-	*out = command_from_conditional(out->conditional);
 	return (err);
 }
