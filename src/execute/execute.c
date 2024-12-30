@@ -250,6 +250,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 		}
 		else 
 		{
+			// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
 			err = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
 			if (err != NO_ERROR)
 				return (t_command_result){.error = err};
@@ -269,8 +270,8 @@ t_command_result execute_command(t_state *state, t_command command) {
 	else if (command.type == CMD_PIPELINE)
 	{
 		err = launch_pipeline(state, command.pipeline, io_default());
-		// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2522 and sig.c:418)
-		// E_FORK -> `last_status = EXIT_FAILURE | (EX_NOEXEC = 126)` (execute_cmd.c:4443 and jobs.c:4443)
+		// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2495 and sig.c:418)
+		// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
 		// E_OOM -> propagate
 		if (err != NO_ERROR)
 			return (t_command_result){.error = err};
