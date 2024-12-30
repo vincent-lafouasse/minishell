@@ -13,6 +13,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/stat.h>
 #include <errno.h>
 #include <assert.h> // bad
@@ -153,8 +154,18 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 		perror("minishell: do_piping: dup2");
 
 	err = apply_redirections(state, simple->redirections);
-	if (err != NO_ERROR) /* exit with status EXIT_FAILURE after logging error (execute_cmd.c:797) */
+	if (err != NO_ERROR) // bad: calls write many times while trying to write an entire line
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(error_repr(err), STDERR_FILENO);
+		if (err != E_AMBIGUOUS_REDIRECT)
+		{
+			ft_putstr_fd(": ", STDERR_FILENO);
+			ft_putstr_fd(strerror(errno), STDERR_FILENO);
+		}
+		ft_putchar_fd('\n', STDERR_FILENO);
 		cleanup_and_die(state, EXIT_FAILURE);
+	}
 
 #if 1 // exit here if command is null!
 	if (!simple->words)
