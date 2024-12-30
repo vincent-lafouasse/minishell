@@ -167,10 +167,8 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
 
-#if 1 // exit here if command is null!
-	if (!simple->words)
+	if (!simple->words) // exit here if command is null
 		cleanup_and_die(state, EXIT_SUCCESS);
-#endif
 
 	char *command_path;
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
