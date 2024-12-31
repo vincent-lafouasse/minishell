@@ -419,7 +419,7 @@ test_map_460_() {
     compare_with_bash 'exit_quoted_arg05' 'exit '\''6'\''66'
     compare_with_bash 'exit_quoted_arg06' 'exit '\''2'\''66'\''32'\'''
     numeric_argument_required 'exit_quoted_arg07' 'exit "'\''666'\''"'
-    compare_with_bash 'exit_quoted_arg08' 'exit '\''"666"'\'''
+    numeric_argument_required 'exit_quoted_arg08' 'exit '\''"666"'\'''
     compare_with_bash 'exit_quoted_arg09' 'exit '\''666'\''"666"666'
     compare_with_bash 'exit_quoted_arg10' 'exit +'\''666'\''"666"666'
     compare_with_bash 'exit_quoted_arg11' 'exit -'\''666'\''"666"666'
