@@ -372,7 +372,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 	else if (command.type == CMD_SUBSHELL)
 		res = execute_subshell(state, command.subshell);
 	else
-		assert(!"unknown command type");
+		res = (t_command_result){.error = E_UNREACHABLE};
 
 	return res;
 }
