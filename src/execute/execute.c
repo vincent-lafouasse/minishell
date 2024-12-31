@@ -261,6 +261,23 @@ t_error restore_standard_input_and_output(int save[2])
 	return (NO_ERROR);
 }
 
+t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin)
+{
+	t_command_result res;
+	int io_backup[2]; // TODO: make sure all files are properly closed and messages are printed in case of errors
+	t_error err;
+
+	if (save_standard_input_and_output(io_backup) != NO_ERROR)
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
+	err = apply_redirections(state, builtin->redirections);
+	if (err != NO_ERROR)
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
+	res = execute_builtin(state, builtin);
+	if (restore_standard_input_and_output(io_backup) != NO_ERROR)
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
+	return res;
+}
+
 t_command_result execute_command(t_state *state, t_command command) {
 
 	t_command_result res;
@@ -274,19 +291,8 @@ t_command_result execute_command(t_state *state, t_command command) {
 			return (t_command_result){.error = err};
 
 		if (/* command.simple->words && */ is_builtin_command(command.simple))
-		{
-			int io_backup[2]; // TODO: make sure all files are properly closed and messages are printed in case of errors
-
-			if (save_standard_input_and_output(io_backup) != NO_ERROR)
-				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
-			err = apply_redirections(state, command.simple->redirections);
-			if (err != NO_ERROR)
-				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
-			res = execute_builtin(state, command.simple);
-			if (restore_standard_input_and_output(io_backup) != NO_ERROR)
-				return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
-		}
-		else 
+			res = do_redirs_and_execute_builtin(state, command.simple);
+		else
 		{
 			// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
 			err = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
