@@ -111,7 +111,10 @@ static void free_null_terminated_str_array(char *arr[])
 		return ;
 	i = 0;
 	while (arr[i] != NULL)
+	{
 		free(arr[i]);
+		i++;
+	}
 	free(arr);
 }
 
