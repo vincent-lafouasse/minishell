@@ -239,7 +239,7 @@ t_error save_standard_input_and_output(int save[2])
 		return (E_DUP2);
 	out = dup(STDOUT_FILENO);
 	if (out == -1)
-		return (close(out), E_DUP2);
+		return (close(in), E_DUP2);
 	save[0] = in;
 	save[1] = out;
 	return (NO_ERROR);
