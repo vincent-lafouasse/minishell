@@ -259,6 +259,12 @@ t_error restore_standard_input_and_output(int save[2])
 	return (NO_ERROR);
 }
 
+void close_fd_pair(int fd[2])
+{
+	close(fd[0]);
+	close(fd[1]);
+}
+
 t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin)  // bad: calls write many times while trying to write an entire line
 {
 	t_command_result res;
