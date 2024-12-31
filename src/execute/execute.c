@@ -259,20 +259,48 @@ t_error restore_standard_input_and_output(int save[2])
 	return (NO_ERROR);
 }
 
-t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin)
+t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin)  // bad: calls write many times while trying to write an entire line
 {
 	t_command_result res;
-	int io_backup[2]; // TODO: make sure all files are properly closed and messages are printed in case of errors
+	int io_backup[2];
 	t_error err;
 
-	if (save_standard_input_and_output(io_backup) != NO_ERROR)
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
+	err = save_standard_input_and_output(io_backup);
+	if (err != NO_ERROR)
+	{
+		ft_putstr_fd("minishell: save_standard_input_and_output: ", STDERR_FILENO);
+		ft_putstr_fd(error_repr(err), STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(strerror(errno), STDERR_FILENO);
+		ft_putchar_fd('\n', STDERR_FILENO);
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+	}
 	err = apply_redirections(state, builtin->redirections);
 	if (err != NO_ERROR)
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(error_repr(err), STDERR_FILENO);
+		if (is_syscall_related(err))
+		{
+			ft_putstr_fd(": ", STDERR_FILENO);
+			ft_putstr_fd(strerror(errno), STDERR_FILENO);
+		}
+		ft_putchar_fd('\n', STDERR_FILENO);
+		close_fd_pair(io_backup);
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+	}
 	res = execute_builtin(state, builtin);
-	if (restore_standard_input_and_output(io_backup) != NO_ERROR)
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE}; // bad: should maybe notify
+	err = restore_standard_input_and_output(io_backup);
+	close_fd_pair(io_backup);
+	if (err != NO_ERROR && res.error == NO_ERROR)
+	{
+		ft_putstr_fd("minishell: restore_standard_input_and_output: ", STDERR_FILENO);
+		ft_putstr_fd(error_repr(err), STDERR_FILENO);
+		ft_putstr_fd(": ", STDERR_FILENO);
+		ft_putstr_fd(strerror(errno), STDERR_FILENO);
+		ft_putchar_fd('\n', STDERR_FILENO);
+		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+	}
 	return res;
 }
 
