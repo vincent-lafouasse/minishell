@@ -404,7 +404,30 @@ test_map_460_() {
     compare_with_bash 'exit_ok_0' 'exit 0'
     compare_with_bash 'exit_ok_plus_0' 'exit +0'
     compare_with_bash 'exit_ok_min_0' 'exit -0'
-    # ^ 495
+    compare_with_bash 'exit_ok_plus_42' 'exit +42'
+    too_many_arguments 'exit_too_many01' 'exit -69 -96'
+    numeric_argument_required 'exit_minus_minus' 'exit --666'
+    numeric_argument_required 'exit_plus_plus_plus01' 'exit ++++666'
+    numeric_argument_required 'exit_plus_plus_plus02' 'exit ++++++0'
+    numeric_argument_required 'exit_minus_minus_minus' 'exit ------0'
+    compare_with_bash 'exit_quoted_arg01' 'exit "666"'
+    compare_with_bash 'exit_quoted_arg02' 'exit '\''666'\'''
+    compare_with_bash 'exit_quoted_arg03' 'exit '\''-666'\'''
+    compare_with_bash 'exit_quoted_arg04' 'exit '\''+666'\'''
+    numeric_argument_required 'exit_quoted_buncha_minus' 'exit '\''----666'\'''
+    numeric_argument_required 'exit_quoted_buncha_plus' 'exit '\''++++666'\'''
+    compare_with_bash 'exit_quoted_arg05' 'exit '\''6'\''66'
+    compare_with_bash 'exit_quoted_arg06' 'exit '\''2'\''66'\''32'\'''
+    numeric_argument_required 'exit_quoted_arg07' 'exit "'\''666'\''"'
+    compare_with_bash 'exit_quoted_arg08' 'exit '\''"666"'\'''
+    compare_with_bash 'exit_quoted_arg09' 'exit '\''666'\''"666"666'
+    compare_with_bash 'exit_quoted_arg10' 'exit +'\''666'\''"666"666'
+    compare_with_bash 'exit_quoted_arg11' 'exit -'\''666'\''"666"666'
+    numeric_argument_required 'exit_big_int01' 'exit 9223372036854775807'
+    numeric_argument_required 'exit_big_int02' 'exit 9223372036854775808'
+    numeric_argument_required 'exit_big_int03' 'exit -9223372036854775808'
+    numeric_argument_required 'exit_big_int04' 'exit -9223372036854775809'
+    # ^ 518
 }
 
 main() {
