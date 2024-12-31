@@ -256,8 +256,6 @@ t_error restore_standard_input_and_output(int save[2])
 		return (E_DUP2);
 	if (dup2(out, STDOUT_FILENO) < 0)
 		return (E_DUP2);
-	close(in);
-	close(out);
 	return (NO_ERROR);
 }
 
