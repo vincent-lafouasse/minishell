@@ -229,7 +229,7 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	execve_and_exit(state, command_path, argv, envp);
 }
 
-t_error save_standard_input_and_output(int save[2])
+t_error save_stdin_stdout(int save[2])
 {
 	int in;
 	int out;
@@ -245,7 +245,7 @@ t_error save_standard_input_and_output(int save[2])
 	return (NO_ERROR);
 }
 
-t_error restore_standard_input_and_output(int save[2])
+t_error restore_stdin_stdout(int save[2])
 {
 	int in;
 	int out;
@@ -271,10 +271,10 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 	int io_backup[2];
 	t_error err;
 
-	err = save_standard_input_and_output(io_backup);
+	err = save_stdin_stdout(io_backup);
 	if (err != NO_ERROR)
 	{
-		ft_putstr_fd("minishell: save_standard_input_and_output: ", STDERR_FILENO);
+		ft_putstr_fd("minishell: save_stdin_stdout: ", STDERR_FILENO);
 		ft_putstr_fd(error_repr(err), STDERR_FILENO);
 		ft_putstr_fd(": ", STDERR_FILENO);
 		ft_putstr_fd(strerror(errno), STDERR_FILENO);
@@ -296,11 +296,11 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	}
 	res = execute_builtin(state, builtin);
-	err = restore_standard_input_and_output(io_backup);
+	err = restore_stdin_stdout(io_backup);
 	close_fd_pair(io_backup);
 	if (err != NO_ERROR && res.error == NO_ERROR)
 	{
-		ft_putstr_fd("minishell: restore_standard_input_and_output: ", STDERR_FILENO);
+		ft_putstr_fd("minishell: restore_stdin_stdout: ", STDERR_FILENO);
 		ft_putstr_fd(error_repr(err), STDERR_FILENO);
 		ft_putstr_fd(": ", STDERR_FILENO);
 		ft_putstr_fd(strerror(errno), STDERR_FILENO);
