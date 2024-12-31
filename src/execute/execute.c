@@ -374,8 +374,5 @@ t_command_result execute_command(t_state *state, t_command command) {
 	else
 		assert(!"unknown command type");
 
-	if (res.error != NO_ERROR)
-		printf("err : %d\n",res.error);
-
 	return res;
 }
