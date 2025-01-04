@@ -27,6 +27,9 @@ t_error	invert_conditional_associativity(t_conditional **out)
 	data = gather_data_and_free(*out);
 	if (data.connector_count == 0)
 		return (E_OOM);
+	// we've stripped all conditional data, and we always free it in case of an
+	// error at this point, so we prune the tree
+	*out = NULL;
 	err = reconstruct_conditional_command(data, out);
 	free(data.commands);
 	free(data.operators);

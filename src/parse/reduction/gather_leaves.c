@@ -27,7 +27,10 @@ static t_error	recurse(t_symbol *root, t_token_list **leaves_p)
 		err = token_duplicate(root->token, &copy);
 		if (err != NO_ERROR)
 			return (err);
-		return (tkl_push_back(leaves_p, copy));
+		err = tkl_push_back(leaves_p, copy);
+		if (err != NO_ERROR)
+			free(copy.literal);
+		return (err);
 	}
 	while (i < root->production->len)
 	{

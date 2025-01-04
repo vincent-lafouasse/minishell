@@ -23,12 +23,15 @@ typedef enum e_error
     E_WAIT,
     E_OPEN,
     E_UNLINK,
+    E_PIPE,
     E_DUMMY,
     E_AMBIGUOUS_REDIRECT,
     E_INTERRUPTED,
 } t_error;
 
 const char *error_repr(t_error err);
+bool is_syscall_related(t_error err);
+bool is_fatal_error(t_error err);
 char parse_error_exit_code(t_error err);
 void die(const char *msg);
 void ft_assert(bool assertion, const char *msg);

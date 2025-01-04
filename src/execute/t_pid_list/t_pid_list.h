@@ -21,4 +21,5 @@ t_error pidl_push_back(t_pid_list** pidl, pid_t pid);
 t_error pidl_push_front(t_pid_list** pidl, pid_t pid);
 pid_t pidl_pop_front(t_pid_list** pidl);
 
+void pidl_delone(t_pid_list** pidl);
 void pidl_clear(t_pid_list** pidl);

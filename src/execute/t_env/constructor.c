@@ -52,7 +52,9 @@ t_error	from_envp(char *values[], t_env **out)
 
 t_error env_insert(t_env **env, const char *key, const char *value)
 {
-	char *owned_key, *owned_value;
+	t_error err;
+	char *owned_key;
+	char *owned_value;
 
 	owned_key = ft_strdup(key);
 	if (!owned_key)
@@ -63,7 +65,13 @@ t_error env_insert(t_env **env, const char *key, const char *value)
 		free(owned_key);
 		return (E_OOM);
 	}
-	return (env_insert_owned_kv(env, owned_key, owned_value));
+	err = env_insert_owned_kv(env, owned_key, owned_value);
+	if (err != NO_ERROR)
+	{
+		free(owned_key);
+		free(owned_value);
+	}
+	return (err);
 }
 
 t_error	env_insert_owned_kv(t_env **env, char *key, char *value)

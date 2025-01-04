@@ -32,7 +32,7 @@ t_error	tokenize(const char *input, t_token_list **out)
 			return (cleanup_propagate(&lexer, err));
 		err = tkl_push_back(&lexer.tokens, token);
 		if (err != NO_ERROR)
-			return (cleanup_propagate(&lexer, err));
+			return (free(token.literal), cleanup_propagate(&lexer, err));
 		lexer_skip_whitespace(&lexer);
 	}
 	err = tkl_push_back(&lexer.tokens, (t_token){.type = EOF_TOKEN});

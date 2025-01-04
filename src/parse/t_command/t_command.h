@@ -108,6 +108,7 @@ void			pipeline_destroy(t_pipeline *pipeline);
 void			conditional_destroy(t_conditional *conditional);
 void			subshell_destroy(t_subshell *subshell);
 void			simple_destroy(t_simple *simple);
+void			command_destroy_and_clear(t_command *command);
 void			command_destroy(t_command command);
 
 bool			command_is_initialized(t_command command);

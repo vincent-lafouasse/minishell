@@ -14,8 +14,10 @@ static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 {
 	pid_t waited_for_pid;
 	bool children_remain;
+	bool requested_pid_exited;
 	int status;
 
+	requested_pid_exited = false;
 	children_remain = true;
 	while (children_remain)
 	{
@@ -28,8 +30,13 @@ static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 				return (E_WAIT);
 		}
 		if (waited_for_pid == pid)
-			*status_out = status; // BAD: uninitialized read if this is never reached
+		{
+			*status_out = status;
+			requested_pid_exited = true;
+		}
 	}
+	if (!requested_pid_exited)
+		return (E_WAIT);
 	return (NO_ERROR);
 }
 
