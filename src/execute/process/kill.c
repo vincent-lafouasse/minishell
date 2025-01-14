@@ -4,6 +4,7 @@
 #include <sys/wait.h>
 #include <errno.h>
 #include <unistd.h>
+#include <signal.h>
 
 void	attempt_to_reap_processes()
 {
