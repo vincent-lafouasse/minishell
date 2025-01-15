@@ -216,13 +216,15 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	if (!argv)
 	{
 		ft_putstr_fd("minishell: Out of memory\n", STDERR_FILENO);
+		free(command_path);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
 	char** envp = env_make_envp(state->env);
 	if (!envp)
 	{
-		free_null_terminated_str_array(argv);
 		ft_putstr_fd("minishell: Out of memory\n", STDERR_FILENO);
+		free_null_terminated_str_array(argv);
+		free(command_path);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
 
