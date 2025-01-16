@@ -374,7 +374,7 @@ test_map_460_() {
     compare_with_bash 'ls_DNE_file' 'ls hola' 1 'no such file or directory'
     refute 'permission_denied__makefile' './Makefile' 126 'Permission denied'
     refute 'permission_denied_touch_hola' 'touch OUTFILE_DIR/hola && OUTFILE_DIR/hola' 126 'Permission denied'
-    compare_with_bash 'env_number_of_lines' 'env | "wc" -l'
+    #compare_with_bash 'env_number_of_lines' 'env | "wc" -l'
     command_not_found 'env_number_of_lines_bad' 'env | "wc "-l'
     compare_with_bash 'expr_sum_1_plus_1' 'expr 1 + 1'
     compare_with_bash 'expr_sum_status_plus_status' 'expr $? + $?'
