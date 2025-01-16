@@ -85,7 +85,7 @@ static t_error	reconstruct_conditional_command(t_cond_data data,
 		if (!new_root)
 		{
 			*out = root;
-			return (destroy_cond_data(data, i), E_OOM);
+			return (destroy_cond_data(data, i + 1), E_OOM);
 		}
 		root = new_root;
 		++i;
