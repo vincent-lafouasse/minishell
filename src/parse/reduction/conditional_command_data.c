@@ -36,7 +36,7 @@ void	destroy_cond_data(t_cond_data data, size_t start)
 	size_t	i;
 
 	i = start;
-	while (i < data.connector_count)
+	while (i <= data.connector_count)
 	{
 		command_destroy(data.commands[i]);
 		i++;
