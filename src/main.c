@@ -117,11 +117,9 @@ char *non_interactive_read_line(void)
 {
 	char *input;
 
-	last_signal = 0;
 	input = readline(NULL);
 	if (last_signal == SIGINT || input == NULL)
 	{
-		last_signal = 0;
 		free(input);
 		return (NULL);
 	}
