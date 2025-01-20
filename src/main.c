@@ -70,7 +70,7 @@ void truncate_to_one_line_if_necessary(char *input)
 		*line_break = '\0';
 }
 
-char *interactive_read_line(void)
+char *interactive_read_line(t_state *state)
 {
 	char *input;
 
@@ -83,6 +83,7 @@ char *interactive_read_line(void)
 		if (last_signal != SIGINT)
 			break;
 		free(input); /* we've caught a C-c signal; repeat */
+		state->last_status = 128 + last_signal;
 	}
 
 	if (*input != '\0')
@@ -99,7 +100,7 @@ void run_interpreter(t_state* state)
 	while (1)
 	{
 		install_interactive_handlers();
-		state->line = interactive_read_line();
+		state->line = interactive_read_line(state);
 		if (!state->line)
 			break; /* eof or read error */
 		//install_execution_handlers();
@@ -113,13 +114,15 @@ void run_interpreter(t_state* state)
 	// TODO: call `exit` builtin on Ctrl-D
 }
 
-char *non_interactive_read_line(void)
+char *non_interactive_read_line(t_state *state)
 {
 	char *input;
 
 	input = readline(NULL);
 	if (last_signal == SIGINT || input == NULL)
 	{
+		if (last_signal == SIGINT)
+			state->last_status = 128 + SIGINT;
 		free(input);
 		return (NULL);
 	}
@@ -134,7 +137,7 @@ void run_non_interactive_loop(t_state *state)
 	while (1)
 	{
 		install_non_interactive_handlers();
-		state->line = non_interactive_read_line();
+		state->line = non_interactive_read_line(state);
 		if (!state->line)
 			break; /* no more bytes to read on stdin or read error */
 		//install_execution_handlers();
