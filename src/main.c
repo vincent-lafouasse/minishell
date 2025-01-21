@@ -29,7 +29,6 @@ t_error run_and_parse_command(const char* input, t_state* state)
 	err = parse(input, &state->root);
 	if (err != NO_ERROR)
 	{
-		ft_putendl_fd(error_repr(err), STDERR_FILENO);
 		state->last_status = parse_error_exit_code(err);
 		return err;
 	}
@@ -97,7 +96,8 @@ void run_interpreter(t_state* state)
 {
 	t_error err;
 
-	while (1)
+	err = NO_ERROR;
+	while (err != E_OOM)
 	{
 		install_interactive_handlers();
 		state->line = interactive_read_line(state);
@@ -105,9 +105,9 @@ void run_interpreter(t_state* state)
 			break; /* eof or read error */
 		//install_execution_handlers();
 
-		// NOTE: E_INTERRUPTED is non fatal, and is used to signify that we
-		// should just continue interpreting commands
-		err = run_and_parse_command(state->line, state); // bad, error should be handled
+		err = run_and_parse_command(state->line, state);
+		if (err != NO_ERROR)
+			log_error(err);
 		free(state->line);
 	}
 	rl_clear_history();
@@ -134,7 +134,8 @@ void run_non_interactive_loop(t_state *state)
 {
 	t_error err;
 
-	while (1)
+	err = NO_ERROR;
+	while (err != E_OOM && err != E_INTERRUPTED)
 	{
 		install_non_interactive_handlers();
 		state->line = non_interactive_read_line(state);
@@ -142,8 +143,9 @@ void run_non_interactive_loop(t_state *state)
 			break; /* no more bytes to read on stdin or read error */
 		//install_execution_handlers();
 
-		// NOTE: here, E_INTERRUPTED should make the script halt
 		err = run_and_parse_command(state->line, state);
+		if (err != NO_ERROR)
+			log_error(err);
 		free(state->line);
 	}
 }
