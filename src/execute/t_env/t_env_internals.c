@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 17:34:31 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 17:34:32 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/22 17:42:23 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,40 +78,4 @@ t_env	*env_detach_link(t_env *env, t_env **head)
 	current->next = NULL;
 	current->prev = NULL;
 	return (current);
-}
-
-t_env	*env_pop_key(t_env **env, const char *key)
-{
-	t_env	*key_node;
-
-	key_node = env_find_node(*env, key);
-	return (env_detach_link(key_node, env));
-}
-
-void	env_delone(t_env **env, t_destructor del)
-{
-	t_env	*new_head;
-
-	if (!env || !*env)
-		return ;
-	new_head = (*env)->next;
-	if (new_head)
-		new_head->prev = NULL;
-	if (del)
-	{
-		del((void *)(*env)->entry.key);
-		del((void *)(*env)->entry.value);
-	}
-	free(*env);
-	*env = new_head;
-}
-
-void	env_clear(t_env **env, t_destructor del)
-{
-	if (!env || !*env)
-		return ;
-	while ((*env)->prev)
-		*env = (*env)->prev;
-	while (*env)
-		env_delone(env, del);
 }
