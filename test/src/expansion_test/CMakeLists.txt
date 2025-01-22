@@ -18,8 +18,12 @@ set(t_string_module
 	word/t_string/constructor.c
 )
 set(env_module
-	execute/t_env/t_env_internals.c
+	execute/t_env/t_env.h
+	execute/t_env/t_env_internals.h
 	execute/t_env/getter.c
+	execute/t_env/make_envp.c
+	execute/t_env/env_destroy.c
+	execute/t_env/t_env_internals.c
 	execute/t_env/constructor.c
 )
 set(word_module
