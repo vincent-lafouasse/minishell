@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:48:20 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 17:14:34 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/22 17:16:48 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,10 @@ static t_error	assign_variable(t_env **env, t_assignment assignment)
 	assert(entry != NULL);
 	if (assignment.appending)
 	{
-		joined = ft_strjoin(!entry->value ? "" : entry->value, assignment.value);
+		if (entry->value)
+			joined = ft_strjoin(entry->value, assignment.value);
+		else
+			joined = ft_strdup(assignment.value);
 		if (!joined)
 			return (E_OOM);
 		free(assignment.value);
