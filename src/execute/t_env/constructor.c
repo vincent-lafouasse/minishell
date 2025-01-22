@@ -1,14 +1,24 @@
-#include "libft/string.h"
-#include "libft/ft_string.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   constructor.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/22 17:34:07 by poss              #+#    #+#             */
+/*   Updated: 2025/01/22 17:36:48 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "error/t_error.h"
+#include "libft/ft_string.h"
+#include "libft/string.h"
 #include "t_env.h"
 #include "t_env_internals.h"
-
-#include <stdlib.h>
 #include <stddef.h>
+#include <stdlib.h>
 
-static void env_entry_destroy(t_env_entry *entry)
+static void	env_entry_destroy(t_env_entry *entry)
 {
 	free((void *)entry->key);
 	free((void *)entry->value);
@@ -16,7 +26,7 @@ static void env_entry_destroy(t_env_entry *entry)
 	entry->value = NULL;
 }
 
-static t_error assign_envp_value(t_env **env, char *assignment)
+static t_error	assign_envp_value(t_env **env, char *assignment)
 {
 	char	*equals;
 	t_error	err;
@@ -50,9 +60,10 @@ t_error	from_envp(char *values[], t_env **out)
 	return (NO_ERROR);
 }
 
-t_error env_insert(t_env **env, const char *key, const char *value)
+t_error	env_insert(t_env **env, const char *key, const char *value)
 {
-	char *owned_key, *owned_value;
+	char	*owned_key;
+	char	*owned_value;
 
 	owned_key = ft_strdup(key);
 	if (!owned_key)
@@ -68,10 +79,10 @@ t_error env_insert(t_env **env, const char *key, const char *value)
 
 t_error	env_insert_owned_kv(t_env **env, char *key, char *value)
 {
-	t_env_entry entry;
-	t_env_entry *existing_entry;
+	t_env_entry	entry;
+	t_env_entry	*existing_entry;
 
-	entry = (t_env_entry) {.key = key, .value = value};
+	entry = (t_env_entry){.key = key, .value = value};
 	if (env_key_exists(*env, key))
 	{
 		existing_entry = env_get_mut(*env, key);
