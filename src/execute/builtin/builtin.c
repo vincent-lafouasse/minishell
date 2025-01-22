@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 17:29:26 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 17:30:46 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/22 21:20:13 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,11 @@ t_command_result	execute_builtin(t_state *state, t_simple *simple)
 
 bool	is_builtin_command(const t_simple *simple)
 {
-	const char	*command = simple->words->contents;
+	char	*command;
 
 	if (simple->words == NULL)
 		return (false);
+	command = simple->words->contents;
 	if (str_eq(command, "echo"))
 		return (true);
 	if (str_eq(command, "cd"))
