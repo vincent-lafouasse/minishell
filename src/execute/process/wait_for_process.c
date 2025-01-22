@@ -1,21 +1,37 @@
-#include "process.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wait_for_process.c                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/22 17:49:05 by poss              #+#    #+#             */
+/*   Updated: 2025/01/22 17:53:41 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "error/t_error.h"
-
 #include "libft/ft_io.h"
-
-#include <unistd.h>
+#include "process.h"
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <unistd.h>
 
-t_error wait_for_process(t_state *state, pid_t pid, int *exit_status_out)
+/*
+
+	if (waited_for_pid < 0)
+		return (E_WAIT); // caller is now in charge of killing this process
+
+*/
+
+t_error	wait_for_process(t_state *state, pid_t pid, int *exit_status_out)
 {
-	int status;
-	pid_t waited_for_pid;
+	int		status;
+	pid_t	waited_for_pid;
 
 	waited_for_pid = wait_through_signals(pid, &status);
 	if (waited_for_pid < 0)
-		return (E_WAIT); // caller is now in charge of killing this process
+		return (E_WAIT);
 	if (WIFSIGNALED(status))
 	{
 		if (state->is_interactive && state->tty_properties_initialized)
