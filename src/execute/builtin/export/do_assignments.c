@@ -6,15 +6,15 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:48:20 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 16:51:31 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/22 16:54:35 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../builtin.h"
+#include "export_internals.h"
 #include "error/t_error.h"
 #include "execute/execute.h"
 #include "execute/t_env/t_env.h"
-#include "libft/ctype.h"
 #include "libft/ft_string.h"
 #include "libft/string.h"
 #include <assert.h> // temporarily
@@ -22,41 +22,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NOT_A_VALID_ID "minishell: export: not a valid identifier\n"
-
 typedef struct s_assignment
 {
 	bool	appending;
 	char	*name;
 	char	*value;
 }					t_assignment;
-
-static void	report_invalid_identifier(char *identifier_name)
-{
-	(void)identifier_name;
-	write(STDERR_FILENO, NOT_A_VALID_ID, ft_strlen(NOT_A_VALID_ID));
-}
-
-// returns 0 if assignment is malformated in any way
-static size_t	name_len(char *assignment)
-{
-	size_t	i;
-
-	if (!ft_isalpha(*assignment) && *assignment != '_')
-		return (0);
-	i = 1;
-	while (assignment[i])
-	{
-		if (assignment[i] == '=')
-			return (i);
-		if (assignment[i] == '+' && assignment[i + 1] == '=')
-			return (i);
-		if (!ft_isalnum(assignment[i]) && assignment[i] != '_')
-			return (0);
-		i++;
-	}
-	return (i);
-}
 
 static t_error	parse_assignment(char *str, t_assignment *out)
 {
