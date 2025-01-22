@@ -11,15 +11,15 @@
 /* ************************************************************************** */
 
 #include "t_pid_list.h"
-
 #include <stdlib.h>
 
-t_pid_list* pidl_new(pid_t pid)
+t_pid_list	*pidl_new(pid_t pid)
 {
-	t_pid_list* out = malloc(sizeof(*out));
+	t_pid_list	*out;
 
+	out = malloc(sizeof(*out));
 	if (out == NULL)
-		return NULL;
+		return (NULL);
 	*out = (t_pid_list){.pid = pid, .next = NULL};
-	return out;
+	return (out);
 }

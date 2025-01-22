@@ -11,29 +11,31 @@
 /* ************************************************************************** */
 
 #include "t_pid_list.h"
-
 #include <stdlib.h>
 
-t_pid_list* pidl_pop_front_link(t_pid_list** pidl)
+t_pid_list	*pidl_pop_front_link(t_pid_list **pidl)
 {
-	if (pidl == NULL || *pidl == NULL)
-		return NULL;
+	t_pid_list	*out;
+	t_pid_list	*new_first;
 
-	t_pid_list* out = *pidl;
-	t_pid_list* new_first = out->next;
+	if (pidl == NULL || *pidl == NULL)
+		return (NULL);
+	out = *pidl;
+	new_first = out->next;
 	out->next = NULL;
 	*pidl = new_first;
-	return out;
+	return (out);
 }
 
-pid_t pidl_pop_front(t_pid_list** pidl)
+pid_t	pidl_pop_front(t_pid_list **pidl)
 {
-	t_pid_list* front = pidl_pop_front_link(pidl);
+	t_pid_list	*front;
+	pid_t		out;
 
+	front = pidl_pop_front_link(pidl);
 	if (front == NULL)
-		return 0;
-
-	pid_t out = front->pid;
+		return (0);
+	out = front->pid;
 	free(front);
-	return out;
+	return (out);
 }

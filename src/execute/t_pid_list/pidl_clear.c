@@ -6,13 +6,14 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 17:46:55 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 17:46:59 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/22 17:47:57 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_pid_list.h"
 
-void pidl_clear(t_pid_list** pidl) // bad dummy
+// bad dummy pidl_clear
+void	pidl_clear(t_pid_list **pidl)
 {
 	(void)pidl;
 }
