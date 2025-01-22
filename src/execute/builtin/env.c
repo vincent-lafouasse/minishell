@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 17:29:59 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 17:30:00 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/22 17:32:49 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include "word/t_word_list/t_word_list.h"
 #include <stdlib.h>
 #include <unistd.h>
+
+#define TOO_MANY_ARGUMENTS "minishell: env: too many arguments\n"
 
 static t_error	gather_environment(t_env *env, t_string **out)
 {
@@ -44,16 +46,16 @@ static t_error	gather_environment(t_env *env, t_string **out)
 	return (NO_ERROR);
 }
 
+// maybe bad, unchecked write in `env.c:execute_env`
 t_command_result	execute_env(t_state *state, t_simple *builtin)
 {
 	t_word_list	*arguments;
 	t_string	*env;
-		const char *error = "minishell: env: too many arguments\n";
 
 	arguments = builtin->words->next;
 	if (arguments != NULL)
 	{
-		write(STDERR_FILENO, error, ft_strlen(error));
+		write(STDERR_FILENO, TOO_MANY_ARGUMENTS, ft_strlen(TOO_MANY_ARGUMENTS));
 		return ((t_command_result){.error = NO_ERROR,
 			.status_code = EX_BADUSAGE});
 	}
@@ -65,8 +67,6 @@ t_command_result	execute_env(t_state *state, t_simple *builtin)
 		string_destroy(env);
 		return ((t_command_result){.error = E_OOM});
 	}
-	write(STDOUT_FILENO, &env->data, env->len); // maybe bad,
-		write error may be handled
-	string_destroy(env);
+	write(STDOUT_FILENO, &env->data, env->len);
 	return ((t_command_result){.error = NO_ERROR, .status_code = 0});
 }
