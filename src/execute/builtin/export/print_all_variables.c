@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 17:00:45 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 17:00:46 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/22 17:02:32 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ static t_error	gather_environment(t_env *env, t_string **out)
 	return (NO_ERROR);
 }
 
+// maybe bad, unchecked write in print_all_variables(state)
 t_command_result	print_all_variables(t_state *state)
 {
 	t_string	*env;
@@ -64,8 +65,7 @@ t_command_result	print_all_variables(t_state *state)
 		string_destroy(env);
 		return ((t_command_result){.error = E_OOM});
 	}
-	write(STDOUT_FILENO, &env->data, env->len); // maybe bad,
-		write error may be handled
+	write(STDOUT_FILENO, &env->data, env->len);
 	string_destroy(env);
 	return ((t_command_result){.error = NO_ERROR, .status_code = 0});
 }
