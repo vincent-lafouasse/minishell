@@ -1,17 +1,27 @@
-#include "builtin.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pwd.c                                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/22 17:30:03 by poss              #+#    #+#             */
+/*   Updated: 2025/01/22 17:30:04 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../execute.h"
+#include "builtin.h"
 #include "error/t_error.h"
 #include "libft/string.h"
-
-#include <stdio.h>
 #include <limits.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-static t_error get_current_directory(char **out)
+static t_error	get_current_directory(char **out)
 {
-	char *buf;
+	char	*buf;
 
 	buf = malloc((PATH_MAX + 1) * sizeof(char));
 	if (!buf)
@@ -25,11 +35,11 @@ static t_error get_current_directory(char **out)
 	return (NO_ERROR);
 }
 
-static int write_cwd_with_newline(char *working_directory)
+static int	write_cwd_with_newline(char *working_directory)
 {
-	size_t len;
-	char *nul_terminator;
-	int write_status;
+	size_t	len;
+	char	*nul_terminator;
+	int		write_status;
 
 	len = ft_strlen(working_directory);
 	nul_terminator = &working_directory[len];
@@ -39,28 +49,30 @@ static int write_cwd_with_newline(char *working_directory)
 	return (write_status);
 }
 
-t_command_result execute_pwd(t_state *state, t_simple *builtin)
+t_command_result	execute_pwd(t_state *state, t_simple *builtin)
 {
+	char	*working_directory;
+	t_error	err;
+	int		write_status;
+
 	(void)state;
 	(void)builtin;
-	char *working_directory;
-	t_error err;
-	int write_status;
-
 	err = get_current_directory(&working_directory);
 	if (err == E_OOM)
-		return (t_command_result){.error = E_OOM};
+		return ((t_command_result){.error = E_OOM});
 	else if (err == E_GETCWD)
 	{
 		perror("minishell: pwd: getcwd");
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return ((t_command_result){.error = NO_ERROR,
+			.status_code = EXIT_FAILURE});
 	}
 	write_status = write_cwd_with_newline(working_directory);
 	free(working_directory);
 	if (write_status < 0)
 	{
 		perror("minishell: pwd: write");
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return ((t_command_result){.error = NO_ERROR,
+			.status_code = EXIT_FAILURE});
 	}
-	return (t_command_result){.error = NO_ERROR, .status_code = 0};
+	return ((t_command_result){.error = NO_ERROR, .status_code = 0});
 }
