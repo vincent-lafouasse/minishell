@@ -1,49 +1,65 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.h                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/22 18:03:02 by poss              #+#    #+#             */
+/*   Updated: 2025/01/22 18:03:03 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EXECUTE_H
 # define EXECUTE_H
 
-#include "./t_env/t_env.h"
-#include "./t_pid_list/t_pid_list.h"
-#include "error/t_error.h"
-#include "parse/t_command/t_command.h"
-#include "io/t_io/t_io.h"
+# include "./t_env/t_env.h"
+# include "./t_pid_list/t_pid_list.h"
+# include "error/t_error.h"
+# include "io/t_io/t_io.h"
+# include "parse/t_command/t_command.h"
+# include <termios.h>
 
-#include <termios.h>
+# define CLOSE_NOTHING -1
 
-#define CLOSE_NOTHING -1
+typedef struct s_state
+{
+	t_env			*env;
+	t_command		root;
+	int				last_status;
+	bool			is_interactive;
+	char			*line;
+	bool			tty_properties_initialized;
+	struct termios	tty_properties;
+}					t_state;
 
-typedef struct s_state {
-	t_env *env;
-	t_command root;
-	int last_status;
-	bool is_interactive;
-	char* line;
-	bool tty_properties_initialized;
-	struct termios tty_properties;
-} t_state;
+typedef struct s_launch_result
+{
+	t_error			error;
+	t_pid_list		*pids;
+}					t_launch_result;
 
-typedef struct s_launch_result {
-	t_error error;
-	t_pid_list* pids;
-} t_launch_result;
-
-typedef struct s_command_result {
-	t_error error;
-	int status_code;
-} t_command_result;
+typedef struct s_command_result
+{
+	t_error			error;
+	int				status_code;
+}					t_command_result;
 
 // internals
 
-t_launch_result launch_pipeline(t_state *state, t_pipeline *pipeline, t_io io);
-t_launch_result launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close);
-t_launch_result launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close);
+t_launch_result		launch_pipeline(t_state *state, t_pipeline *pipeline,
+						t_io io);
+t_launch_result		launch_simple_command(t_state *state, t_simple *simple,
+						t_io io, int fd_to_close);
+t_launch_result		launch_subshell(t_state *state, t_subshell *subshell,
+						t_io io, int fd_to_close);
 
 // public
 
-t_command_result execute_command(t_state *state, t_command command);
-t_command_result execute_conditional(t_state *state, t_conditional *cond);
-t_command_result execute_subshell(t_state *state, t_subshell *subshell);
+t_command_result	execute_command(t_state *state, t_command command);
+t_command_result	execute_conditional(t_state *state, t_conditional *cond);
+t_command_result	execute_subshell(t_state *state, t_subshell *subshell);
 
-t_command_result execute_builtin(t_state *state, t_simple *simple);
-
+t_command_result	execute_builtin(t_state *state, t_simple *simple);
 
 #endif // EXECUTE_H
