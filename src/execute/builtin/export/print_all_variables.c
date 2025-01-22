@@ -2,11 +2,8 @@
 
 #include "execute/execute.h"
 #include "error/t_error.h"
-#include "libft/string.h"
 #include "word/t_string/t_string.h"
-#include "word/t_word_list/t_word_list.h"
 
-#include <stdlib.h>
 #include <unistd.h>
 
 static t_error append_entry_line(t_env_entry entry, t_string **out)
