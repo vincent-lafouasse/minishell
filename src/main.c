@@ -238,7 +238,9 @@ int	main(int argc, char *argv[], char *envp[])
 	{
 		state.is_interactive = false;
 		truncate_to_one_line_if_necessary(argv[2]);
-		run_and_parse_command(argv[2], &state);
+		err = run_and_parse_command(argv[2], &state);
+		if (err != NO_ERROR)
+			log_error(err);
 	}
 	else
 		printf("%s\n", USAGE);
