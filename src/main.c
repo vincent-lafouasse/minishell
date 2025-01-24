@@ -38,6 +38,7 @@ t_error run_and_parse_command(const char* input, t_state* state)
 
 	if (last_signal == SIGINT)
 	{
+		state->last_status = 128 + SIGINT;
 		command_destroy_and_clear(&state->root);
 		return E_INTERRUPTED;
 	}
