@@ -21,7 +21,7 @@ void report_error(const char *origin, const char *reason) {
     string_extend(&msg, origin);
     string_extend(&msg, ": ");
     string_extend(&msg, reason);
-    ft_putstr_fd(msg->data, STDERR_FILENO);
+    write(STDERR_FILENO, msg->data, msg->len);
 }
 
 void report_syscall_error(const char *syscall) {
