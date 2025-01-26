@@ -18,6 +18,7 @@ void	report_error_message(const char *reason)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(reason, STDERR_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
+		return;
 	}
 	string_extend(&msg, "minishell: ");
 	string_extend(&msg, reason);
