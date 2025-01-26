@@ -9,7 +9,9 @@ t_command_result execute_conditional(t_state *state, t_conditional *cond) {
 	t_command first = cond->first;
 	t_command second = cond->second;
 
-	t_command_result first_res = execute_command(state, first); // bad, may err
+	t_command_result first_res = execute_command(state, first);
+	if (first_res.error != NO_ERROR)
+		return (first_res);
 
 	int status = first_res.status_code;
 	if (status != 0 && op == AND_OP) // false &&
