@@ -113,7 +113,7 @@ void run_interpreter(t_state* state)
 		state->line = NULL;
 	}
 	rl_clear_history();
-	// TODO: call `exit` builtin on Ctrl-D
+	ft_putstr_fd("exit\n", STDERR_FILENO);
 }
 
 char *non_interactive_read_line(t_state *state)
