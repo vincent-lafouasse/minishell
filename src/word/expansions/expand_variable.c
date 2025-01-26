@@ -125,5 +125,5 @@ t_error wql_variable_expand(t_expansion_variables vars, t_word_quotes_list *wql)
 		string_destroy(expanded);
 		wql = wql->next;
 	}
-	return (err);
+	return (NO_ERROR);
 }

@@ -14,22 +14,29 @@ static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 {
 	pid_t waited_for_pid;
 	bool children_remain;
+	bool requested_pid_exited;
 	int status;
 
+	requested_pid_exited = false;
 	children_remain = true;
 	while (children_remain)
 	{
 		waited_for_pid = wait_through_signals(-1, &status);
 		if (waited_for_pid < 0)
 		{
-			if (errno == ECHILD) // pid < 0 && errno == ECHILD after `wait(-1)`: we have no more children
+			if (errno == ECHILD)
 				children_remain = false;
 			else
 				return (E_WAIT);
 		}
 		if (waited_for_pid == pid)
-			*status_out = status; // BAD: uninitialized read if this is never reached
+		{
+			*status_out = status;
+			requested_pid_exited = true;
+		}
 	}
+	if (!requested_pid_exited)
+		return (E_WAIT);
 	return (NO_ERROR);
 }
 
@@ -47,8 +54,7 @@ t_error wait_for_pipeline(t_state *state, const t_pid_list *pids, int *last_exit
 	last_pid = pidl_last(pids)->pid;
 	err = waitpid_and_exhaust_children(last_pid, &last_status);
 	if (err != NO_ERROR)
-		// E_WAIT occured, remaining child processes should be killed by the caller, THOUGH:
-		return (err); // BAD: `kill(2)` has no effect on zombie processes, so `wait(pid, WNOHANG)` them first
+		return (err);
 	if (WIFSIGNALED(last_status))
 	{
 		if (state->is_interactive && state->tty_properties_initialized)

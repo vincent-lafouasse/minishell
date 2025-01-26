@@ -25,40 +25,37 @@
 t_error run_and_parse_command(const char* input, t_state* state)
 {
 	t_error err;
-	t_command cmd;
 
-	err = parse(input, &cmd);
+	err = parse(input, &state->root);
 	if (err != NO_ERROR)
 	{
-		ft_putendl_fd(error_repr(err), STDERR_FILENO);
 		state->last_status = parse_error_exit_code(err);
 		return err;
 	}
 
-	if (!command_is_initialized(cmd))
+	if (!command_is_initialized(state->root))
 		return NO_ERROR;
 
 	if (last_signal == SIGINT)
 	{
-		command_destroy(cmd);
+		state->last_status = 128 + SIGINT;
+		command_destroy_and_clear(&state->root);
 		return E_INTERRUPTED;
 	}
 
-	err = gather_here_documents(cmd);
+	err = gather_here_documents(state->root);
 	if (err != NO_ERROR)
 	{
-		command_destroy(cmd);
+		command_destroy_and_clear(&state->root);
 		return (err);
 	}
 
-	state->root = cmd;
-	t_command_result res = execute_command(state, cmd); // bad, should probablue check err value maybe
-	/*
-	switch (res.error) {
-		// status_code = whatever
-	}
-	*/
-	state->last_status = res.status_code;
+	t_command_result res = execute_command(state, state->root);
+	command_destroy_and_clear(&state->root);
+	if (res.error == NO_ERROR)
+		state->last_status = res.status_code;
+	else if (res.error != NO_ERROR && res.status_code == 0)
+		state->last_status = EXIT_FAILURE;
 	return res.error;
 }
 
@@ -71,7 +68,7 @@ void truncate_to_one_line_if_necessary(char *input)
 		*line_break = '\0';
 }
 
-char *interactive_read_line(void)
+char *interactive_read_line(t_state *state)
 {
 	char *input;
 
@@ -84,6 +81,7 @@ char *interactive_read_line(void)
 		if (last_signal != SIGINT)
 			break;
 		free(input); /* we've caught a C-c signal; repeat */
+		state->last_status = 128 + last_signal;
 	}
 
 	if (*input != '\0')
@@ -95,35 +93,36 @@ char *interactive_read_line(void)
 
 void run_interpreter(t_state* state)
 {
-	char		*input;
 	t_error err;
 
-	while (1)
+	err = NO_ERROR;
+	while (err != E_OOM)
 	{
 		install_interactive_handlers();
-		input = interactive_read_line();
-		if (!input)
+		state->line = interactive_read_line(state);
+		if (!state->line)
 			break; /* eof or read error */
 		//install_execution_handlers();
 
-		// NOTE: E_INTERRUPTED is non fatal, and is used to signify that we
-		// should just continue interpreting commands
-		err = run_and_parse_command(input, state); // bad, error should be handled
-		free(input);
+		err = run_and_parse_command(state->line, state);
+		if (err != NO_ERROR)
+			log_error(err);
+		free(state->line);
+		state->line = NULL;
 	}
 	rl_clear_history();
-	// TODO: call `exit` builtin on Ctrl-D
+	ft_putstr_fd("exit\n", STDERR_FILENO);
 }
 
-char *non_interactive_read_line(void)
+char *non_interactive_read_line(t_state *state)
 {
 	char *input;
 
-	last_signal = 0;
 	input = readline(NULL);
 	if (last_signal == SIGINT || input == NULL)
 	{
-		last_signal = 0;
+		if (last_signal == SIGINT)
+			state->last_status = 128 + SIGINT;
 		free(input);
 		return (NULL);
 	}
@@ -133,20 +132,22 @@ char *non_interactive_read_line(void)
 
 void run_non_interactive_loop(t_state *state)
 {
-	char		*input;
 	t_error err;
 
-	while (1)
+	err = NO_ERROR;
+	while (err != E_OOM && err != E_INTERRUPTED)
 	{
 		install_non_interactive_handlers();
-		input = non_interactive_read_line();
-		if (!input)
+		state->line = non_interactive_read_line(state);
+		if (!state->line)
 			break; /* no more bytes to read on stdin or read error */
 		//install_execution_handlers();
 
-		// NOTE: here, E_INTERRUPTED should make the script halt
-		err = run_and_parse_command(input, state);
-		free(input);
+		err = run_and_parse_command(state->line, state);
+		if (err != NO_ERROR)
+			log_error(err);
+		free(state->line);
+		state->line = NULL;
 	}
 }
 
@@ -176,9 +177,6 @@ t_error set_up_environment(t_env **env, char *envp[])
 	err = from_envp(envp, env);
 	if (err != NO_ERROR)
 		return (err);
-	// bad(pendantic, low priority): the default values of TERM, and PATH should
-	// be hidden to both builtins (`env`, `export`), and normal programs
-	// (`/bin/env`) until they are set by the user using `export`
 	err = add_if_not_set(env, "TERM", "dumb");
 	if (err != NO_ERROR)
 	{
@@ -210,6 +208,15 @@ t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
 	return (NO_ERROR);
 }
 
+void shell_cleanup(t_state *state)
+{
+	command_destroy_and_clear(&state->root);
+	free(state->line);
+	rl_clear_history();
+	env_destroy(&state->env);
+	pidl_clear(&state->our_children);
+}
+
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_state		state;
@@ -228,10 +235,12 @@ int	main(int argc, char *argv[], char *envp[])
 	{
 		state.is_interactive = false;
 		truncate_to_one_line_if_necessary(argv[2]);
-		run_and_parse_command(argv[2], &state);
+		err = run_and_parse_command(argv[2], &state);
+		if (err != NO_ERROR)
+			log_error(err);
 	}
 	else
 		printf("%s\n", USAGE);
-	// env_destroy(&state.env); bad, env destroyer is not implemented
+	shell_cleanup(&state);
 	exit(state.last_status);
 }

@@ -7,16 +7,19 @@
 #include "libft/ctype.h"
 
 #include <unistd.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
 bool    checked_atoi(const char *s, int32_t *out);
 
+void shell_cleanup(t_state *state); // bad: should be #include "shell.h"
+
 _Noreturn
 static void exit_and_cleanup(t_state *state, int32_t exit_status)
 {
-	(void)state;
-	exit(exit_status & 255); // bad, doesn't clean up before exiting
+	shell_cleanup(state);
+	exit(exit_status & 255);
 }
 
 t_command_result execute_exit(t_state *state, t_simple *builtin)

@@ -45,6 +45,22 @@ static t_error gather_environment(t_env *env, t_string **out)
 	return (NO_ERROR);
 }
 
+static t_command_result write_env_to_stdout(t_string *env)
+{
+	int status;
+	int exit_code;
+
+	status = write(STDOUT_FILENO, &env->data, env->len);
+	string_destroy(env);
+	if (status < 0)
+	{
+		exit_code = EXIT_FAILURE; // bad, should report write error
+	}
+	else
+		exit_code = EXIT_SUCCESS;
+	return (t_command_result){.error = NO_ERROR, .status_code = exit_code};
+}
+
 t_command_result print_all_variables(t_state *state)
 {
 	t_string *env;
@@ -58,8 +74,5 @@ t_command_result print_all_variables(t_state *state)
 		return (t_command_result){.error = E_OOM};
 	}
 
-	write(STDOUT_FILENO, &env->data, env->len); // maybe bad, write error may be handled
-	string_destroy(env);
-	return (t_command_result){.error = NO_ERROR, .status_code = 0};
+	return write_env_to_stdout(env);
 }
-

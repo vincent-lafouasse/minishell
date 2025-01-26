@@ -6,7 +6,6 @@
 #include "libft/ft_io.h"
 
 #include <assert.h> // bad
-#include <stdio.h> // bad
 #include <unistd.h>
 
 static bool str_eq(const char* a, const char* b);

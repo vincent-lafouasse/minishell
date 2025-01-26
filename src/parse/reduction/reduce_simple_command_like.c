@@ -44,13 +44,13 @@ static t_redirect	redir_from_tokens(t_token bracket, t_token word)
 	return (redir);
 }
 
-t_error	process_word_or_redir(t_token_list **leaves, t_word_list **words,
+t_error	process_word_or_redir(t_token_list ***leaves, t_word_list **words,
 		t_redir_list **redirections)
 {
 	t_error			err;
 	t_token_list	*current;
 
-	current = *leaves;
+	current = **leaves;
 	if (current->token.type == WORD)
 	{
 		err = wl_push_back(words, current->token.literal);
@@ -58,7 +58,7 @@ t_error	process_word_or_redir(t_token_list **leaves, t_word_list **words,
 		{
 			return (E_OOM);
 		}
-		*leaves = current->next;
+		*leaves = &current->next;
 	}
 	else
 	{
@@ -68,7 +68,7 @@ t_error	process_word_or_redir(t_token_list **leaves, t_word_list **words,
 		{
 			return (E_OOM);
 		}
-		*leaves = current->next->next;
+		*leaves = &current->next->next;
 	}
 	return (NO_ERROR);
 }
@@ -76,24 +76,25 @@ t_error	process_word_or_redir(t_token_list **leaves, t_word_list **words,
 t_error	reduce_simple_command_like(t_symbol *symbol, t_word_list **words,
 		t_redir_list **redirections)
 {
-	t_token_list	*head;
 	t_token_list	*leaves;
+	t_token_list	**current;
 	t_error			err;
 
 	leaves = NULL;
 	err = gather_leaves(symbol, &leaves);
 	if (err != NO_ERROR)
 		return (err);
-	head = leaves;
-	while (leaves)
+	current = &leaves;
+	while (*current)
 	{
-		err = process_word_or_redir(&leaves, words, redirections);
+		err = process_word_or_redir(&current, words, redirections);
 		if (err != NO_ERROR)
 		{
-			tkl_clear(&leaves, free);
+			tkl_clear(current, free);
+			tkl_clear(&leaves, NULL);
 			return (err);
 		}
 	}
-	tkl_clear(&head, NULL);
+	tkl_clear(&leaves, NULL);
 	return (NO_ERROR);
 }

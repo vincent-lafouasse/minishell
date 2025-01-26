@@ -31,6 +31,7 @@ void	*symbol_clear(t_symbol symbol)
 		i++;
 	}
 	free(symbol.production);
+	symbol.production = NULL;
 	return (NULL);
 }
 
