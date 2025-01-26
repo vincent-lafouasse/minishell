@@ -106,7 +106,7 @@ void run_interpreter(t_state* state)
 
 		err = run_and_parse_command(state->line, state);
 		if (err != NO_ERROR)
-			log_error(err);
+			report_error_message(error_repr(err));
 		free(state->line);
 		state->line = NULL;
 	}
@@ -145,7 +145,7 @@ void run_non_interactive_loop(t_state *state)
 
 		err = run_and_parse_command(state->line, state);
 		if (err != NO_ERROR)
-			log_error(err);
+			report_error_message(error_repr(err));
 		free(state->line);
 		state->line = NULL;
 	}
@@ -237,7 +237,7 @@ int	main(int argc, char *argv[], char *envp[])
 		truncate_to_one_line_if_necessary(argv[2]);
 		err = run_and_parse_command(argv[2], &state);
 		if (err != NO_ERROR)
-			log_error(err);
+			report_error_message(error_repr(err));
 	}
 	else
 		printf("%s\n", USAGE);
