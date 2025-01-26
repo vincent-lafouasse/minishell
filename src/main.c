@@ -179,9 +179,6 @@ t_error set_up_environment(t_env **env, char *envp[])
 	err = from_envp(envp, env);
 	if (err != NO_ERROR)
 		return (err);
-	// bad(pendantic, low priority): the default values of TERM, and PATH should
-	// be hidden to both builtins (`env`, `export`), and normal programs
-	// (`/bin/env`) until they are set by the user using `export`
 	err = add_if_not_set(env, "TERM", "dumb");
 	if (err != NO_ERROR)
 	{
