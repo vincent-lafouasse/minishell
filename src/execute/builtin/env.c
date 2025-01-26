@@ -34,7 +34,7 @@ static t_error gather_environment(t_env *env, t_string **out)
 	return (NO_ERROR);
 }
 
-t_command_result write_env_to_stdout(t_string *env)
+static t_command_result write_env_to_stdout(t_string *env)
 {
 	int status;
 	int exit_code;
