@@ -214,7 +214,7 @@ void shell_cleanup(t_state *state)
 	free(state->line);
 	rl_clear_history();
 	env_destroy(&state->env);
-	// bad: should free pids
+	pidl_clear(&state->our_children);
 }
 
 int	main(int argc, char *argv[], char *envp[])
