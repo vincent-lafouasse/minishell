@@ -5,9 +5,9 @@
 
 #include <unistd.h>
 
-// -> prints: "minishell: $ORIGIN: $REASON"
+// -> prints: "minishell: $ORIGIN: $REASON\n"
 void report_error(const char *origin, const char *reason) {
-    size_t len = ft_strlen(origin) + ft_strlen(reason) + 15;
+    size_t len = ft_strlen(origin) + ft_strlen(reason) + ft_strlen("minishell: : \n");
     t_string* msg = string_new_with_capacity(len);
 
     if (!msg) {
@@ -15,12 +15,14 @@ void report_error(const char *origin, const char *reason) {
         ft_putstr_fd(origin, STDERR_FILENO);
         ft_putstr_fd(": ", STDERR_FILENO);
         ft_putstr_fd(reason, STDERR_FILENO);
+        ft_putstr_fd("\n", STDERR_FILENO);
     }
 
     string_extend(&msg, "minishell: ");
     string_extend(&msg, origin);
     string_extend(&msg, ": ");
     string_extend(&msg, reason);
+    string_extend(&msg, "\n");
     write(STDERR_FILENO, msg->data, msg->len);
 }
 
