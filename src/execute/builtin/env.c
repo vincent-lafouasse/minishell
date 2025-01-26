@@ -43,7 +43,8 @@ static t_command_result write_env_to_stdout(t_string *env)
 	string_destroy(env);
 	if (status < 0)
 	{
-		exit_code = EXIT_FAILURE; // bad, should report write error
+		exit_code = EXIT_FAILURE;
+		report_error("write_env_to_stdout", "write");
 	}
 	else
 		exit_code = EXIT_SUCCESS;
