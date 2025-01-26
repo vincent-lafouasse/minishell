@@ -200,7 +200,10 @@ t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
 	*state_out = (t_state){0};
 	err = set_up_environment(&state_out->env, envp);
 	if (err != NO_ERROR)
+	{
+		report_t_error("set_up_environment", err);
 		return (err);
+	}
 	if (!dash_c && isatty(STDIN_FILENO) && isatty(STDERR_FILENO))
 		init_interactive(state_out);
 	else
