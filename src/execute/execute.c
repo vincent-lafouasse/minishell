@@ -317,6 +317,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 	t_command_result res;
 	t_error err;
 
+	assert(state->our_children == NULL);
 	if (command.type == CMD_SIMPLE)
 	{
 		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
