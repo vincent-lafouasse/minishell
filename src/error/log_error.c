@@ -40,6 +40,7 @@ void	report_error(const char *origin, const char *reason)
 		ft_putstr_fd(": ", STDERR_FILENO);
 		ft_putstr_fd(reason, STDERR_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
+		return;
 	}
 	string_extend(&msg, "minishell: ");
 	string_extend(&msg, origin);
