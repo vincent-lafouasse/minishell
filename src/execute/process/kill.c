@@ -13,7 +13,7 @@ void	attempt_to_reap_processes()
 	while (1)
 	{
 		status = waitpid(-1, NULL, WNOHANG);
-		if (status == -1 && errno != EINTR)
+		if (status == 0 || (status == -1 && errno != EINTR))
 			break;
 	}
 	if (status == -1 && errno != ECHILD && errno != EINTR)
