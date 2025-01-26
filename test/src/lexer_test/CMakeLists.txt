@@ -25,7 +25,6 @@ set(error_module
 	error/error_repr.c
 )
 set(log_module
-	log/log_error.c
 	log/log_token.c
 	log/log.h
 )

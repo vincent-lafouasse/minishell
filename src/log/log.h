@@ -10,7 +10,6 @@
 
 void log_token(t_token token);
 void log_token_list(const t_token_list *tkl);
-void log_error(t_error err);
 void parse_tree_to_json(const t_symbol *root);
 void syntax_tree_to_json(t_command tree);
 void log_word_list(const t_word_list *words);

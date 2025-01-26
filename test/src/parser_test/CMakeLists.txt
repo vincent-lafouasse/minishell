@@ -92,7 +92,6 @@ set(log_module
 	log/log_words.c
 	log/syntax_tree_to_json.c
 	log/log_token.c
-	log/log_error.c
 	log/log.h
 	log/log_env.c
 	log/parse_tree_to_json.c
