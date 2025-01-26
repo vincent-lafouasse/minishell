@@ -34,48 +34,12 @@ void report_error(const char *origin, const char *reason)
 void report_syscall_error(const char *syscall)
 {
     const char *system_error = strerror(errno);
-    size_t len = ft_strlen(syscall) + ft_strlen(system_error) +
-                 ft_strlen("minishell: : \n");
-    t_string *msg = string_new_with_capacity(len);
 
-    if (!msg)
-    {
-        ft_putstr_fd("minishell: ", STDERR_FILENO);
-        ft_putstr_fd(syscall, STDERR_FILENO);
-        ft_putstr_fd(": ", STDERR_FILENO);
-        ft_putstr_fd(system_error, STDERR_FILENO);
-        ft_putstr_fd("\n", STDERR_FILENO);
-    }
-
-    string_extend(&msg, "minishell: ");
-    string_extend(&msg, syscall);
-    string_extend(&msg, ": ");
-    string_extend(&msg, system_error);
-    string_extend(&msg, "\n");
-    write(STDERR_FILENO, msg->data, msg->len);
+    report_error(syscall, system_error);
 }
 
 // -> prints: "minishell: $REASON:  $ERROR_REPR(err)\n"
 void report_t_error(const char *reason, t_error err)
 {
-    const char *t_error_str = error_repr(err);
-    size_t len = ft_strlen(reason) + ft_strlen(t_error_str) +
-                 ft_strlen("minishell: : \n");
-    t_string *msg = string_new_with_capacity(len);
-
-    if (!msg)
-    {
-        ft_putstr_fd("minishell: ", STDERR_FILENO);
-        ft_putstr_fd(reason, STDERR_FILENO);
-        ft_putstr_fd(": ", STDERR_FILENO);
-        ft_putstr_fd(t_error_str, STDERR_FILENO);
-        ft_putstr_fd("\n", STDERR_FILENO);
-    }
-
-    string_extend(&msg, "minishell: ");
-    string_extend(&msg, reason);
-    string_extend(&msg, ": ");
-    string_extend(&msg, t_error_str);
-    string_extend(&msg, "\n");
-    write(STDERR_FILENO, msg->data, msg->len);
+    report_error(reason, error_repr(err));
 }
