@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <signal.h>
 
-void kill_pid_list(const t_pid_list *pids)
+static void kill_pid_list(const t_pid_list *pids)
 {
 	const t_pid_list *curr;
 
