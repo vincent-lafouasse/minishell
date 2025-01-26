@@ -1,7 +1,9 @@
 #include "execute.h"
 #include "execute/process/process.h"
 #include "error/t_error.h"
+#include "libft/ft_io.h"
 #include "libft/string.h"
+#include "log/log.h"
 #include "parse/t_command/t_command.h"
 #include <unistd.h>
 #include <assert.h>
@@ -37,36 +39,22 @@ t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close);
 
-	t_command_result inner_res = execute_command(state, cmd); // bad?, log err ?
+	t_command_result inner_res = execute_command(state, cmd);
+	if (inner_res.error != NO_ERROR)
+	{
+		ft_putstr_fd("minishell: subshell:", STDERR_FILENO); // TODO: make error message a little cleaner
+		log_error(inner_res.error);
+	}
 	shell_cleanup(state);
-	exit(inner_res.status_code); // bad. dont know what status to return yet
+	if (inner_res.error != NO_ERROR)
+		exit(inner_res.status_code);
+	else
+		exit(state->last_status);;
 }
 
 t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {
-	t_error err;
-	bool in_child;
-
-	err = fork_and_push_pid(&in_child, &state->our_children);
-	if (err != NO_ERROR)
-		return err;
-
-	if (!in_child)
-		return NO_ERROR;
-	else
-		pidl_clear(&state->our_children);
-
-	err = do_piping(io);
-	if (err != NO_ERROR)
-		perror("minishell: do_piping: dup2");
-
 	warn_non_empty_redirs(subshell);
-
-	if (fd_to_close != CLOSE_NOTHING)
-		close(fd_to_close);
-
-	t_command_result inner_res = execute_command(state, subshell->cmd); // bad?, log err ?
-	shell_cleanup(state);
-	exit(inner_res.status_code); // bad. dont know what status to return yet
+	return launch_cmd_in_subshell(state, subshell->cmd, io, fd_to_close);
 }
 
 t_command_result execute_subshell(t_state *state, t_subshell *subshell)
