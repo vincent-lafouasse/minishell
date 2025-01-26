@@ -18,7 +18,7 @@ _Noreturn
 static void exit_and_cleanup(t_state *state, int32_t exit_status)
 {
 	shell_cleanup(state);
-	exit(exit_status & 255); // bad, doesn't clean up before exiting
+	exit(exit_status & 255);
 }
 
 t_command_result execute_exit(t_state *state, t_simple *builtin)
