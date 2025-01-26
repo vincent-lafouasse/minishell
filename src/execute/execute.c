@@ -132,9 +132,7 @@ static void execve_and_exit(t_state* state, char* command_path, char **argv, cha
 		state->last_status = NOT_EXECUTABLE_EXIT_CODE;
 
 	if (file_is_directory(command_path)) { // maybe we should check S_ISREG aswell
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(command_path, STDERR_FILENO);
-		ft_putstr_fd(": is a directory\n", STDERR_FILENO);
+		report_error(command_path, "is a directory");
 		free(command_path);
 		cleanup_and_die(state, state->last_status);
 	}
@@ -142,13 +140,6 @@ static void execve_and_exit(t_state* state, char* command_path, char **argv, cha
 	perror("minishell: execve");
 	free(command_path);
 	cleanup_and_die(state, state->last_status);
-}
-
-static void log_command_not_found(const char *pathname) // bad? input may be split by other processes writing to stderr
-{
-	ft_putstr_fd("minishell: ", STDERR_FILENO);
-	ft_putstr_fd(pathname, STDERR_FILENO);
-	ft_putstr_fd(": command not found\n", STDERR_FILENO);
 }
 
 t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
@@ -173,16 +164,12 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 		perror("minishell: do_piping: dup2");
 
 	err = apply_redirections(state, simple->redirections);
-	if (err != NO_ERROR) // bad: calls write many times while trying to write an entire line
+	if (err != NO_ERROR)
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(error_repr(err), STDERR_FILENO);
 		if (is_syscall_related(err))
-		{
-			ft_putstr_fd(": ", STDERR_FILENO);
-			ft_putstr_fd(strerror(errno), STDERR_FILENO);
-		}
-		ft_putchar_fd('\n', STDERR_FILENO);
+			report_syscall_error("apply_redirections");
+		else
+			report_t_error("apply_redirections", err);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
 
@@ -193,19 +180,12 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	err = path_expanded_word(state->env, simple->words->contents, &command_path);
 	if (err == E_COMMAND_NOT_FOUND && command_path == NULL)
 	{
-		log_command_not_found(simple->words->contents);
+		report_error(simple->words->contents, "command not found");
 		cleanup_and_die(state, COMMAND_NOT_FOUND_EXIT_CODE);
 	}
 	if (err != NO_ERROR)
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(error_repr(err), STDERR_FILENO);
-		if (is_syscall_related(err))
-		{
-			ft_putstr_fd(": ", STDERR_FILENO);
-			ft_putstr_fd(strerror(errno), STDERR_FILENO);
-		}
-		ft_putchar_fd('\n', STDERR_FILENO);
+		report_t_error("path_expanded_word", err);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
 
@@ -215,14 +195,14 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	char** argv = wl_into_word_array(&simple->words);
 	if (!argv)
 	{
-		ft_putstr_fd("minishell: Out of memory\n", STDERR_FILENO);
+		report_t_error("wl_into_word_array", E_OOM);
 		free(command_path);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
 	char** envp = env_make_envp(state->env);
 	if (!envp)
 	{
-		ft_putstr_fd("minishell: Out of memory\n", STDERR_FILENO);
+		report_t_error("env_make_envp", E_OOM);
 		free_null_terminated_str_array(argv);
 		free(command_path);
 		cleanup_and_die(state, EXIT_FAILURE);
@@ -267,7 +247,7 @@ void close_fd_pair(int fd[2])
 	close(fd[1]);
 }
 
-t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin)  // bad: calls write many times while trying to write an entire line
+t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin)
 {
 	t_command_result res;
 	int io_backup[2];
@@ -276,24 +256,16 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 	err = save_stdin_stdout(io_backup);
 	if (err != NO_ERROR)
 	{
-		ft_putstr_fd("minishell: save_stdin_stdout: ", STDERR_FILENO);
-		ft_putstr_fd(error_repr(err), STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-		ft_putstr_fd(strerror(errno), STDERR_FILENO);
-		ft_putchar_fd('\n', STDERR_FILENO);
+		report_syscall_error(error_repr(err));
 		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	}
 	err = apply_redirections(state, builtin->redirections);
 	if (err != NO_ERROR)
 	{
-		ft_putstr_fd("minishell: ", STDERR_FILENO);
-		ft_putstr_fd(error_repr(err), STDERR_FILENO);
 		if (is_syscall_related(err))
-		{
-			ft_putstr_fd(": ", STDERR_FILENO);
-			ft_putstr_fd(strerror(errno), STDERR_FILENO);
-		}
-		ft_putchar_fd('\n', STDERR_FILENO);
+			report_syscall_error("apply_redirections");
+		else
+			report_t_error("apply_redirections", err);
 		close_fd_pair(io_backup);
 		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	}
@@ -302,11 +274,7 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 	close_fd_pair(io_backup);
 	if (err != NO_ERROR && res.error == NO_ERROR)
 	{
-		ft_putstr_fd("minishell: restore_stdin_stdout: ", STDERR_FILENO);
-		ft_putstr_fd(error_repr(err), STDERR_FILENO);
-		ft_putstr_fd(": ", STDERR_FILENO);
-		ft_putstr_fd(strerror(errno), STDERR_FILENO);
-		ft_putchar_fd('\n', STDERR_FILENO);
+		report_syscall_error(error_repr(err));
 		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
 	}
 	return res;
