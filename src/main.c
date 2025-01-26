@@ -110,6 +110,7 @@ void run_interpreter(t_state* state)
 		if (err != NO_ERROR)
 			log_error(err);
 		free(state->line);
+		state->line = NULL;
 	}
 	rl_clear_history();
 	// TODO: call `exit` builtin on Ctrl-D
@@ -148,6 +149,7 @@ void run_non_interactive_loop(t_state *state)
 		if (err != NO_ERROR)
 			log_error(err);
 		free(state->line);
+		state->line = NULL;
 	}
 }
 
