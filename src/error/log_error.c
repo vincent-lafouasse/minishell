@@ -6,6 +6,25 @@
 #include <sys/errno.h>
 #include <unistd.h>
 
+void	report_error_message(const char *reason)
+{
+	size_t		len;
+	t_string	*msg;
+
+	len = ft_strlen(reason) + ft_strlen("minishell: \n");
+	msg = string_new_with_capacity(len);
+	if (!msg)
+	{
+		ft_putstr_fd("minishell: ", STDERR_FILENO);
+		ft_putstr_fd(reason, STDERR_FILENO);
+		ft_putstr_fd("\n", STDERR_FILENO);
+	}
+	string_extend(&msg, "minishell: ");
+	string_extend(&msg, reason);
+	string_extend(&msg, "\n");
+	write(STDERR_FILENO, msg->data, msg->len);
+}
+
 // -> prints: "minishell: $ORIGIN: $REASON\n"
 void	report_error(const char *origin, const char *reason)
 {
