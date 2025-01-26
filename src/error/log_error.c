@@ -26,8 +26,10 @@ void report_error(const char *origin, const char *reason) {
     write(STDERR_FILENO, msg->data, msg->len);
 }
 
+// -> prints: "minishell: $SYSCALL: $STRERROR(ERRNO)\n"
 void report_syscall_error(const char *syscall) {
 }
 
+// -> prints: "minishell: $REASON:  $ERROR_REPR(err)\n"
 void report_t_error(const char *reason, t_error err) {
 }
