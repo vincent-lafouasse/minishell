@@ -41,10 +41,7 @@ t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to
 
 	t_command_result inner_res = execute_command(state, cmd);
 	if (inner_res.error != NO_ERROR)
-	{
-		ft_putstr_fd("minishell: subshell:", STDERR_FILENO); // TODO: make error message a little cleaner
-		log_error(inner_res.error);
-	}
+		report_t_error("subshell", err);
 	shell_cleanup(state);
 	if (inner_res.error != NO_ERROR)
 		exit(inner_res.status_code);
