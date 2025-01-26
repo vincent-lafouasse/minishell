@@ -49,7 +49,7 @@ t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to
 	if (inner_res.error != NO_ERROR)
 		exit(inner_res.status_code);
 	else
-		exit(state->last_status);;
+		exit(state->last_status);
 }
 
 t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {
