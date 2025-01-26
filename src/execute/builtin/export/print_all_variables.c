@@ -1,22 +1,15 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   print_all_variables.c                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/22 17:00:45 by poss              #+#    #+#             */
-/*   Updated: 2025/01/22 17:02:32 by poss             ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "../builtin.h"
-#include "error/t_error.h"
+
 #include "execute/execute.h"
+#include "error/t_error.h"
+#include "libft/string.h"
 #include "word/t_string/t_string.h"
+#include "word/t_word_list/t_word_list.h"
+
+#include <stdlib.h>
 #include <unistd.h>
 
-static t_error	append_entry_line(t_env_entry entry, t_string **out)
+static t_error append_entry_line(t_env_entry entry, t_string **out)
 {
 	if (string_extend(out, "export "))
 		return (E_OOM);
@@ -36,10 +29,10 @@ static t_error	append_entry_line(t_env_entry entry, t_string **out)
 	return (NO_ERROR);
 }
 
-static t_error	gather_environment(t_env *env, t_string **out)
+static t_error gather_environment(t_env *env, t_string **out)
 {
-	t_env_entry	curr;
-	t_error		err;
+	t_env_entry curr;
+	t_error err;
 
 	while (env)
 	{
@@ -52,20 +45,21 @@ static t_error	gather_environment(t_env *env, t_string **out)
 	return (NO_ERROR);
 }
 
-// maybe bad, unchecked write in print_all_variables(state)
-t_command_result	print_all_variables(t_state *state)
+t_command_result print_all_variables(t_state *state)
 {
-	t_string	*env;
+	t_string *env;
 
 	env = string_new();
 	if (!env)
-		return ((t_command_result){.error = E_OOM});
+		return (t_command_result){.error = E_OOM};
 	if (gather_environment(state->env, &env) != NO_ERROR)
 	{
 		string_destroy(env);
-		return ((t_command_result){.error = E_OOM});
+		return (t_command_result){.error = E_OOM};
 	}
-	write(STDOUT_FILENO, &env->data, env->len);
+
+	write(STDOUT_FILENO, &env->data, env->len); // maybe bad, write error may be handled
 	string_destroy(env);
-	return ((t_command_result){.error = NO_ERROR, .status_code = 0});
+	return (t_command_result){.error = NO_ERROR, .status_code = 0};
 }
+
