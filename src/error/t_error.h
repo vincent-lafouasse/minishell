@@ -32,3 +32,7 @@ const char *error_repr(t_error err);
 char parse_error_exit_code(t_error err);
 void die(const char *msg);
 void ft_assert(bool assertion, const char *msg);
+
+void report_error(const char *origin, const char *reason);
+void report_syscall_error(const char *syscall);
+void report_t_error(const char *reason, t_error err);
