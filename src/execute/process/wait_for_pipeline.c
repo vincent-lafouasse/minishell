@@ -24,7 +24,7 @@ static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 		waited_for_pid = wait_through_signals(-1, &status);
 		if (waited_for_pid < 0)
 		{
-			if (errno == ECHILD) // pid < 0 && errno == ECHILD after `wait(-1)`: we have no more children
+			if (errno == ECHILD)
 				children_remain = false;
 			else
 				return (E_WAIT);
