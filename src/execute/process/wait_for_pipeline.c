@@ -54,8 +54,7 @@ t_error wait_for_pipeline(t_state *state, const t_pid_list *pids, int *last_exit
 	last_pid = pidl_last(pids)->pid;
 	err = waitpid_and_exhaust_children(last_pid, &last_status);
 	if (err != NO_ERROR)
-		// E_WAIT occured, remaining child processes should be killed by the caller, THOUGH:
-		return (err); // BAD: `kill(2)` has no effect on zombie processes, so `wait(pid, WNOHANG)` them first
+		return (err);
 	if (WIFSIGNALED(last_status))
 	{
 		if (state->is_interactive && state->tty_properties_initialized)
