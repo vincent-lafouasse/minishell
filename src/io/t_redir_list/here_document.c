@@ -1,3 +1,4 @@
+#include "error/t_error.h"
 #include "t_redir_list.h"
 #include "parse/t_command/t_command.h"
 #include "word/expansions/expand.h"
@@ -14,14 +15,6 @@
 #include <unistd.h>
 
 #define HERE_DOCUMENT_PROMPT "> "
-
-static void warn_for_unexpected_eof(void)
-{
-	const char *message;
-
-	message = "minishell: warning: here-document delimited by end-of-file\n";
-	ft_putendl_fd(message, STDERR_FILENO);
-}
 
 static t_error	here_doc_append(t_string **out, const char *str)
 {
@@ -55,7 +48,7 @@ static t_error	read_here_document_internal(const char *delimiter, t_string **doc
 		}
 		if (!line)
 		{
-			warn_for_unexpected_eof();
+			report_error("warning", "here-document delimited by end-of-file");
 			break;
 		}
 		if (delimiter_matches_line(delimiter, line))
