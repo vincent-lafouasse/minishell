@@ -13,12 +13,6 @@
 
 void shell_cleanup(t_state *state); // bad, should be #include "shell.h"
 
-static void warn_non_empty_redirs(const t_subshell* s) {
-	const char* msg = "minishell: warning: ignored redirs in subshell\n";
-	if (s->redirections != NULL)
-		write(STDERR_FILENO, msg, ft_strlen(msg));
-}
-
 t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close) {
 	t_error err;
 	bool in_child;
@@ -50,7 +44,8 @@ t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to
 }
 
 t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {
-	warn_non_empty_redirs(subshell);
+	if (subshell->redirections != NULL)
+		report_error("warning", "subshell redirections ignored");
 	return launch_cmd_in_subshell(state, subshell->cmd, io, fd_to_close);
 }
 
