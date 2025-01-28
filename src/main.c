@@ -52,9 +52,8 @@ t_error run_and_parse_command(const char* input, t_state* state)
 
 	t_command_result res = execute_command(state, state->root);
 	command_destroy_and_clear(&state->root);
-	if (res.error == NO_ERROR)
-		state->last_status = res.status_code;
-	else if (res.error != NO_ERROR && res.status_code == 0)
+	state->last_status = res.status_code;
+	if (res.error != NO_ERROR && res.status_code == 0)
 		state->last_status = EXIT_FAILURE;
 	return res.error;
 }
