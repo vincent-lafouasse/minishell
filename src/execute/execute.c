@@ -35,10 +35,11 @@ static void cleanup_and_die(t_state *state, int with_status)
 t_error launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
 	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
 
+	t_expansion_variables vars;
 	t_error err;
 
 	if (command.type == CMD_SIMPLE) {
-		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
+		vars = (t_expansion_variables){state->env, state->last_status};
 		err = variable_expand_words(vars, &command.simple->words);
 		if (err != NO_ERROR)
 			return err;
