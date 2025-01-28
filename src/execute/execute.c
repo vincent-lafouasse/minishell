@@ -122,11 +122,10 @@ _Noreturn
 static void execve_and_exit(t_state* state, char* command_path, char **argv, char **envp)
 {
 	execve(command_path, argv, envp);
-	int error = errno;
 	free_null_terminated_str_array(argv);
 	free_null_terminated_str_array(envp);
 
-	if (error == ENOENT) // (execute_cmd.c:5967)
+	if (errno == ENOENT) // (execute_cmd.c:5967)
 		state->last_status = COMMAND_NOT_FOUND_EXIT_CODE;
 	else
 		state->last_status = NOT_EXECUTABLE_EXIT_CODE;
