@@ -15,6 +15,20 @@
 #define COMMAND_NOT_FOUND_EXIT_CODE 127
 #define NOT_EXECUTABLE_EXIT_CODE 126
 
+typedef struct s_execve_variables {
+	char *path;
+	char **argv;
+	char **envp;
+} t_execve_variables;
+
+_Noreturn
+static void execve_or_die(t_state* state, t_execve_variables vars);
+_Noreturn
+static void simple_cmd_routine(t_state *state, t_simple *simple, t_io io, int fd_to_close);
+
+static void prepare_io_or_die(t_state *state, t_simple *simple, t_io io, int fd_to_close);
+static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execve_variables *vars);
+
 bool file_is_directory(const char *file_path);
 
 void shell_cleanup(t_state *);
@@ -41,35 +55,44 @@ static void free_null_terminated_str_array(char *arr[])
 	free(arr);
 }
 
-_Noreturn
-static void execve_and_exit(t_state* state, char* command_path, char **argv, char **envp)
+t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
 {
-	execve(command_path, argv, envp);
-	free_null_terminated_str_array(argv);
-	free_null_terminated_str_array(envp);
+	t_error err;
+	bool in_child;
 
-	if (errno == ENOENT) // (execute_cmd.c:5967)
-		state->last_status = COMMAND_NOT_FOUND_EXIT_CODE;
+	err = fork_and_push_pid(&in_child, &state->our_children);
+	if (err != NO_ERROR)
+		return err;
+
+	if (!in_child)
+		return NO_ERROR;
 	else
-		state->last_status = NOT_EXECUTABLE_EXIT_CODE;
+		pidl_clear(&state->our_children);
 
-	if (file_is_directory(command_path)) { // maybe we should check S_ISREG aswell
-		report_error(command_path, "is a directory");
-		free(command_path);
-		cleanup_and_die(state, state->last_status);
-	}
-
-	perror("minishell: execve");
-	free(command_path);
-	cleanup_and_die(state, state->last_status);
+	simple_cmd_routine(state, simple, io, fd_to_close);
 }
-
 
 _Noreturn
 static void simple_cmd_routine(t_state *state, t_simple *simple, t_io io, int fd_to_close)
 {
+	t_execve_variables variables;
+
+	prepare_io_or_die(state, simple, io, fd_to_close);
+
+	if (!simple->words) // exit here if command is null
+		cleanup_and_die(state, EXIT_SUCCESS);
+
+	prepare_execve_vars_or_die(state, simple, &variables);
+
+	// exit here instead of executing if last_signal is SIGINT
+	reset_signal_handlers();
+
+	execve_or_die(state, variables);
+}
+
+static void prepare_io_or_die(t_state *state, t_simple *simple, t_io io, int fd_to_close)
+{
 	t_error err;
-	char *command_path;
 
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close);
@@ -87,12 +110,14 @@ static void simple_cmd_routine(t_state *state, t_simple *simple, t_io io, int fd
 			report_t_error("apply_redirections", err);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
+}
 
-	if (!simple->words) // exit here if command is null
-		cleanup_and_die(state, EXIT_SUCCESS);
+static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execve_variables *vars)
+{
+	t_error err;
 
-	err = path_expanded_word(state->env, simple->words->contents, &command_path);
-	if (err == E_COMMAND_NOT_FOUND && command_path == NULL)
+	err = path_expanded_word(state->env, simple->words->contents, &vars->path);
+	if (err == E_COMMAND_NOT_FOUND)
 	{
 		report_error(simple->words->contents, "command not found");
 		cleanup_and_die(state, COMMAND_NOT_FOUND_EXIT_CODE);
@@ -103,41 +128,42 @@ static void simple_cmd_routine(t_state *state, t_simple *simple, t_io io, int fd
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
 
-	// exit here instead of executing if last_signal is SIGINT
-	reset_signal_handlers();
-
-	char** argv = wl_into_word_array(&simple->words);
-	if (!argv)
+	vars->argv = wl_into_word_array(&simple->words);
+	if (!vars->argv)
 	{
 		report_t_error("wl_into_word_array", E_OOM);
-		free(command_path);
+		free(vars->path);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
-	char** envp = env_make_envp(state->env);
-	if (!envp)
+	vars->envp = env_make_envp(state->env);
+	if (!vars->envp)
 	{
 		report_t_error("env_make_envp", E_OOM);
-		free_null_terminated_str_array(argv);
-		free(command_path);
+		free_null_terminated_str_array(vars->argv);
+		free(vars->path);
 		cleanup_and_die(state, EXIT_FAILURE);
 	}
-
-	execve_and_exit(state, command_path, argv, envp);
 }
 
-t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_to_close)
+_Noreturn
+static void execve_or_die(t_state* state, t_execve_variables vars)
 {
-	t_error err;
-	bool in_child;
+	execve(vars.path, vars.argv, vars.envp);
+	free_null_terminated_str_array(vars.argv);
+	free_null_terminated_str_array(vars.envp);
 
-	err = fork_and_push_pid(&in_child, &state->our_children);
-	if (err != NO_ERROR)
-		return err;
-
-	if (!in_child)
-		return NO_ERROR;
+	if (errno == ENOENT) // (execute_cmd.c:5967)
+		state->last_status = COMMAND_NOT_FOUND_EXIT_CODE;
 	else
-		pidl_clear(&state->our_children);
+		state->last_status = NOT_EXECUTABLE_EXIT_CODE;
 
-	simple_cmd_routine(state, simple, io, fd_to_close);
+	if (file_is_directory(vars.path)) { // maybe we should check S_ISREG aswell
+		report_error(vars.path, "is a directory");
+		free(vars.path);
+		cleanup_and_die(state, state->last_status);
+	}
+
+	perror("minishell: execve");
+	free(vars.path);
+	cleanup_and_die(state, state->last_status);
 }
