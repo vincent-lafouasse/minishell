@@ -14,9 +14,9 @@
 void shell_cleanup(t_state *state); // bad, should be #include "shell.h"
 
 _Noreturn
-static void subshell_routine(t_state *state, t_command cmd, t_io io, int fd_to_close);
 
 t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close) {
+	t_command_result res;
 	t_error err;
 	bool in_child;
 
@@ -29,26 +29,16 @@ t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to
 	else
 		pidl_clear(&state->our_children);
 
-	subshell_routine(state, cmd, io, fd_to_close);
-}
-
-_Noreturn
-static void subshell_routine(t_state *state, t_command cmd, t_io io, int fd_to_close)
-{
-	t_error err;
-	t_command_result inner_res;
-
 	err = do_piping(io);
 	if (err != NO_ERROR)
 		perror("minishell: do_piping: dup2");
 
 	if (fd_to_close != CLOSE_NOTHING)
 		close(fd_to_close);
-	inner_res = execute_command(state, cmd);
-	if (inner_res.error != NO_ERROR)
+
+	res = execute_command(state, cmd);
+	if (res.error != NO_ERROR)
 		report_t_error("subshell", err);
-	shell_cleanup(state);
-	exit(inner_res.status_code);
 }
 
 t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {

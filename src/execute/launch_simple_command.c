@@ -23,8 +23,6 @@ typedef struct s_execve_variables {
 
 _Noreturn
 static void execve_or_die(t_state* state, t_execve_variables vars);
-_Noreturn
-static void simple_cmd_routine(t_state *state, t_simple *simple, t_io io, int fd_to_close);
 
 static void prepare_io_or_die(t_state *state, t_simple *simple, t_io io, int fd_to_close);
 static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execve_variables *vars);
@@ -59,6 +57,7 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 {
 	t_error err;
 	bool in_child;
+	t_execve_variables variables;
 
 	err = fork_and_push_pid(&in_child, &state->our_children);
 	if (err != NO_ERROR)
@@ -68,14 +67,6 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 		return NO_ERROR;
 	else
 		pidl_clear(&state->our_children);
-
-	simple_cmd_routine(state, simple, io, fd_to_close);
-}
-
-_Noreturn
-static void simple_cmd_routine(t_state *state, t_simple *simple, t_io io, int fd_to_close)
-{
-	t_execve_variables variables;
 
 	prepare_io_or_die(state, simple, io, fd_to_close);
 
