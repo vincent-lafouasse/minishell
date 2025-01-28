@@ -280,6 +280,33 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 	return res;
 }
 
+t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
+{
+	t_error err;
+
+	err = launch_pipeline(state, pipeline, io_default());
+	// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2495 and sig.c:418)
+	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
+	// E_OOM -> propagate
+	if (err != NO_ERROR)
+		return (t_command_result){.error = err};
+	assert(state->our_children != NULL);
+
+	int last_exit_status;
+	err = wait_for_pipeline(state, state->our_children, &last_exit_status);
+	// the only errors `waitpid` can return to us are EINVAL and ECHILD, the
+	// first being a programming error and the other one signifying that the
+	// process was somehow never launched or does not belong to us anymore.
+	// meaning they are effectively unreachable, only warn for them in this case
+	if (err != NO_ERROR)
+	{
+		last_exit_status = EXIT_FAILURE;
+		perror("minishell: wait_for_pipeline");
+	}
+	pidl_clear(&state->our_children);
+	return ((t_command_result){.error = NO_ERROR, .status_code = last_exit_status});
+}
+
 t_command_result execute_command(t_state *state, t_command command) {
 
 	t_command_result res;
@@ -315,29 +342,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 		}
 	}
 	else if (command.type == CMD_PIPELINE)
-	{
-		err = launch_pipeline(state, command.pipeline, io_default());
-		// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2495 and sig.c:418)
-		// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
-		// E_OOM -> propagate
-		if (err != NO_ERROR)
-			return (t_command_result){.error = err};
-		assert(state->our_children != NULL);
-
-		int last_exit_status;
-		err = wait_for_pipeline(state, state->our_children, &last_exit_status);
-		// the only errors `waitpid` can return to us are EINVAL and ECHILD, the
-		// first being a programming error and the other one signifying that the
-		// process was somehow never launched or does not belong to us anymore.
-		// meaning they are effectively unreachable, only warn for them in this case
-		if (err != NO_ERROR)
-		{
-			last_exit_status = EXIT_FAILURE;
-			perror("minishell: wait_for_pipeline");
-		}
-		pidl_clear(&state->our_children);
-		res = (t_command_result){.error = NO_ERROR, .status_code = last_exit_status};
-	}
+		res = execute_pipeline(state, command.pipeline);
 	else if (command.type == CMD_CONDITIONAL)
 		res = execute_conditional(state, command.conditional);
 	else if (command.type == CMD_SUBSHELL)
