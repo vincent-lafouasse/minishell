@@ -280,6 +280,43 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 	return res;
 }
 
+t_command_result execute_simple(t_state *state, t_simple *simple)
+{
+	t_error err;
+
+	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
+	err = launch_simple_command(state, simple, io_default(), CLOSE_NOTHING);
+	if (err != NO_ERROR)
+		return (t_command_result){.error = err};
+	assert(state->our_children != NULL);
+
+	int exit_status;
+	err = wait_for_process(state, state->our_children->pid, &exit_status);
+	if (err != NO_ERROR)
+	{
+		exit_status = EXIT_FAILURE;
+		perror("minishell: wait_for_pipeline");
+	}
+	pidl_clear(&state->our_children);
+	return ((t_command_result){.error = NO_ERROR, .status_code = exit_status});
+}
+
+t_command_result execute_simple_or_builtin(t_state *state, t_simple *simple)
+{
+	t_expansion_variables vars;
+	t_error err;
+
+	vars = (t_expansion_variables){state->env, state->last_status};
+	err = variable_expand_words(vars, &simple->words);
+	if (err != NO_ERROR)
+		return (t_command_result){.error = err};
+
+	if (/* simple->words && */ is_builtin_command(simple))
+		return (do_redirs_and_execute_builtin(state, simple));
+	else
+		return (execute_simple(state, simple));
+}
+
 t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 {
 	t_error err;
@@ -310,37 +347,10 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 t_command_result execute_command(t_state *state, t_command command) {
 
 	t_command_result res;
-	t_error err;
 
 	assert(state->our_children == NULL);
 	if (command.type == CMD_SIMPLE)
-	{
-		t_expansion_variables vars = (t_expansion_variables){state->env, state->last_status};
-		err = variable_expand_words(vars, &command.simple->words);
-		if (err != NO_ERROR)
-			return (t_command_result){.error = err};
-
-		if (/* command.simple->words && */ is_builtin_command(command.simple))
-			res = do_redirs_and_execute_builtin(state, command.simple);
-		else
-		{
-			// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
-			err = launch_simple_command(state, command.simple, io_default(), CLOSE_NOTHING);
-			if (err != NO_ERROR)
-				return (t_command_result){.error = err};
-			assert(state->our_children != NULL);
-
-			int exit_status;
-			err = wait_for_process(state, state->our_children->pid, &exit_status);
-			if (err != NO_ERROR)
-			{
-				exit_status = EXIT_FAILURE;
-				perror("minishell: wait_for_pipeline");
-			}
-			pidl_clear(&state->our_children);
-			res = (t_command_result){.error = NO_ERROR, .status_code = exit_status};
-		}
-	}
+		res = execute_simple_or_builtin(state, command.simple);
 	else if (command.type == CMD_PIPELINE)
 		res = execute_pipeline(state, command.pipeline);
 	else if (command.type == CMD_CONDITIONAL)
