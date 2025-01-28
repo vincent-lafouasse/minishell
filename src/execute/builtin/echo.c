@@ -84,18 +84,18 @@ t_command_result execute_echo(t_state *state, t_simple *builtin)
 
 	out = string_new();
 	if (!out)
-		return (t_command_result){.error = E_OOM};
+		return command_err(E_OOM);
 
 	err = echo_into_string(&out, words, should_print_newline);
 	if (err != NO_ERROR)
 	{
 		string_destroy(out);
-		return (t_command_result){.error = err};
+		return command_err(err);
 	}
 
 	int chars_written = write(STDOUT_FILENO, &out->data, out->len);
 	string_destroy(out);
 	if (chars_written < 0)
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
-	return (t_command_result){.error = NO_ERROR, .status_code = 0};
+		return command_ok(EXIT_FAILURE);
+	return command_ok(EXIT_SUCCESS);
 }

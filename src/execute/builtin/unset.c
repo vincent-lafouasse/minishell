@@ -57,6 +57,6 @@ t_command_result execute_unset(t_state *state, t_simple *builtin)
 		var = var->next;
 	}
 	if (got_invalid_identifier)
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
-	return (t_command_result){.error = NO_ERROR, .status_code = 0};
+		return command_ok(EXIT_FAILURE);
+	return command_ok(EXIT_SUCCESS);
 }

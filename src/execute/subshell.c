@@ -53,7 +53,7 @@ t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 {
 	t_error err = launch_subshell(state, subshell, io_default(), CLOSE_NOTHING);
 	if (err != NO_ERROR) {
-		return (t_command_result){.error = err};
+		return (command_err(err));
 	}
 	pid_t pid = state->our_children->pid;
 
@@ -65,5 +65,5 @@ t_command_result execute_subshell(t_state *state, t_subshell *subshell)
 		perror("minishell: wait_for_process");
 	}
 	pidl_clear(&state->our_children);
-	return (t_command_result){.error = NO_ERROR, .status_code = exit_status};
+	return (command_ok(exit_status));
 }

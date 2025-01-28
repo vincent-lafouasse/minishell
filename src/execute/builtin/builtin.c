@@ -32,7 +32,7 @@ t_command_result execute_builtin(t_state *state, t_simple *simple) {
 	if (str_eq(command, "exit"))
 		return execute_exit(state, simple);
 
-	return (t_command_result){.error = E_UNREACHABLE};
+	return command_err(E_UNREACHABLE);
 }
 
 bool is_builtin_command(const t_simple* simple) {

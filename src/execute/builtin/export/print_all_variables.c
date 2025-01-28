@@ -59,7 +59,7 @@ static t_command_result write_env_to_stdout(t_string *env)
 	}
 	else
 		exit_code = EXIT_SUCCESS;
-	return (t_command_result){.error = NO_ERROR, .status_code = exit_code};
+	return command_ok(exit_code);
 }
 
 t_command_result print_all_variables(t_state *state)
@@ -68,11 +68,11 @@ t_command_result print_all_variables(t_state *state)
 
 	env = string_new();
 	if (!env)
-		return (t_command_result){.error = E_OOM};
+		return command_err(E_OOM);
 	if (gather_environment(state->env, &env) != NO_ERROR)
 	{
 		string_destroy(env);
-		return (t_command_result){.error = E_OOM};
+		return command_err(E_OOM);
 	}
 
 	return write_env_to_stdout(env);

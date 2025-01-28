@@ -256,7 +256,7 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 	if (err != NO_ERROR)
 	{
 		report_syscall_error(error_repr(err));
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return command_ok(EXIT_FAILURE);
 	}
 	err = apply_redirections(state, builtin->redirections);
 	if (err != NO_ERROR)
@@ -266,7 +266,7 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 		else
 			report_t_error("apply_redirections", err);
 		close_fd_pair(io_backup);
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return command_ok(EXIT_FAILURE);
 	}
 	res = execute_builtin(state, builtin);
 	err = restore_stdin_stdout(io_backup);
@@ -274,7 +274,7 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 	if (err != NO_ERROR && res.error == NO_ERROR)
 	{
 		report_syscall_error(error_repr(err));
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return command_ok(EXIT_FAILURE);
 	}
 	return res;
 }
@@ -286,9 +286,9 @@ t_command_result execute_simple(t_state *state, t_simple *simple)
 	err = launch_simple_command(state, simple, io_default(), CLOSE_NOTHING);
 	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
 	if (err == E_FORK)
-		return (t_command_result){.error = NO_ERROR, .status_code = 126 | 128};
+		return command_ok(126 | 128);
 	else if (err != NO_ERROR)
-		return (t_command_result){.error = err};
+		return command_err(err);
 	assert(state->our_children != NULL);
 
 	int exit_status;
@@ -299,7 +299,7 @@ t_command_result execute_simple(t_state *state, t_simple *simple)
 		perror("minishell: wait_for_pipeline");
 	}
 	pidl_clear(&state->our_children);
-	return ((t_command_result){.error = NO_ERROR, .status_code = exit_status});
+	return (command_ok(exit_status));
 }
 
 t_command_result execute_simple_or_builtin(t_state *state, t_simple *simple)
@@ -310,7 +310,7 @@ t_command_result execute_simple_or_builtin(t_state *state, t_simple *simple)
 	vars = (t_expansion_variables){state->env, state->last_status};
 	err = variable_expand_words(vars, &simple->words);
 	if (err != NO_ERROR)
-		return (t_command_result){.error = err};
+		return command_err(err);
 
 	if (/* simple->words && */ is_builtin_command(simple))
 		return (do_redirs_and_execute_builtin(state, simple));
@@ -327,11 +327,11 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
 	// E_OOM -> propagate
 	if (err == E_PIPE)
-		return (t_command_result){.error = NO_ERROR, .status_code = 1 | 128};
+		return command_ok(1 | 128);
 	if (err == E_FORK)
-		return (t_command_result){.error = NO_ERROR, .status_code = 126 | 128};
+		return command_ok(126 | 128);
 	if (err != NO_ERROR)
-		return (t_command_result){.error = err};
+		return command_err(err);
 	assert(state->our_children != NULL);
 
 	int last_exit_status;
@@ -346,7 +346,7 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 		perror("minishell: wait_for_pipeline");
 	}
 	pidl_clear(&state->our_children);
-	return ((t_command_result){.error = NO_ERROR, .status_code = last_exit_status});
+	return (command_ok(last_exit_status));
 }
 
 t_command_result execute_command(t_state *state, t_command command) {
@@ -363,7 +363,7 @@ t_command_result execute_command(t_state *state, t_command command) {
 	else if (command.type == CMD_SUBSHELL)
 		res = execute_subshell(state, command.subshell);
 	else
-		res = (t_command_result){.error = E_UNREACHABLE};
+		res = command_err(E_UNREACHABLE);
 
 	return res;
 }

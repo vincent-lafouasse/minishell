@@ -126,7 +126,7 @@ t_command_result do_assignments(t_env **env, t_word_list *assignments)
 	{
 		err = parse_assignment(assignments->contents, &assignment);
 		if (err != NO_ERROR)
-			return (t_command_result){.error = err};
+			return command_err(err);
 		if (!assignment.name)
 		{
 			any_failed = true;
@@ -139,10 +139,9 @@ t_command_result do_assignments(t_env **env, t_word_list *assignments)
 		{
 			free(assignment.name);
 			free(assignment.value);
-			return (t_command_result){.error = err};
+			return command_err(err);
 		}
 		assignments = assignments->next;
 	}
-	return (t_command_result) {.error = NO_ERROR, .status_code = any_failed ?
-								EXIT_FAILURE : EXIT_SUCCESS};
+	return (command_ok(any_failed ? EXIT_FAILURE : EXIT_SUCCESS));
 }

@@ -20,14 +20,14 @@ t_command_result execute_cd(t_state *state, t_simple *builtin)
 	if (!arguments || arguments->next != NULL)
 	{
 		write(STDERR_FILENO, USAGE_MESSAGE, ft_strlen(USAGE_MESSAGE));
-		return (t_command_result){.error = NO_ERROR, .status_code = EX_BADUSAGE};
+		return command_ok(EX_BADUSAGE);
 	}
 
 	if (chdir(arguments->contents) < 0)
 	{
 		perror("minishell: cd");
-		return (t_command_result){.error = NO_ERROR, .status_code = EXIT_FAILURE};
+		return command_ok(EXIT_FAILURE);
 	}
 
-	return (t_command_result){.error = NO_ERROR, .status_code = 0};
+	return command_ok(EXIT_SUCCESS);
 }

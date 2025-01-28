@@ -43,7 +43,7 @@ t_command_result execute_exit(t_state *state, t_simple *builtin)
 	{
 		const char *error = "minishell: exit: too many arguments\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
-		return (t_command_result){.error = NO_ERROR, .status_code = EX_BADUSAGE};
+		return command_ok(EX_BADUSAGE);
 	}
 	exit_and_cleanup(state, exit_status);
 }
