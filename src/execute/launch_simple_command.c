@@ -30,15 +30,6 @@ static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execv
 
 bool file_is_directory(const char *file_path);
 
-void shell_cleanup(t_state *);
-
-_Noreturn
-static void cleanup_and_die(t_state *state, int with_status)
-{
-	shell_cleanup(state);
-	exit(with_status);
-}
-
 static void free_null_terminated_str_array(char *arr[])
 {
 	size_t i;
@@ -72,7 +63,7 @@ t_error launch_simple_command(t_state *state, t_simple *simple, t_io io, int fd_
 	prepare_io_or_die(state, simple, io, fd_to_close);
 
 	if (!simple->words) // exit here if command is null
-		cleanup_and_die(state, EXIT_SUCCESS);
+		shell_exit(state, EXIT_SUCCESS);
 
 	prepare_execve_vars_or_die(state, simple, &variables);
 
@@ -100,7 +91,7 @@ static void prepare_io_or_die(t_state *state, t_simple *simple, t_io io, int fd_
 			report_syscall_error("apply_redirections");
 		else
 			report_t_error("apply_redirections", err);
-		cleanup_and_die(state, EXIT_FAILURE);
+		shell_exit(state, EXIT_FAILURE);
 	}
 }
 
@@ -112,12 +103,12 @@ static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execv
 	if (err == E_COMMAND_NOT_FOUND)
 	{
 		report_error(simple->words->contents, "command not found");
-		cleanup_and_die(state, COMMAND_NOT_FOUND_EXIT_CODE);
+		shell_exit(state, COMMAND_NOT_FOUND_EXIT_CODE);
 	}
 	if (err != NO_ERROR)
 	{
 		report_t_error("path_expanded_word", err);
-		cleanup_and_die(state, EXIT_FAILURE);
+		shell_exit(state, EXIT_FAILURE);
 	}
 
 	vars->argv = wl_into_word_array(&simple->words);
@@ -125,7 +116,7 @@ static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execv
 	{
 		report_t_error("wl_into_word_array", E_OOM);
 		free(vars->path);
-		cleanup_and_die(state, EXIT_FAILURE);
+		shell_exit(state, EXIT_FAILURE);
 	}
 	vars->envp = env_make_envp(state->env);
 	if (!vars->envp)
@@ -133,7 +124,7 @@ static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execv
 		report_t_error("env_make_envp", E_OOM);
 		free_null_terminated_str_array(vars->argv);
 		free(vars->path);
-		cleanup_and_die(state, EXIT_FAILURE);
+		shell_exit(state, EXIT_FAILURE);
 	}
 }
 
@@ -152,10 +143,10 @@ static void execve_or_die(t_state* state, t_execve_variables vars)
 	if (file_is_directory(vars.path)) { // maybe we should check S_ISREG aswell
 		report_error(vars.path, "is a directory");
 		free(vars.path);
-		cleanup_and_die(state, state->last_status);
+		shell_exit(state, state->last_status);
 	}
 
 	perror("minishell: execve");
 	free(vars.path);
-	cleanup_and_die(state, state->last_status);
+	shell_exit(state, state->last_status);
 }

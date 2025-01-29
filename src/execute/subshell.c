@@ -12,15 +12,6 @@
 #include <stdio.h>
 #include <sys/wait.h>
 
-void shell_cleanup(t_state *state); // bad, should be #include "shell.h"
-
-_Noreturn
-static void cleanup_and_die(t_state *state, int with_status)
-{
-	shell_cleanup(state);
-	exit(with_status);
-}
-
 t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to_close) {
 	t_command_result res;
 	t_error err;
@@ -46,7 +37,7 @@ t_error launch_cmd_in_subshell(t_state *state, t_command cmd, t_io io, int fd_to
 	if (res.error != NO_ERROR)
 		report_t_error("subshell", err);
 
-	cleanup_and_die(state, res.status_code);
+	shell_exit(state, res.status_code);
 }
 
 t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to_close) {

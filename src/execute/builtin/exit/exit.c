@@ -1,6 +1,7 @@
 #include "../builtin.h"
 
 #include "execute/execute.h"
+#include "shell/shell.h"
 #include "error/t_error.h"
 #include "word/t_word_list/t_word_list.h"
 #include "libft/string.h"
@@ -13,15 +14,6 @@
 
 bool    checked_atoi(const char *s, int32_t *out);
 
-void shell_cleanup(t_state *state); // bad: should be #include "shell.h"
-
-_Noreturn
-static void exit_and_cleanup(t_state *state, int32_t exit_status)
-{
-	shell_cleanup(state);
-	exit(exit_status & 255);
-}
-
 t_command_result execute_exit(t_state *state, t_simple *builtin)
 {
 	t_word_list *args;
@@ -32,12 +24,12 @@ t_command_result execute_exit(t_state *state, t_simple *builtin)
 
 	args = builtin->words->next;
 	if (!args)
-		exit_and_cleanup(state, state->last_status);
+		shell_exit(state, state->last_status);
 	if (!checked_atoi(args->contents, &exit_status))
 	{
 		const char *error = "minishell: exit: numeric argument required\n";
 		write(STDERR_FILENO, error, ft_strlen(error));
-		exit_and_cleanup(state, EX_BADUSAGE);
+		shell_exit(state, EX_BADUSAGE);
 	}
 	if (args->next != NULL)
 	{
@@ -45,5 +37,5 @@ t_command_result execute_exit(t_state *state, t_simple *builtin)
 		write(STDERR_FILENO, error, ft_strlen(error));
 		return command_ok(EX_BADUSAGE);
 	}
-	exit_and_cleanup(state, exit_status);
+	shell_exit(state, exit_status);
 }
