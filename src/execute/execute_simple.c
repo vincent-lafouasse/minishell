@@ -13,7 +13,6 @@
 
 static t_error save_stdin_stdout(int save[2]);
 static t_error restore_stdin_stdout(int save[2]);
-static void close_fd_pair(int fd[2]);
 static t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin);
 
 t_command_result execute_simple_or_builtin(t_state *state, t_simple *simple)
@@ -71,11 +70,11 @@ static t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *
 	if (err != NO_ERROR)
 	{
 		report_t_error("apply_redirections", err);
-		return close_fd_pair(io_backup), command_ok(EXIT_FAILURE);
+		return io_close(io_from_array(io_backup)), command_ok(EXIT_FAILURE);
 	}
 	res = execute_builtin(state, builtin);
 	err = restore_stdin_stdout(io_backup);
-	close_fd_pair(io_backup);
+	io_close(io_from_array(io_backup));
 	if (err != NO_ERROR && res.error == NO_ERROR)
 	{
 		report_syscall_error(error_repr(err));
@@ -112,10 +111,4 @@ static t_error restore_stdin_stdout(int save[2])
 	if (dup2(out, STDOUT_FILENO) < 0)
 		return (E_DUP2);
 	return (NO_ERROR);
-}
-
-static void close_fd_pair(int fd[2])
-{
-	close(fd[0]);
-	close(fd[1]);
 }
