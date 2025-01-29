@@ -45,6 +45,19 @@ static t_error launch_pipeline_inner(t_state* state, t_command command, t_io io,
 		return launch_subshell(state, command.subshell, io, fd_to_close);
 }
 
+static void pipeline_cleanup(t_state *state, t_io pipe, int prev_pipe_read)
+{
+	int error_save;
+
+	error_save = errno;
+	if (prev_pipe_read != CLOSE_NOTHING)
+		close(prev_pipe_read);
+	io_close(pipe);
+	kill_pipeline(state, state->our_children);
+	pidl_clear(&state->our_children);
+	errno = error_save;
+}
+
 t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 {
 	t_command current;
@@ -56,12 +69,7 @@ t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		int pipe_fd[2];
 
 		if (pipe(pipe_fd) < 0)
-		{
-			io_close(ends);
-			kill_pipeline(state, state->our_children);
-			pidl_clear(&state->our_children);
-			return E_PIPE;
-		}
+			return pipeline_cleanup(state, ends, CLOSE_NOTHING), E_PIPE;
 
 		t_io current_io = io_new(ends.input, pipe_fd[PIPE_WRITE]);
 		ends.input = pipe_fd[PIPE_READ];
@@ -69,13 +77,7 @@ t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		err = launch_pipeline_inner(state, current.pipeline->first,
 													  current_io, pipe_fd[PIPE_READ]);
 		if (err != NO_ERROR)
-		{
-			io_close(current_io);
-			close(ends.input);
-			kill_pipeline(state, state->our_children);
-			pidl_clear(&state->our_children);
-			return err;
-		}
+			return pipeline_cleanup(state, current_io, ends.input), err;
 
 		io_close(current_io);
 
@@ -83,12 +85,7 @@ t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 	}
 	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
 	if (err != NO_ERROR)
-	{
-		close(ends.input);
-		kill_pipeline(state, state->our_children);
-		pidl_clear(&state->our_children);
-		return err;
-	}
+		return pipeline_cleanup(state, ends, CLOSE_NOTHING), err;
 	io_close(ends);
 
 	return NO_ERROR;
@@ -166,6 +163,7 @@ t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *builtin
 t_command_result execute_simple(t_state *state, t_simple *simple)
 {
 	t_error err;
+	int exit_status;
 
 	err = launch_simple_command(state, simple, io_default(), CLOSE_NOTHING);
 	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
@@ -175,7 +173,6 @@ t_command_result execute_simple(t_state *state, t_simple *simple)
 		return command_err(err);
 	assert(state->our_children != NULL);
 
-	int exit_status;
 	err = wait_for_process(state, state->our_children->pid, &exit_status);
 	if (err != NO_ERROR)
 	{
