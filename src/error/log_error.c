@@ -24,6 +24,7 @@ void	report_error_message(const char *reason)
 	string_extend(&msg, reason);
 	string_extend(&msg, "\n");
 	write(STDERR_FILENO, msg->data, msg->len);
+	string_destroy(msg);
 }
 
 // -> prints: "minishell: $ORIGIN: $REASON\n"
@@ -49,6 +50,7 @@ void	report_error(const char *origin, const char *reason)
 	string_extend(&msg, reason);
 	string_extend(&msg, "\n");
 	write(STDERR_FILENO, msg->data, msg->len);
+	string_destroy(msg);
 }
 
 // -> prints: "minishell: $SYSCALL: $STRERROR(ERRNO)\n"
