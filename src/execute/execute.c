@@ -107,7 +107,7 @@ t_command_result execute_simple(t_state *state, t_simple *simple)
 	if (err != NO_ERROR)
 	{
 		exit_status = EXIT_FAILURE;
-		perror("minishell: wait_for_pipeline");
+		report_syscall_error("wait_for_process");
 	}
 	pidl_clear(&state->our_children);
 	return (command_ok(exit_status));

@@ -40,7 +40,7 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 	if (err != NO_ERROR)
 	{
 		last_exit_status = EXIT_FAILURE;
-		perror("minishell: wait_for_pipeline");
+		report_syscall_error("wait_for_pipeline");
 	}
 	pidl_clear(&state->our_children);
 	return (command_ok(last_exit_status));
