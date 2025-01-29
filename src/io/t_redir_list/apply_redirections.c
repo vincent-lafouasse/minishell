@@ -3,7 +3,7 @@
 
 #include "libft/string.h"
 #include "word/expansions/expand.h"
-#include "execute/execute.h" // TODO: move t_state out of this header
+#include "shell/shell.h"
 
 #include <fcntl.h>
 #include <stdlib.h>

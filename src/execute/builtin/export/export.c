@@ -2,8 +2,6 @@
 
 #include "execute/execute.h"
 
-#include <stdio.h> // temporarily
-
 t_command_result do_assignments(t_env **env, t_word_list *assignments);
 t_command_result print_all_variables(t_state *state);
 

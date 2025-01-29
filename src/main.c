@@ -12,7 +12,6 @@
 #include "execute/execute.h"
 #include "execute/t_env/t_env.h"
 #include "io/t_io/t_io.h"
-#include "log/log.h" // todo remove in production mode
 #include "parse/parse.h"
 #include "libft/string.h"
 #include "libft/ft_io.h"
