@@ -170,7 +170,7 @@ t_command_result execute_simple(t_state *state, t_simple *simple)
 	err = launch_simple_command(state, simple, io_default(), CLOSE_NOTHING);
 	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
 	if (err == E_FORK)
-		return command_ok(126 | 128);
+		return report_syscall_error("fork"), command_ok(126 | 128);
 	else if (err != NO_ERROR)
 		return command_err(err);
 	assert(state->our_children != NULL);
@@ -211,9 +211,9 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
 	// E_OOM -> propagate
 	if (err == E_PIPE)
-		return command_ok(1 | 128);
+		return report_syscall_error("pipe"), command_ok(1 | 128);
 	if (err == E_FORK)
-		return command_ok(126 | 128);
+		return report_syscall_error("fork"), command_ok(126 | 128);
 	if (err != NO_ERROR)
 		return command_err(err);
 	assert(state->our_children != NULL);
