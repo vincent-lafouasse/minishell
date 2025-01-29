@@ -1,5 +1,5 @@
 #include "Redirections.h"
-#include "io/t_redir_list/t_redir_list.h"
+#include "redirection/t_redir_list/t_redir_list.h"
 #include <cstring>
 
 static t_redirect redirect_copy(t_redirect redir)

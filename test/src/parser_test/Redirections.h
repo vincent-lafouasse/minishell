@@ -6,7 +6,7 @@
 extern "C"
 {
 #include "parse/t_command/t_command.h"
-#include "io/t_redir_list/t_redir_list.h"
+#include "redirection/t_redir_list/t_redir_list.h"
 };
 
 struct Redirections

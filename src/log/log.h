@@ -6,7 +6,7 @@
 #include "parse/tokenize/tokenize.h"
 #include "parse/t_symbol/t_symbol.h"
 #include "word/t_word_list/t_word_list.h"
-#include "io/t_redir_list/t_redir_list.h"
+#include "redirection/t_redir_list/t_redir_list.h"
 
 void log_token(t_token token);
 void log_token_list(const t_token_list *tkl);

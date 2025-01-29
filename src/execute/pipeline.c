@@ -3,7 +3,7 @@
 #include "error/t_error.h"
 #include "shell/shell.h"
 #include "parse/t_command/t_command.h"
-#include "io/t_io/t_io.h"
+#include "redirection/t_io/t_io.h"
 #include "word/expansions/expand.h"
 #include "execute/process/process.h"
 

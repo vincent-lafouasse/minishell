@@ -11,7 +11,7 @@
 /* ************************************************************************** */
 
 #include "../tokenize/t_token.h"
-#include "io/t_redir_list/t_redir_list.h"
+#include "redirection/t_redir_list/t_redir_list.h"
 #include "parse/tokenize/t_token_list/t_token_list.h"
 #include "reduction_internals.h"
 #include <assert.h> // temporarily

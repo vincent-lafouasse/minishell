@@ -13,7 +13,7 @@
 #ifndef T_COMMAND_H
 # define T_COMMAND_H
 
-# include "io/t_redir_list/t_redir_list.h"
+# include "redirection/t_redir_list/t_redir_list.h"
 # include "word/t_word_list/t_word_list.h"
 # include <stdbool.h>
 

@@ -4,7 +4,7 @@
 #include "shell/shell.h"
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
-#include "io/t_io/t_io.h"
+#include "redirection/t_io/t_io.h"
 
 #define CLOSE_NOTHING -1
 
