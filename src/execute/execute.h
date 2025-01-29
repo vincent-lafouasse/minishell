@@ -37,6 +37,8 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline);
 t_command_result execute_command(t_state *state, t_command command);
 t_command_result execute_conditional(t_state *state, t_conditional *cond);
 t_command_result execute_subshell(t_state *state, t_subshell *subshell);
+t_command_result execute_simple(t_state *state, t_simple *simple);
+t_command_result execute_simple_or_builtin(t_state *state, t_simple *simple);
 
 t_command_result execute_builtin(t_state *state, t_simple *simple);
 
