@@ -70,8 +70,8 @@ t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 													  current_io, pipe_fd[PIPE_READ]);
 		if (err != NO_ERROR)
 		{
-			io_close(io_new(pipe_fd[PIPE_READ], pipe_fd[PIPE_WRITE]));
 			io_close(current_io);
+			close(ends.input);
 			kill_pipeline(state, state->our_children);
 			pidl_clear(&state->our_children);
 			return err;
