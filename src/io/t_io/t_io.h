@@ -12,6 +12,7 @@ typedef struct s_io {
 
 t_io io_default(void);
 t_io io_new(int input, int output);
+t_io io_from_array(int arr[2]);
 
 void io_close(t_io io);
 t_error do_piping(t_io io);

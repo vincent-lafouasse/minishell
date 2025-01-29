@@ -9,3 +9,8 @@ t_io io_new(int input, int output)
 {
 	return ((t_io){.input = input, .output = output});
 }
+
+t_io io_from_array(int arr[2])
+{
+	return ((t_io){.input = arr[0], .output = arr[1]});
+}
