@@ -1,6 +1,7 @@
 #include "process.h"
 
 #include "error/t_error.h"
+#include "shell/shell.h"
 
 #include "libft/ft_io.h"
 

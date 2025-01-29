@@ -1,5 +1,7 @@
 #include "process.h"
 
+#include "shell/shell.h"
+
 #include <stdio.h>
 #include <sys/wait.h>
 #include <errno.h>

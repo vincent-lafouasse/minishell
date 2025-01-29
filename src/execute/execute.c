@@ -1,5 +1,6 @@
 #include "execute.h"
 #include "error/t_error.h"
+#include "shell/shell.h"
 #include "execute/t_env/t_env.h"
 #include "execute/process/process.h"
 #include "execute/t_env/t_env_internals.h"

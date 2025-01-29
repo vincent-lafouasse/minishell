@@ -1,26 +1,12 @@
 #ifndef EXECUTE_H
 # define EXECUTE_H
 
-#include "./t_env/t_env.h"
-#include "./t_pid_list/t_pid_list.h"
+#include "shell/shell.h"
 #include "error/t_error.h"
 #include "parse/t_command/t_command.h"
 #include "io/t_io/t_io.h"
 
-#include <termios.h>
-
 #define CLOSE_NOTHING -1
-
-typedef struct s_state {
-	t_env *env;
-	t_command root;
-	int last_status;
-	bool is_interactive;
-	char* line;
-	bool tty_properties_initialized;
-	struct termios tty_properties;
-	t_pid_list *our_children;
-} t_state;
 
 typedef struct s_command_result {
 	t_error error;

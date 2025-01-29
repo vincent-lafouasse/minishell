@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "error/t_error.h"
+#include "shell/shell.h"
 #include "execute/execute.h"
 #include "execute/t_env/t_env.h"
 #include "io/t_io/t_io.h"

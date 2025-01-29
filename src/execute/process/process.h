@@ -14,6 +14,7 @@
 #include "../t_pid_list/t_pid_list.h"
 #include "error/t_error.h"
 #include "execute/execute.h"
+#include "shell/shell.h"
 
 t_error fork_process(bool *in_child, int *pid_out);
 t_error fork_and_push_pid(bool *in_child, t_pid_list **pidl_out);

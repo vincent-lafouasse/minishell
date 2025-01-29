@@ -2,6 +2,8 @@
 
 #include "parse/t_command/t_command.h"
 #include "../execute.h"
+#include "shell/shell.h"
+
 #include <stdbool.h>
 
 #define EX_BADUSAGE 2

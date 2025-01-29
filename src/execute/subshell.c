@@ -1,5 +1,6 @@
 #include "execute.h"
 #include "execute/process/process.h"
+#include "shell/shell.h"
 #include "error/t_error.h"
 #include "libft/ft_io.h"
 #include "libft/string.h"

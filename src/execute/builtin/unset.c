@@ -1,6 +1,7 @@
 #include "builtin.h"
 
 #include "../execute.h"
+#include "shell/shell.h"
 #include "libft/ctype.h"
 #include "libft/string.h"
 #include "execute/t_env/t_env.h"
