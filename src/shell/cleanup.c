@@ -7,7 +7,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-_Noreturn void shell_exit(t_state *state, int exit_status)
+__attribute__((noreturn)) void shell_exit(t_state *state, int exit_status)
 {
 	shell_cleanup(state);
 	exit(exit_status);

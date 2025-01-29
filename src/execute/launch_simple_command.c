@@ -22,7 +22,7 @@ typedef struct s_execve_variables {
 	char **envp;
 } t_execve_variables;
 
-_Noreturn
+__attribute__((noreturn))
 static void execve_or_die(t_state* state, t_execve_variables vars);
 
 static void prepare_io_or_die(t_state *state, t_simple *simple, t_io io, int fd_to_close);
@@ -128,7 +128,7 @@ static void prepare_execve_vars_or_die(t_state *state, t_simple *simple, t_execv
 	}
 }
 
-_Noreturn
+__attribute__((noreturn))
 static void execve_or_die(t_state* state, t_execve_variables vars)
 {
 	execve(vars.path, vars.argv, vars.envp);

@@ -20,6 +20,6 @@ typedef struct s_state {
 } t_state;
 
 void shell_cleanup(t_state *state);
-_Noreturn void shell_exit(t_state *state, int exit_status);
+__attribute__((noreturn)) void shell_exit(t_state *state, int exit_status);
 
 #endif // SHELL_H
