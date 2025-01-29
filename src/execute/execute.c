@@ -57,7 +57,7 @@ t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 
 		if (pipe(pipe_fd) < 0)
 		{
-			// BAD: should close pipe related file descriptors where necessary
+			io_close(ends);
 			kill_pipeline(state, state->our_children);
 			pidl_clear(&state->our_children);
 			return E_PIPE;
@@ -70,7 +70,8 @@ t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 													  current_io, pipe_fd[PIPE_READ]);
 		if (err != NO_ERROR)
 		{
-			// BAD: should close pipe related file descriptors where necessary
+			io_close(io_new(pipe_fd[PIPE_READ], pipe_fd[PIPE_WRITE]));
+			io_close(current_io);
 			kill_pipeline(state, state->our_children);
 			pidl_clear(&state->our_children);
 			return err;
@@ -81,6 +82,13 @@ t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		current = current.pipeline->second;
 	}
 	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
+	if (err != NO_ERROR)
+	{
+		close(ends.input);
+		kill_pipeline(state, state->our_children);
+		pidl_clear(&state->our_children);
+		return err;
+	}
 	io_close(ends);
 
 	return NO_ERROR;
