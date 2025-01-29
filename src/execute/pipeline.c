@@ -25,9 +25,9 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 	// E_OOM -> propagate
 	if (err == E_PIPE)
 		return report_syscall_error("pipe"), command_ok(1 | 128);
-	if (err == E_FORK)
+	else if (err == E_FORK)
 		return report_syscall_error("fork"), command_ok(126 | 128);
-	if (err != NO_ERROR)
+	else if (err != NO_ERROR)
 		return command_err(err);
 	assert(state->our_children != NULL);
 
