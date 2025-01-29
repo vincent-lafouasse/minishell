@@ -33,6 +33,7 @@ t_error launch_subshell(t_state *state, t_subshell *subshell, t_io io, int fd_to
 
 // public
 
+t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline);
 t_command_result execute_command(t_state *state, t_command command);
 t_command_result execute_conditional(t_state *state, t_conditional *cond);
 t_command_result execute_subshell(t_state *state, t_subshell *subshell);
