@@ -2,6 +2,7 @@
 #include "libft/string.h"
 #include "t_error.h"
 #include "word/t_string/t_string.h"
+#include <errno.h>
 #include <string.h>
 #include <sys/errno.h>
 #include <unistd.h>
@@ -64,5 +65,11 @@ void	report_syscall_error(const char *syscall)
 // -> prints: "minishell: $REASON:  $ERROR_REPR(err)\n"
 void	report_t_error(const char *origin, t_error err)
 {
-	report_error(reason, error_repr(err));
+	const char *reason;
+
+	if (is_syscall_related(err))
+		reason = (const char *)strerror(errno);
+	else
+		reason = error_repr(err);
+	report_error(origin, reason);
 }
