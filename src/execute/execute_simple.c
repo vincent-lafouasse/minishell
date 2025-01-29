@@ -70,12 +70,8 @@ static t_command_result	do_redirs_and_execute_builtin(t_state *state, t_simple *
 	err = apply_redirections(state, builtin->redirections);
 	if (err != NO_ERROR)
 	{
-		if (is_syscall_related(err))
-			report_syscall_error("apply_redirections");
-		else
-			report_t_error("apply_redirections", err);
-		close_fd_pair(io_backup);
-		return command_ok(EXIT_FAILURE);
+		report_t_error("apply_redirections", err);
+		return close_fd_pair(io_backup), command_ok(EXIT_FAILURE);
 	}
 	res = execute_builtin(state, builtin);
 	err = restore_stdin_stdout(io_backup);
