@@ -1,7 +1,8 @@
 #pragma once
 
-#include "parse/t_command/t_command.h"
 #include "../execute.h"
+
+#include "parse/t_command/t_command.h"
 #include "shell/shell.h"
 
 #include <stdbool.h>

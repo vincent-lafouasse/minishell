@@ -8,13 +8,15 @@
 // for. though, all bets are off if a child process somehow remains. it is
 // preferred to have no processes under you before calling `wait_for`s.
 
+#include "../t_pid_list/t_pid_list.h"
+#include "../execute.h"
+
+#include "error/t_error.h"
+#include "shell/shell.h"
+
 #include <sys/types.h>
 #include <stdbool.h>
-
-#include "../t_pid_list/t_pid_list.h"
-#include "error/t_error.h"
-#include "execute/execute.h"
-#include "shell/shell.h"
+#include <termios.h>
 
 t_error fork_process(bool *in_child, int *pid_out);
 t_error fork_and_push_pid(bool *in_child, t_pid_list **pidl_out);

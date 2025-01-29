@@ -1,4 +1,5 @@
 #include "execute.h"
+
 #include "error/t_error.h"
 #include "shell/shell.h"
 #include "execute/t_env/t_env.h"
@@ -23,10 +24,8 @@
 #define PIPE_READ 0
 #define PIPE_WRITE 1
 
-void shell_cleanup(t_state *state); // BAD: this should be #include "shell.h"
-
 // either simple or subshell or maybe builtin
-t_error launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
+static t_error launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
 	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
 
 	t_expansion_variables vars;
