@@ -23,11 +23,29 @@ static t_error redirect_expand(t_expansion_variables vars, const char *word, cha
 	return (NO_ERROR);
 }
 
+// closes old_fd in case of error
+static t_error move_fd_if_not_same(int old_fd, int new_fd)
+{
+	int errno_backup;
+
+	if (old_fd != new_fd)
+	{
+		if (dup2(old_fd, new_fd) < 0)
+		{
+			errno_backup = errno;
+			close(old_fd);
+			errno = errno_backup;
+			return (E_DUP2);
+		}
+		close(old_fd);
+	}
+	return (NO_ERROR);
+}
+
 static t_error redirect_regular_file(t_expansion_variables vars, t_redirect redir)
 {
 	int fd;
 	int redirectee;
-	int errno_backup;
 	char *expanded_filename;
 	t_error err;
 
@@ -41,22 +59,40 @@ static t_error redirect_regular_file(t_expansion_variables vars, t_redirect redi
 	if (fd < 0)
 		return (free(expanded_filename), E_OPEN);
 	redirectee = redirectee_fd_for_redir_kind(redir.kind);
-	if (fd != redirectee)
-	{
-		if (dup2(fd, redirectee) < 0)
-		{
-			errno_backup = errno;
-			close(fd);
-			errno = errno_backup;
-			return (free(expanded_filename), E_DUP2);
-		}
-		close(fd);
-	}
+	err = move_fd_if_not_same(fd, redirectee);
+	if (err != NO_ERROR)
+		return (free(expanded_filename), E_DUP2);
 	free(expanded_filename);
 	return (NO_ERROR);
 }
 
 #define HEREDOC_FILE_PATH "/tmp/minishell-heredoc-XXXXXX"
+
+static t_error make_tmp_file(const char *path, int *wr_out, int *rd_out)
+{
+	int errno_backup;
+
+	*wr_out = open(path, O_RDWR | O_CREAT | O_TRUNC | O_EXCL, S_IRUSR | S_IWUSR);
+	if (*wr_out < 0) /* the file is already taken if errno == EEXIST */
+		return (E_OPEN);
+	*rd_out = open(path, O_RDONLY, S_IRUSR);
+	if (*rd_out < 0)
+	{
+		errno_backup = errno;
+		close(*wr_out);
+		errno = errno_backup;
+		return (E_OPEN);
+	}
+	if (unlink(HEREDOC_FILE_PATH) < 0)
+	{
+		errno_backup = errno;
+		close(*wr_out);
+		close(*rd_out);
+		errno = errno_backup;
+		return (E_UNLINK);
+	}
+	return (NO_ERROR);
+}
 
 // some concerns/error cases (ranked by severity):
 // - here we error out if the file already exists, this technically enables the
@@ -75,50 +111,27 @@ static t_error redirect_regular_file(t_expansion_variables vars, t_redirect redi
 static t_error redirect_here_document(t_redirect redir)
 {
 	int tmpfile_writable;
-	int tmpfile_read_only;
+	int tmpfile_rd_only;
+	t_error err;
 
 	assert(redir.kind == HERE_DOCUMENT);
 
-	tmpfile_writable = open(HEREDOC_FILE_PATH, O_RDWR | O_CREAT | O_TRUNC | O_EXCL, S_IRUSR | S_IWUSR);
-	if (tmpfile_writable < 0) /* the file is already taken if errno == EEXIST */
-		return (E_OPEN);
-	tmpfile_read_only = open(HEREDOC_FILE_PATH, O_RDONLY, S_IRUSR);
-	if (tmpfile_read_only < 0)
-	{
-		int err = errno;
-		close(tmpfile_writable);
-		errno = err;
-		return (E_OPEN);
-	}
-	if (unlink(HEREDOC_FILE_PATH) < 0)
-	{
-		int err = errno;
-		close(tmpfile_writable);
-		close(tmpfile_read_only);
-		errno = err;
-		return (E_UNLINK);
-	}
+	err = make_tmp_file(HEREDOC_FILE_PATH, &tmpfile_writable, &tmpfile_rd_only);
+	if (err != NO_ERROR)
+		return (err);
 	if (write(tmpfile_writable, redir.doc.contents, ft_strlen(redir.doc.contents)) < 0)
 	{
 		int err = errno;
 		close(tmpfile_writable);
-		close(tmpfile_read_only);
+		close(tmpfile_rd_only);
 		errno = err;
 		return (E_WRITE);
 	}
 	close(tmpfile_writable);
 	int redirectee = redirectee_fd_for_redir_kind(redir.kind);
-	if (tmpfile_read_only != redirectee)
-	{
-		if (dup2(tmpfile_read_only, redirectee) < 0)
-		{
-			int err = errno;
-			close(tmpfile_read_only);
-			errno = err;
-			return (E_DUP2);
-		}
-		close(tmpfile_read_only);
-	}
+	err = move_fd_if_not_same(tmpfile_rd_only, redirectee);
+	if (err != NO_ERROR)
+		return (err);
 	return (NO_ERROR);
 }
 
