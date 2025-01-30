@@ -6,18 +6,18 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:38:43 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:41:11 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 19:42:54 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
-#include <stdbool.h>
-#include <sys/stat.h>
 #include "libft/string.h"
+#include <stdbool.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
-void ft_split_destroy(char *data[])
+void	ft_split_destroy(char *data[])
 {
-	size_t i;
+	size_t	i;
 
 	i = 0;
 	while (data[i])
@@ -28,7 +28,7 @@ void ft_split_destroy(char *data[])
 	free(data);
 }
 
-char *join_delimited(const char *s1, char delim, const char *s2)
+char	*join_delimited(const char *s1, char delim, const char *s2)
 {
 	size_t	len1;
 	size_t	len2;
@@ -48,15 +48,16 @@ char *join_delimited(const char *s1, char delim, const char *s2)
 	return (out);
 }
 
-bool is_absolute_pathname(const char *word)
+bool	is_absolute_pathname(const char *word)
 {
-	return (ft_strchr(word, '/') != (char *)NULL);
+	return (ft_strchr(word, '/'));
 }
 
-bool filename_is_directory(const char *command_path)
+bool	filename_is_directory(const char *command_path)
 {
-	struct stat command_stats;
+	struct stat	command_stats;
+
 	if (stat(command_path, &command_stats) < 0)
-		return false;
+		return (false);
 	return (S_ISDIR(command_stats.st_mode));
 }
