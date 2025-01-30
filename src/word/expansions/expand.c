@@ -1,17 +1,27 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 19:43:54 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 19:43:57 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "./expand.h"
 #include "./expand_internals.h"
-
-#include "word/t_word_list/t_word_list.h"
 #include "error/t_error.h"
-
-#include <stdlib.h>
+#include "word/t_word_list/t_word_list.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
-t_error variable_expand_words(t_expansion_variables vars, t_word_list **words)
+t_error	variable_expand_words(t_expansion_variables vars, t_word_list **words)
 {
-	char *expanded_word;
-	t_error err;
-	t_word_list *current;
+	char		*expanded_word;
+	t_error		err;
+	t_word_list	*current;
 
 	current = *words;
 	while (current)
@@ -24,7 +34,8 @@ t_error variable_expand_words(t_expansion_variables vars, t_word_list **words)
 			wl_delone(words, free);
 			current = *words;
 		}
-		else if (!expanded_word && current->prev != NULL) {
+		else if (!expanded_word && current->prev != NULL)
+		{
 			wl_delone(&current, free);
 		}
 		else
@@ -37,10 +48,11 @@ t_error variable_expand_words(t_expansion_variables vars, t_word_list **words)
 	return (NO_ERROR);
 }
 
-t_error variable_expand_word(t_expansion_variables vars, const char *word, char **out)
+t_error	variable_expand_word(t_expansion_variables vars, const char *word,
+		char **out)
 {
-	t_error err;
-	t_word_quotes_list *parts;
+	t_error				err;
+	t_word_quotes_list	*parts;
 
 	err = wql_parse(word, &parts);
 	if (err != NO_ERROR)
