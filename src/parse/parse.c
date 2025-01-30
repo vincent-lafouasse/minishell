@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:42 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:26:01 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 19:27:20 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,13 +39,14 @@ t_error	generate_parse_tree(const t_token_list *tokens, t_symbol *out)
 	return (NO_ERROR);
 }
 
-t_error	parse_tokens(const t_token_list* tokens, t_command* out) {
+t_error	parse_tokens(const t_token_list *tokens, t_command *out)
+{
 	t_symbol	parse_tree;
 	t_error		err;
 
 	err = generate_parse_tree(tokens, &parse_tree);
 	if (err != NO_ERROR)
-		return err;
+		return (err);
 	err = reduce_parse_tree_into_command(&parse_tree, out);
 	if (err != NO_ERROR)
 	{
