@@ -1,20 +1,31 @@
-#include "log.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   log_words.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 19:11:52 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 19:11:55 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "log.h"
 #include <stdio.h>
 
-void log_word_list(const t_word_list *words)
+void	log_word_list(const t_word_list *words)
 {
-    while (words)
-    {
-        printf(" > %s", words->contents);
-        printf("\n");
-        words = words->next;
-    }
+	while (words)
+	{
+		printf(" > %s", words->contents);
+		printf("\n");
+		words = words->next;
+	}
 }
 
-void log_redir_list(const t_redir_list *rdl)
+void	log_redir_list(const t_redir_list *rdl)
 {
-	char *word;
+	char	*word;
 
 	while (rdl)
 	{
