@@ -6,78 +6,51 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:45:59 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:46:00 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 19:48:59 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "expand_internals.h"
-
 #include <stdlib.h>
 
-t_error wql_new(t_word_quote_state state, char *part, t_word_quotes_list **out)
+t_error	wql_new(t_word_quote_state state, char *part, t_word_quotes_list **out)
 {
 	*out = malloc(sizeof(t_word_quotes_list));
 	if (*out == NULL)
 		return (E_OOM);
-
 	**out = (t_word_quotes_list){.next = NULL, .state = state, .part = part};
 	return (NO_ERROR);
 }
 
-t_word_quotes_list *wql_last(t_word_quotes_list* wql)
+t_word_quotes_list	*wql_last(t_word_quotes_list *wql)
 {
-	t_word_quotes_list* last;
+	t_word_quotes_list	*last;
 
 	if (wql == NULL)
-		return NULL;
+		return (NULL);
 	last = wql;
 	while (last->next)
 		last = last->next;
 	return (last);
 }
 
-t_error wql_push_back(t_word_quotes_list** wql, t_word_quote_state state, char *part)
+void	wql_delone(t_word_quotes_list **wql)
 {
-	t_error err;
-	t_word_quotes_list* new_last;
-
-	err = wql_new(state, part, &new_last);
-	if (err != NO_ERROR)
-		return err;
-	wql_push_back_link(wql, new_last);
-	return NO_ERROR;
-}
-
-void wql_push_back_link(t_word_quotes_list** wql, t_word_quotes_list* link)
-{
-	t_word_quotes_list* last;
-
-	if (wql == NULL)
-		return ;
-	last = wql_last(*wql);
-	if (last == NULL)
-		*wql = link;
-	else
-		last->next = link;
-}
-
-void wql_delone(t_word_quotes_list **wql)
-{
-	t_word_quotes_list *next_backup;
+	t_word_quotes_list	*next_backup;
 
 	if (!wql || !*wql)
-		return;
+		return ;
 	next_backup = (*wql)->next;
 	free((*wql)->part);
 	free(*wql);
 	*wql = next_backup;
-	return;
+	return ;
 }
 
-void wql_clear(t_word_quotes_list** wql)
+void	wql_clear(t_word_quotes_list **wql)
 {
 	if (!wql)
-		return;
+		return ;
 	while (*wql)
 		wql_delone(wql);
 }
