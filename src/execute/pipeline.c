@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:47:07 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:48:19 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 20:53:18 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,8 +110,8 @@ t_error	launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		io_close(current_io);
 		current = current.pipeline->second;
 	}
-	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad,
-	handle error if (err != NO_ERROR) return (pipeline_cleanup(state, ends,
+	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
+	if (err != NO_ERROR) return (pipeline_cleanup(state, ends,
 			CLOSE_NOTHING), err);
 	io_close(ends);
 	return (NO_ERROR);
