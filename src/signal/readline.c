@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:09:00 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:09:29 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 21:56:50 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,6 @@ static void	reject_readline_current_line(void)
 
 void	save_interrupt_and_reject_line(int signal)
 {
-	last_signal = signal;
+	g_last_signal = signal;
 	reject_readline_current_line();
 }

@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:09:08 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:09:40 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 21:56:57 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include <signal.h>
 
-extern sig_atomic_t	last_signal;
+extern sig_atomic_t	g_last_signal;
 
 void	install_interactive_handlers(void);
 void	install_non_interactive_handlers(void);

@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:12:16 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:13:35 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 21:57:47 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ t_error	run_and_parse_command(const char *input, t_state *state)
 	}
 	if (!command_is_initialized(state->root))
 		return (NO_ERROR);
-	if (last_signal == SIGINT)
+	if (g_last_signal == SIGINT)
 	{
 		state->last_status = 128 + SIGINT;
 		command_destroy_and_clear(&state->root);
@@ -78,14 +78,14 @@ char	*interactive_read_line(t_state *state)
 
 	while (1)
 	{
-		last_signal = 0;
+		g_last_signal = 0;
 		input = readline(SHELL_PROMPT);
 		if (input == NULL)
 			return (NULL);
-		if (last_signal != SIGINT)
+		if (g_last_signal != SIGINT)
 			break ;
 		free(input);
-		state->last_status = 128 + last_signal;
+		state->last_status = 128 + g_last_signal;
 	}
 	if (*input != '\0')
 		add_history(input);
@@ -120,9 +120,9 @@ char	*non_interactive_read_line(t_state *state)
 	char	*input;
 
 	input = readline(NULL);
-	if (last_signal == SIGINT || input == NULL)
+	if (g_last_signal == SIGINT || input == NULL)
 	{
-		if (last_signal == SIGINT)
+		if (g_last_signal == SIGINT)
 			state->last_status = 128 + SIGINT;
 		free(input);
 		return (NULL);

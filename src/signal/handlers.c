@@ -6,14 +6,14 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:08:36 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:08:39 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 21:56:26 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "signal.h"
 #include <unistd.h>
 
-sig_atomic_t	last_signal = 0;
+sig_atomic_t	g_last_signal = 0;
 
 void	install_interactive_handlers(void)
 {

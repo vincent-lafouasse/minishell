@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:54:05 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:52:08 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 21:57:21 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,11 +46,11 @@ static t_error	read_here_document_internal(const char *delimiter,
 {
 	char	*line;
 
-	last_signal = 0;
+	g_last_signal = 0;
 	while (1)
 	{
 		line = readline(HERE_DOCUMENT_PROMPT);
-		if (last_signal == SIGINT)
+		if (g_last_signal == SIGINT)
 		{
 			free(line);
 			return (E_INTERRUPTED);
