@@ -1,12 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   expand_internals.h                                 :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 19:45:36 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 19:45:38 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EXPAND_INTERNALS_H
 # define EXPAND_INTERNALS_H
 
 #include "./expand.h"
 
 #include "error/t_error.h"
-#include "word/t_word_list/t_word_list.h"
-
-#include <stddef.h>
 
 typedef enum e_word_quote_state {
 	WQS_SINGLY_QUOTED,
