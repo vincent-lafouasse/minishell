@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   checked_atoi.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:16:53 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:16:55 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft/ctype.h"
 #include <stdbool.h>
 #include <stdint.h>
 
-static bool			parse_valid_number(int8_t sign, const char *s, int32_t *out);
-static bool    	   str_is_all_zeros(const char *num);
-static uint32_t	   ft_abs(int32_t n);
+static bool		parse_valid_number(int8_t sign, const char *s, int32_t *out);
+static bool		str_is_all_zeros(const char *num);
+static uint32_t	ft_abs(int32_t n);
 
-bool    checked_atou(const char *s, uint32_t *out);
+bool			checked_atou(const char *s, uint32_t *out);
 
-bool    checked_atoi(const char *s, int32_t *out)
+bool	checked_atoi(const char *s, int32_t *out)
 {
-	int8_t    sign;
+	int8_t	sign;
 
 	sign = 1;
 	while (ft_isspace(*s))
@@ -32,9 +44,9 @@ bool    checked_atoi(const char *s, int32_t *out)
 	return (parse_valid_number(sign, s, out));
 }
 
-static bool parse_valid_number(int8_t sign, const char *s, int32_t *out)
+static bool	parse_valid_number(int8_t sign, const char *s, int32_t *out)
 {
-	uint32_t    absolute_value;
+	uint32_t	absolute_value;
 
 	if (!checked_atou(s, &absolute_value))
 		return (false);
@@ -46,7 +58,7 @@ static bool parse_valid_number(int8_t sign, const char *s, int32_t *out)
 	return (true);
 }
 
-static bool		str_is_all_zeros(const char *s)
+static bool	str_is_all_zeros(const char *s)
 {
 	if (!s || *s == '\0')
 		return (false);
@@ -59,9 +71,9 @@ static bool		str_is_all_zeros(const char *s)
 	return (true);
 }
 
-static uint32_t    ft_abs(int32_t n)
+static uint32_t	ft_abs(int32_t n)
 {
 	if (n < 0)
-		return -n;
-	return n;
+		return (-n);
+	return (n);
 }

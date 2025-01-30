@@ -1,41 +1,50 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:18:58 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:18:58 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../builtin.h"
-
 #include "execute/execute.h"
-#include "shell/shell.h"
-#include "error/t_error.h"
-#include "word/t_word_list/t_word_list.h"
 #include "libft/string.h"
-#include "libft/ctype.h"
+#include "shell/shell.h"
+#include "word/t_word_list/t_word_list.h"
 
-#include <unistd.h>
+#include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
-#include <stdbool.h>
+#include <unistd.h>
 
-bool    checked_atoi(const char *s, int32_t *out);
+#define EXIT_NON_NUMERIC "minishell: exit: numeric argument required\n"
+#define EXIT_TOO_MANY_ARGS "minishell: exit: too many arguments\n"
 
-t_command_result execute_exit(t_state *state, t_simple *builtin)
+bool	checked_atoi(const char *s, int32_t *out);
+
+t_command_result	execute_exit(t_state *state, t_simple *builtin)
 {
-	t_word_list *args;
-	int32_t exit_status;
+	t_word_list	*args;
+	int32_t		exit_status;
 
 	if (state->is_interactive)
 		write(STDERR_FILENO, "exit\n", 5);
-
 	args = builtin->words->next;
 	if (!args)
 		shell_exit(state, state->last_status);
 	if (!checked_atoi(args->contents, &exit_status))
 	{
-		const char *error = "minishell: exit: numeric argument required\n";
-		write(STDERR_FILENO, error, ft_strlen(error));
+		write(STDERR_FILENO, EXIT_NON_NUMERIC, ft_strlen(EXIT_NON_NUMERIC));
 		shell_exit(state, EX_BADUSAGE);
 	}
 	if (args->next != NULL)
 	{
-		const char *error = "minishell: exit: too many arguments\n";
-		write(STDERR_FILENO, error, ft_strlen(error));
-		return command_ok(EX_BADUSAGE);
+		write(STDERR_FILENO, EXIT_TOO_MANY_ARGS, ft_strlen(EXIT_TOO_MANY_ARGS));
+		return (command_ok(EX_BADUSAGE));
 	}
 	shell_exit(state, exit_status);
 }
