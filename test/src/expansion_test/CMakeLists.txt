@@ -9,29 +9,48 @@ set(word_expansions_module
 	word/expansions/pathname/expand.c
 	word/expansions/expand.c
 )
-set(t_string_module
+set(env_module
+	execute/t_env/t_env.h
+	execute/t_env/t_env_internals.h
+	execute/t_env/getter.c
+	execute/t_env/push.c
+	execute/t_env/destructor.c
+	execute/t_env/t_env_internals.c
+	execute/t_env/t_env.c
+	execute/t_env/constructor.c
+)
+set(word_module
+	word/t_string/realloc.h
+	word/t_string/t_string.h
 	word/t_string/c_string.c
 	word/t_string/insert.c
 	word/t_string/alloc.c
 	word/t_string/destructor.c
 	word/t_string/realloc.c
 	word/t_string/constructor.c
-)
-set(env_module
-	execute/t_env/t_env_internals.c
-	execute/t_env/getter.c
-	execute/t_env/constructor.c
-)
-set(word_module
+	word/word_clone.c
+	word/expansions/remove_outer_quotes.c
+	word/expansions/expand_variable.c
+	word/expansions/quote_removed_word.c
+	word/expansions/t_word_quotes_list.c
+	word/expansions/expand.h
+	word/expansions/make_joined.c
+	word/expansions/expand_internals.h
+	word/expansions/parse.c
+	word/expansions/wql_push.c
+	word/expansions/pathname/expand_internals.c
+	word/expansions/pathname/expand.c
+	word/expansions/expand.c
+	word/t_word_list/destroy.c
+	word/t_word_list/push.c
 	word/t_word_list/t_word_list.h
 	word/t_word_list/t_word_list.c
-	word/word_clone.c
+	word/word.h
 )
 
 
 set(tested_source
 	${word_expansions_module}
-	${t_string_module}
 	${env_module}
 	${word_module}
 )
