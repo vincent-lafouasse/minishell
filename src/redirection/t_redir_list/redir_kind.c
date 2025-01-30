@@ -11,26 +11,25 @@
 /* ************************************************************************** */
 
 #include "t_redir_list.h"
-
-#include <unistd.h>
 #include <fcntl.h>
+#include <unistd.h>
 
-int open_flags_for_redir_kind(t_redir_kind kind)
+int	open_flags_for_redir_kind(t_redir_kind kind)
 {
 	if (kind == FROM_FILE)
-		return O_RDONLY;
+		return (O_RDONLY);
 	else if (kind == INTO_FILE)
-		return O_CREAT | O_WRONLY | O_TRUNC;
+		return (O_CREAT | O_WRONLY | O_TRUNC);
 	else if (kind == APPEND_INTO_FILE)
-		return O_CREAT | O_WRONLY | O_APPEND;
-	return -1;
+		return (O_CREAT | O_WRONLY | O_APPEND);
+	return (-1);
 }
 
-int redirectee_fd_for_redir_kind(t_redir_kind kind)
+int	redirectee_fd_for_redir_kind(t_redir_kind kind)
 {
 	if (kind == FROM_FILE || kind == HERE_DOCUMENT)
-		return STDIN_FILENO;
+		return (STDIN_FILENO);
 	else if (kind == INTO_FILE || kind == APPEND_INTO_FILE)
-		return STDOUT_FILENO;
-	return -1;
+		return (STDOUT_FILENO);
+	return (-1);
 }
