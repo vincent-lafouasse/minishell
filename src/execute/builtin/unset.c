@@ -1,49 +1,58 @@
-#include "builtin.h"
-
-#include "shell/shell.h"
-#include "libft/ctype.h"
-#include "libft/string.h"
-#include "execute/t_env/t_env.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   unset.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:22:38 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:22:38 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../execute.h"
-
-#include <stdlib.h>
+#include "builtin.h"
+#include "execute/t_env/t_env.h"
+#include "libft/ctype.h"
+#include "libft/string.h"
+#include "shell/shell.h"
 #include <stdbool.h>
+#include <stdlib.h>
 #include <unistd.h>
 
-static void report_invalid_identifier(char *identifier_name)
+static void	report_invalid_identifier(char *identifier_name)
 {
+	const char	*message = "minishell: unset: invalid identifier\n";
+
 	(void)identifier_name;
-	const char *message = "minishell: unset: invalid identifier\n";
 	write(STDERR_FILENO, message, ft_strlen(message));
 }
 
-static bool is_valid_identifier(char *str)
+static bool	is_valid_identifier(char *str)
 {
-	size_t i = 0;
+	size_t	i;
 
+	i = 0;
 	if (!*str || ft_isdigit(*str))
-		return false;
+		return (false);
 	while (str[i])
 	{
 		if (!ft_isalnum(str[i]) && str[i] != '_')
-			return false;
+			return (false);
 		i++;
 	}
-	return true;
+	return (true);
 }
 
-t_command_result execute_unset(t_state *state, t_simple *builtin)
+t_command_result	execute_unset(t_state *state, t_simple *builtin)
 {
+	t_word_list	*var;
+	t_env		*entry;
+	bool		got_invalid_identifier;
+
 	(void)state;
-
-	t_word_list *var;
-	t_env *entry;
-	bool got_invalid_identifier;
-
 	var = builtin->words->next;
 	got_invalid_identifier = false;
-
 	while (var)
 	{
 		if (!is_valid_identifier(var->contents))
@@ -51,7 +60,7 @@ t_command_result execute_unset(t_state *state, t_simple *builtin)
 			report_invalid_identifier(var->contents);
 			got_invalid_identifier = true;
 			var = var->next;
-			continue;
+			continue ;
 		}
 		entry = env_remove(&state->env, var->contents);
 		if (entry)
@@ -59,6 +68,6 @@ t_command_result execute_unset(t_state *state, t_simple *builtin)
 		var = var->next;
 	}
 	if (got_invalid_identifier)
-		return command_ok(EXIT_FAILURE);
-	return command_ok(EXIT_SUCCESS);
+		return (command_ok(EXIT_FAILURE));
+	return (command_ok(EXIT_SUCCESS));
 }
