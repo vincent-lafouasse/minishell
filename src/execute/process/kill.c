@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   kill.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:35:39 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:39:00 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "process.h"
 
 #include "../t_pid_list/t_pid_list.h"
@@ -6,13 +18,12 @@
 
 #include <stdio.h>
 #include <sys/wait.h>
-#include <errno.h>
 #include <unistd.h>
 #include <signal.h>
 
-static void kill_pid_list(const t_pid_list *pids)
+static void	kill_pid_list(const t_pid_list *pids)
 {
-	const t_pid_list *curr;
+	const t_pid_list	*curr;
 
 	curr = pids;
 	while (curr)

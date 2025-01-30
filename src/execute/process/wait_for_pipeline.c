@@ -1,21 +1,30 @@
-#include "process.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wait_for_pipeline.c                                :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:36:28 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:36:29 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "../t_pid_list/t_pid_list.h"
 #include "error/t_error.h"
-
 #include "libft/ft_io.h"
-
+#include "process.h"
 #include <errno.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <stdbool.h>
 
-static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
+static t_error	waitpid_and_exhaust_children(pid_t pid, int *status_out)
 {
-	pid_t waited_for_pid;
-	bool children_remain;
-	bool requested_pid_exited;
-	int status;
+	pid_t	waited_for_pid;
+	bool	children_remain;
+	bool	requested_pid_exited;
+	int		status;
 
 	requested_pid_exited = false;
 	children_remain = true;
@@ -40,11 +49,12 @@ static t_error waitpid_and_exhaust_children(pid_t pid, int *status_out)
 	return (NO_ERROR);
 }
 
-t_error wait_for_pipeline(t_state *state, const t_pid_list *pids, int *last_exit_status_out)
+t_error	wait_for_pipeline(t_state *state, const t_pid_list *pids,
+		int *last_exit_status_out)
 {
-	pid_t last_pid;
-	int last_status;
-	t_error err;
+	pid_t	last_pid;
+	int		last_status;
+	t_error	err;
 
 	if (!pids)
 	{
