@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:54:05 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:56:30 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 20:52:08 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 #include "t_redir_list.h"
 #include "word/expansions/expand.h"
 #include "word/t_string/t_string.h"
-#include <stdio.h> // HACK: supress readline compilation errors on my end
+#include <stdio.h>
 #include "readline/readline.h"
 #include <stdlib.h>
 #include <unistd.h>
