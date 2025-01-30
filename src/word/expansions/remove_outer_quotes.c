@@ -11,14 +11,12 @@
 /* ************************************************************************** */
 
 #include "expand_internals.h"
-
 #include "libft/string.h"
-
 #include <stdbool.h>
 
-static bool is_malformed_quoted_string(const char *str)
+static bool	is_malformed_quoted_string(const char *str)
 {
-	size_t len;
+	size_t	len;
 
 	len = ft_strlen(str);
 	if (len == 0 || len == 1)
@@ -29,12 +27,12 @@ static bool is_malformed_quoted_string(const char *str)
 }
 
 // with extra checks to ensure no UB occurs
-static void remove_outer_quotes_inner(t_word_quotes_list *current)
+static void	remove_outer_quotes_inner(t_word_quotes_list *current)
 {
-	size_t len;
+	size_t	len;
 
 	if (is_malformed_quoted_string(current->part))
-		return;
+		return ;
 	len = ft_strlen(current->part);
 	ft_memmove(current->part, current->part + 1, len - 2);
 	current->part[len - 2] = '\0';
