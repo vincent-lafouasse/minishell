@@ -40,6 +40,9 @@ t_error	gather_here_documents(t_command cmd);
 typedef struct s_state t_state;
 t_error apply_redirections(t_state *state, t_redir_list *redirections);
 
+int open_flags_for_redir_kind(t_redir_kind kind);
+int redirectee_fd_for_redir_kind(t_redir_kind kind);
+
 void redirect_clear(t_redirect *redir, t_destructor del);
 
 t_redir_list *rdl_new(t_redirect redir /* ! */);

@@ -11,26 +11,6 @@
 #include <errno.h>
 #include <assert.h>
 
-static int open_flags_for_redir_kind(t_redir_kind kind)
-{
-	if (kind == FROM_FILE)
-		return O_RDONLY;
-	else if (kind == INTO_FILE)
-		return O_CREAT | O_WRONLY | O_TRUNC;
-	else if (kind == APPEND_INTO_FILE)
-		return O_CREAT | O_WRONLY | O_APPEND;
-	return -1;
-}
-
-static int redirectee_fd_for_redir_kind(t_redir_kind kind)
-{
-	if (kind == FROM_FILE || kind == HERE_DOCUMENT)
-		return STDIN_FILENO;
-	else if (kind == INTO_FILE || kind == APPEND_INTO_FILE)
-		return STDOUT_FILENO;
-	return -1;
-}
-
 static t_error redirect_expand(t_expansion_variables vars, const char *word, char **out)
 {
 	t_error err;
