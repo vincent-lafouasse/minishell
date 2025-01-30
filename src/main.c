@@ -1,73 +1,80 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <sys/wait.h>
-#include <assert.h> // temporarily, run_command
-
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <unistd.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:12:16 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:13:35 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "error/t_error.h"
-#include "shell/shell.h"
 #include "execute/execute.h"
 #include "execute/t_env/t_env.h"
-#include "redirection/t_io/t_io.h"
-#include "parse/parse.h"
-#include "libft/string.h"
 #include "libft/ft_io.h"
+#include "libft/string.h"
+#include "parse/parse.h"
 #include "parse/t_command/t_command.h"
-#include "signal/signal.h"
+#include "redirection/t_io/t_io.h"
 #include "redirection/t_redir_list/t_redir_list.h"
+#include "shell/shell.h"
+#include "signal/signal.h"
+#include <assert.h> // temporarily, run_command
+#include <stdio.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"
 
-t_error run_and_parse_command(const char* input, t_state* state)
+t_error	run_and_parse_command(const char *input, t_state *state)
 {
-	t_error err;
+	t_error				err;
+	t_command_result	res;
 
 	err = parse(input, &state->root);
 	if (err != NO_ERROR)
 	{
 		state->last_status = parse_error_exit_code(err);
-		return err;
+		return (err);
 	}
-
 	if (!command_is_initialized(state->root))
-		return NO_ERROR;
-
+		return (NO_ERROR);
 	if (last_signal == SIGINT)
 	{
 		state->last_status = 128 + SIGINT;
 		command_destroy_and_clear(&state->root);
-		return E_INTERRUPTED;
+		return (E_INTERRUPTED);
 	}
-
 	err = gather_here_documents(state->root);
 	if (err != NO_ERROR)
 	{
 		command_destroy_and_clear(&state->root);
 		return (err);
 	}
-
-	t_command_result res = execute_command(state, state->root);
+	res = execute_command(state, state->root);
 	command_destroy_and_clear(&state->root);
 	state->last_status = res.status_code;
-	return res.error;
+	return (res.error);
 }
 
-void truncate_to_one_line_if_necessary(char *input)
+void	truncate_to_one_line_if_necessary(char *input)
 {
-	char *line_break;
+	char	*line_break ;
 
 	line_break = ft_strchr(input, '\n');
 	if (line_break)
 		*line_break = '\0';
 }
 
-char *interactive_read_line(t_state *state)
+char	*interactive_read_line(t_state *state)
 {
-	char *input;
+	char	*input;
 
 	while (1)
 	{
@@ -76,21 +83,19 @@ char *interactive_read_line(t_state *state)
 		if (input == NULL)
 			return (NULL);
 		if (last_signal != SIGINT)
-			break;
-		free(input); /* we've caught a C-c signal; repeat */
+			break ;
+		free(input);
 		state->last_status = 128 + last_signal;
 	}
-
 	if (*input != '\0')
 		add_history(input);
-
 	truncate_to_one_line_if_necessary(input);
 	return (input);
 }
 
-void run_interpreter(t_state* state)
+void	run_interpreter(t_state *state)
 {
-	t_error err;
+	t_error	err;
 
 	err = NO_ERROR;
 	while (err != E_OOM)
@@ -98,9 +103,7 @@ void run_interpreter(t_state* state)
 		install_interactive_handlers();
 		state->line = interactive_read_line(state);
 		if (!state->line)
-			break; /* eof or read error */
-		//install_execution_handlers();
-
+			break ;
 		err = run_and_parse_command(state->line, state);
 		if (err != NO_ERROR)
 			report_error_message(error_repr(err));
@@ -112,9 +115,9 @@ void run_interpreter(t_state* state)
 		ft_putstr_fd("exit\n", STDERR_FILENO);
 }
 
-char *non_interactive_read_line(t_state *state)
+char	*non_interactive_read_line(t_state *state)
 {
-	char *input;
+	char	*input;
 
 	input = readline(NULL);
 	if (last_signal == SIGINT || input == NULL)
@@ -128,9 +131,9 @@ char *non_interactive_read_line(t_state *state)
 	return (input);
 }
 
-void run_non_interactive_loop(t_state *state)
+void	run_non_interactive_loop(t_state *state)
 {
-	t_error err;
+	t_error	err;
 
 	err = NO_ERROR;
 	while (err != E_OOM && err != E_INTERRUPTED)
@@ -138,9 +141,7 @@ void run_non_interactive_loop(t_state *state)
 		install_non_interactive_handlers();
 		state->line = non_interactive_read_line(state);
 		if (!state->line)
-			break; /* no more bytes to read on stdin or read error */
-		//install_execution_handlers();
-
+			break ;
 		err = run_and_parse_command(state->line, state);
 		if (err != NO_ERROR)
 			report_error_message(error_repr(err));
@@ -149,28 +150,28 @@ void run_non_interactive_loop(t_state *state)
 	}
 }
 
-void init_interactive(t_state *state_out)
+void	init_interactive(t_state *state_out)
 {
-	int ret;
+	int	ret;
 
 	ret = tcgetattr(STDERR_FILENO, &state_out->tty_properties);
 	state_out->tty_properties_initialized = ret == 0;
 	state_out->is_interactive = true;
 }
 
-#define DEFAULT_PATH_VALUE											\
-  "/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:."
+#define DEFAULT_PATH_VALUE \
+		"/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:."
 
-static t_error add_if_not_set(t_env **env, const char *key, const char *value)
+static t_error	add_if_not_set(t_env **env, const char *key, const char *value)
 {
 	if (env_key_exists(*env, key))
 		return (NO_ERROR);
-	return env_insert(env, key, value);
+	return (env_insert(env, key, value));
 }
 
-t_error set_up_environment(t_env **env, char *envp[])
+t_error	set_up_environment(t_env **env, char *envp[])
 {
-	t_error err;
+	t_error	err;
 
 	err = from_envp(envp, env);
 	if (err != NO_ERROR)
@@ -190,9 +191,9 @@ t_error set_up_environment(t_env **env, char *envp[])
 	return (NO_ERROR);
 }
 
-t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
+t_error	shell_init(char *envp[], bool dash_c, t_state *state_out)
 {
-	t_error		err;
+	t_error	err;
 
 	rl_outstream = stderr;
 	*state_out = (t_state){0};
@@ -211,14 +212,14 @@ t_error shell_init(char *envp[], bool dash_c, t_state *state_out)
 
 int	main(int argc, char *argv[], char *envp[])
 {
-	t_state		state;
-	t_error		err;
+	t_state	state;
+	t_error	err;
+	bool	executing_arg_command;
 
-	bool executing_arg_command = argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0;
+	executing_arg_command = argc == 3 && ft_strncmp(argv[1], "-c", 3) == 0;
 	err = shell_init(envp, executing_arg_command, &state);
 	if (err != NO_ERROR)
-		return EXIT_FAILURE;
-	
+		return (EXIT_FAILURE);
 	if (argc == 1 && state.is_interactive)
 		run_interpreter(&state);
 	else if (argc == 1 && !state.is_interactive)
