@@ -134,8 +134,8 @@ static void	prepare_execve_vars_or_die(t_state *state, t_simple *simple,
 }
 
 // if (errno == ENOENT) // (execute_cmd.c:5967)
-__attribute__((noreturn)) static void	execve_or_die(t_state *state,
-	t_execve_variables vars)
+__attribute__((noreturn))
+static void	execve_or_die(t_state *state, t_execve_variables vars)
 {
 	execve(vars.path, vars.argv, vars.envp);
 	free_null_terminated_str_array(vars.argv);
