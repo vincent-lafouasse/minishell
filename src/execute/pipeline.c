@@ -68,7 +68,7 @@ static t_error	launch_pipeline_inner(t_state *state, t_command command,
 		err = variable_expand_words(vars, &command.simple->words);
 		if (err != NO_ERROR)
 			return (err);
-		if (/* command.simple->words && */ is_builtin_command(command.simple))
+		if (command.simple->words && is_builtin_command(command.simple))
 			return (launch_cmd_in_subshell(state, command, io, fd_to_close));
 		return (launch_simple_command(state, command.simple, io, fd_to_close));
 	}
