@@ -183,6 +183,7 @@ set(execute_source
 	execute/process/get_exit_status.c
 	execute/process/wait_through_signals.c
 	execute/launch_simple_command.c
+	execute/launch_simple_command_utils.c
 )
 
 set(shell_source
