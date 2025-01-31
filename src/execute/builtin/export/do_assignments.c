@@ -115,11 +115,11 @@ static t_error	assign_variable(t_env **env, t_assignment assignment)
 
 t_command_result	do_assignments(t_env **env, t_word_list *assignments)
 {
-	bool			any_failed;
+	int				exit_code;
 	t_assignment	assignment;
 	t_error			err;
 
-	any_failed = false;
+	exit_code = EXIT_SUCCESS;
 	while (assignments)
 	{
 		err = parse_assignment(assignments->contents, &assignment);
@@ -127,7 +127,7 @@ t_command_result	do_assignments(t_env **env, t_word_list *assignments)
 			return (command_err(err));
 		if (!assignment.name)
 		{
-			any_failed = true;
+			exit_code = EXIT_FAILURE;
 			report_error(assignments->contents, "not a valid identifier");
 			assignments = assignments->next;
 			continue ;
@@ -140,5 +140,5 @@ t_command_result	do_assignments(t_env **env, t_word_list *assignments)
 		}
 		assignments = assignments->next;
 	}
-	return (command_ok(any_failed ? EXIT_FAILURE : EXIT_SUCCESS));
+	return (command_ok(exit_code));
 }
