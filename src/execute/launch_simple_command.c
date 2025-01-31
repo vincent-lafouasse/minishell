@@ -42,20 +42,7 @@ static void	prepare_execve_vars_or_die(t_state *state, t_simple *simple,
 
 bool		file_is_directory(const char *file_path);
 
-static void	free_null_terminated_str_array(char *arr[])
-{
-	size_t	i;
-
-	if (!arr)
-		return ;
-	i = 0;
-	while (arr[i] != NULL)
-	{
-		free(arr[i]);
-		i++;
-	}
-	free(arr);
-}
+void	free_null_terminated_str_array(char *arr[]);
 
 t_error	launch_simple_command(t_state *state, t_simple *simple, t_io io,
 		int fd_to_close)
