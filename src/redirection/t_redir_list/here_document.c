@@ -33,14 +33,6 @@ static t_error	here_doc_append(t_string **out, const char *str)
 	return (NO_ERROR);
 }
 
-static bool	delimiter_matches_line(const char *delimiter, const char *line)
-{
-	size_t	delimiter_len;
-
-	delimiter_len = ft_strlen(delimiter);
-	return (ft_strncmp(line, delimiter, delimiter_len + 1) == 0);
-}
-
 static t_error	read_here_document_internal(const char *delimiter,
 		t_string **document_out)
 {
@@ -57,7 +49,7 @@ static t_error	read_here_document_internal(const char *delimiter,
 			report_error("warning", "here-document delimited by end-of-file");
 			break ;
 		}
-		if (delimiter_matches_line(delimiter, line))
+		if (ft_strncmp(line, delimiter, ft_strlen(delimiter) + 1) == 0)
 		{
 			free(line);
 			break ;
