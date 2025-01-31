@@ -29,6 +29,14 @@ typedef struct s_assignment
 	char			*value;
 }					t_assignment;
 
+void	clean_up_assignment(t_assignment *assignment)
+{
+	free(assignment->name);
+	free(assignment->value);
+	assignment->name = NULL;
+	assignment->value = NULL;
+}
+
 // returns 0 if assignment is malformated in any way
 static size_t	name_len(char *assignment)
 {
@@ -127,8 +135,7 @@ t_command_result	do_assignments(t_env **env, t_word_list *assignments)
 		err = assign_variable(env, assignment);
 		if (err != NO_ERROR)
 		{
-			free(assignment.name);
-			free(assignment.value);
+			clean_up_assignment(&assignment);
 			return (command_err(err));
 		}
 		assignments = assignments->next;
