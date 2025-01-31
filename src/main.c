@@ -10,25 +10,18 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "shell/shell.h"
 #include "error/t_error.h"
+#include "signal/signal.h"
 #include "execute/execute.h"
-#include "execute/t_env/t_env.h"
+#include "parse/parse.h"
+#include "word/word.h"
+
 #include "libft/ft_io.h"
 #include "libft/string.h"
-#include "parse/parse.h"
-#include "parse/t_command/t_command.h"
-#include "redirection/t_io/t_io.h"
-#include "redirection/t_redir_list/t_redir_list.h"
-#include "shell/shell.h"
-#include "signal/signal.h"
-#include <assert.h> // temporarily, run_command
-#include <stdio.h>
-#include <readline/history.h>
-#include <readline/readline.h>
+
 #include <stdlib.h>
-#include <sys/wait.h>
-#include <unistd.h>
-#include <word/word.h>
+#include <signal.h>
 
 #define USAGE "./minishell [-c command]\n"
 
