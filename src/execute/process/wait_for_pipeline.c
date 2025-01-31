@@ -31,13 +31,10 @@ static t_error	waitpid_and_exhaust_children(pid_t pid, int *status_out)
 	while (children_remain)
 	{
 		waited_for_pid = wait_through_signals(-1, &status);
-		if (waited_for_pid < 0)
-		{
-			if (errno == ECHILD)
-				children_remain = false;
-			else
-				return (E_WAIT);
-		}
+		if (waited_for_pid < 0 && errno == ECHILD)
+			children_remain = false;
+		else if (waited_for_pid < 0)
+			return (E_WAIT);
 		if (waited_for_pid != -1 && waited_for_pid == pid)
 		{
 			*status_out = status;
