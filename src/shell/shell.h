@@ -19,6 +19,9 @@
 # include <stdbool.h>
 # include <termios.h>
 
+# define DEFAULT_PATH_VALUE \
+		"/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:."
+
 # define EXIT_FAILURE 1
 
 typedef struct s_state
@@ -32,6 +35,8 @@ typedef struct s_state
 	struct termios	tty_properties;
 	t_pid_list		*our_children;
 }					t_state;
+
+t_error	shell_init(char *envp[], bool running_arg_command, t_state *state_out);
 
 void	shell_cleanup(t_state *state);
 void	shell_exit(t_state *state, int exit_status) __attribute__((noreturn));
