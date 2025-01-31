@@ -40,6 +40,7 @@ typedef struct s_state
 
 void	run_interpreter(t_state *state);
 void	run_non_interactive_loop(t_state *state);
+void	run_argument_command(t_state *state, char *command);
 
 t_error	run_and_parse_command(const char *input, t_state *state);
 

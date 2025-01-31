@@ -78,13 +78,7 @@ int	main(int argc, char *argv[], char *envp[])
 	else if (argc == 1 && !state.is_interactive)
 		run_non_interactive_loop(&state);
 	else if (executing_arg_command)
-	{
-		state.is_interactive = false;
-		truncate_to_one_line_if_necessary(argv[2]);
-		err = run_and_parse_command(argv[2], &state);
-		if (err != NO_ERROR)
-			report_error_message(error_repr(err));
-	}
+		run_argument_command(&state, argv[2]);
 	else
 		printf("%s\n", USAGE);
 	shell_exit(&state, state.last_status);
