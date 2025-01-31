@@ -118,6 +118,7 @@ static t_error	read_here_documents_in_rdl(t_redir_list *rdl)
 	return (NO_ERROR);
 }
 
+// NOTE: redirections are ignored in subshells
 t_error	gather_here_documents(t_command cmd)
 {
 	t_error	err;
@@ -126,7 +127,6 @@ t_error	gather_here_documents(t_command cmd)
 		return (read_here_documents_in_rdl(cmd.simple->redirections));
 	else if (cmd.type == CMD_SUBSHELL)
 		return (gather_here_documents(cmd.subshell->cmd));
-			// redirections ignored!
 	else if (cmd.type == CMD_PIPELINE)
 	{
 		err = gather_here_documents(cmd.pipeline->first);
