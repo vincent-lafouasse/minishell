@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:43:54 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:43:57 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/31 15:42:03 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,9 +35,7 @@ t_error	variable_expand_words(t_expansion_variables vars, t_word_list **words)
 			current = *words;
 		}
 		else if (!expanded_word && current->prev != NULL)
-		{
 			wl_delone(&current, free);
-		}
 		else
 		{
 			free(current->contents);
