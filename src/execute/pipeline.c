@@ -24,27 +24,23 @@
 #define PIPE_READ 0
 #define PIPE_WRITE 1
 
+#define EXIT_FAILURE 1
+#define EX_NOEXEC 126
+
 t_command_result	execute_pipeline(t_state *state, t_pipeline *pipeline)
 {
 	t_error	err;
 	int		last_exit_status;
 
 	err = launch_pipeline(state, pipeline, io_default());
-	// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2495 and sig.c:418)
-	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
-	// E_OOM -> propagate
 	if (err == E_PIPE)
-		return (report_syscall_error("pipe"), command_ok(1 | 128));
+		return (report_syscall_error("pipe"), command_ok(EXIT_FAILURE | 128));
 	else if (err == E_FORK)
-		return (report_syscall_error("fork"), command_ok(126 | 128));
+		return (report_syscall_error("fork"), command_ok(EX_NOEXEC | 128));
 	else if (err != NO_ERROR)
 		return (command_err(err));
 	assert(state->our_children != NULL);
 	err = wait_for_pipeline(state, state->our_children, &last_exit_status);
-	// the only errors `waitpid` can return to us are EINVAL and ECHILD, the
-	// first being a programming error and the other one signifying that the
-	// process was somehow never launched or does not belong to us anymore.
-	// meaning they are effectively unreachable, only warn for them in this case
 	if (err != NO_ERROR)
 	{
 		last_exit_status = EXIT_FAILURE;
