@@ -51,10 +51,7 @@ static t_error	read_here_document_internal(const char *delimiter,
 	{
 		line = readline(HERE_DOCUMENT_PROMPT);
 		if (g_last_signal == SIGINT)
-		{
-			free(line);
-			return (E_INTERRUPTED);
-		}
+			return (free(line), E_INTERRUPTED);
 		if (!line)
 		{
 			report_error("warning", "here-document delimited by end-of-file");
@@ -66,10 +63,7 @@ static t_error	read_here_document_internal(const char *delimiter,
 			break ;
 		}
 		if (here_doc_append(document_out, line) != NO_ERROR)
-		{
-			free(line);
-			return (E_OOM);
-		}
+			return (free(line), E_OOM);
 		free(line);
 	}
 	return (NO_ERROR);
