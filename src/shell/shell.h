@@ -22,6 +22,8 @@
 # define DEFAULT_PATH_VALUE \
 		"/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin:/bin:/sbin:."
 
+# define SHELL_PROMPT "minishell$ "
+
 # define EXIT_FAILURE 1
 
 typedef struct s_state
@@ -35,6 +37,11 @@ typedef struct s_state
 	struct termios	tty_properties;
 	t_pid_list		*our_children;
 }					t_state;
+
+void	run_interpreter(t_state *state);
+void	run_non_interactive_loop(t_state *state);
+
+t_error	run_and_parse_command(const char *input, t_state *state);
 
 t_error	shell_init(char *envp[], bool running_arg_command, t_state *state_out);
 
