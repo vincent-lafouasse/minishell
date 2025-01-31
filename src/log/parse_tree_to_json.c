@@ -6,9 +6,11 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:11:57 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:15:05 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/31 12:39:59 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/*
 
 #include "log.h"
 #include <stdio.h>
@@ -115,3 +117,5 @@ void	parse_tree_to_json(const t_symbol *root)
 	print_node(root);
 	printf("}\n");
 }
+
+*/

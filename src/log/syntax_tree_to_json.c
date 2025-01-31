@@ -6,9 +6,11 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:12:01 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:16:12 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/31 12:39:43 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+/*
 
 #include "log.h"
 #include "parse/t_command/t_command.h"
@@ -52,7 +54,9 @@ static void	print_redir_list(const t_redir_list *rdl)
 	while (rdl)
 	{
 		printf("{");
-		word = rdl->redirect.kind == HERE_DOCUMENT ? rdl->redirect.doc.here_doc_eof : rdl->redirect.filename;
+		word = rdl->redirect.kind == HERE_DOCUMENT ?
+			rdl->redirect.doc.here_doc_eof :
+			rdl->redirect.filename;
 		printf("\"text\": { \"name\": \"%s %s\"}", repr, word);
 		printf("}");
 		if (rdl->next != NULL)
@@ -141,3 +145,5 @@ void	syntax_tree_to_json(t_command tree)
 	print_cmd(tree);
 	printf("}\n");
 }
+
+*/
