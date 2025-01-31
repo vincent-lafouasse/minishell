@@ -19,6 +19,8 @@
 # include <stdbool.h>
 # include <termios.h>
 
+# define EXIT_FAILURE 1
+
 typedef struct s_state
 {
 	t_env			*env;

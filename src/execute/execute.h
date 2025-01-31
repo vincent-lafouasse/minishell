@@ -35,7 +35,6 @@ static inline t_command_result	command_ok(int status_code)
 // function in header bad ?
 static inline t_command_result	command_err(t_error err)
 {
-# define EXIT_FAILURE 1 // bad, replace with EXIT_FAILURE from shell.h
 	return ((t_command_result){.error = err, .status_code = EXIT_FAILURE});
 }
 
