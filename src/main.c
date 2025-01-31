@@ -48,15 +48,11 @@ t_error	run_and_parse_command(const char *input, t_state *state)
 	if (g_last_signal == SIGINT)
 	{
 		state->last_status = 128 + SIGINT;
-		command_destroy_and_clear(&state->root);
-		return (E_INTERRUPTED);
+		return (command_destroy_and_clear(&state->root), E_INTERRUPTED);
 	}
 	err = gather_here_documents(state->root);
 	if (err != NO_ERROR)
-	{
-		command_destroy_and_clear(&state->root);
-		return (err);
-	}
+		return (command_destroy_and_clear(&state->root), err);
 	res = execute_command(state, state->root);
 	command_destroy_and_clear(&state->root);
 	state->last_status = res.status_code;
