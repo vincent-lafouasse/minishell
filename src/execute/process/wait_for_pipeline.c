@@ -38,7 +38,7 @@ static t_error	waitpid_and_exhaust_children(pid_t pid, int *status_out)
 			else
 				return (E_WAIT);
 		}
-		if (waited_for_pid == pid)
+		if (waited_for_pid != -1 && waited_for_pid == pid)
 		{
 			*status_out = status;
 			requested_pid_exited = true;
