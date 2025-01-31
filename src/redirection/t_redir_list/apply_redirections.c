@@ -21,19 +21,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-static t_error	redirect_expand(t_expansion_variables vars, const char *word,
-		char **out)
-{
-	t_error	err;
-
-	err = variable_expand_word(vars, word, out);
-	if (err != NO_ERROR)
-		return (err);
-	if (*out == NULL)
-		return (E_AMBIGUOUS_REDIRECT);
-	return (NO_ERROR);
-}
-
 // closes old_fd in case of error
 static t_error	move_fd_if_not_same(int old_fd, int new_fd)
 {
@@ -63,9 +50,11 @@ static t_error	redirect_regular_file(t_expansion_variables vars,
 
 	assert(redir.kind == FROM_FILE || redir.kind == INTO_FILE
 		|| redir.kind == APPEND_INTO_FILE);
-	err = redirect_expand(vars, redir.filename, &expanded_filename);
+	err = variable_expand_word(vars, redir.filename, &expanded_filename);
 	if (err != NO_ERROR)
 		return (err);
+	if (expanded_filename == NULL)
+		return (E_AMBIGUOUS_REDIRECT);
 	fd = open(expanded_filename, open_flags_for_redir_kind(redir.kind), 0666);
 	if (fd < 0)
 		return (free(expanded_filename), E_OPEN);
