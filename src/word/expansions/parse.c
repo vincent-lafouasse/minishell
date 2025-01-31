@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:45:47 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:45:48 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/31 14:51:33 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,17 +71,10 @@ t_error	wql_parse(const char *word, t_word_quotes_list **out)
 		current_part_len = current_word_part_len(word);
 		part = ft_substr(word, 0, current_part_len);
 		if (!part)
-		{
-			wql_clear(&quotes);
-			return (E_OOM);
-		}
+			return (wql_clear(&quotes), E_OOM);
 		err = wql_push_back(&quotes, current_part_kind, part);
 		if (err != NO_ERROR)
-		{
-			free(part);
-			wql_clear(&quotes);
-			return (E_OOM);
-		}
+			return (free(part), wql_clear(&quotes), E_OOM);
 		word += current_part_len;
 	}
 	*out = quotes;
