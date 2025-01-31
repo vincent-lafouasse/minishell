@@ -60,9 +60,7 @@ t_command_result	execute_subshell(t_state *state, t_subshell *subshell)
 
 	err = launch_subshell(state, subshell, io_default(), CLOSE_NOTHING);
 	if (err != NO_ERROR)
-	{
 		return (command_err(err));
-	}
 	err = wait_for_process(state, state->our_children->pid, &exit_status);
 	if (err != NO_ERROR)
 	{
