@@ -30,7 +30,7 @@
 #include <unistd.h>
 #include <word/word.h>
 
-#define USAGE "./minishell [-c command]"
+#define USAGE "./minishell [-c command]\n"
 
 t_error	run_and_parse_command(const char *input, t_state *state)
 {
@@ -76,6 +76,6 @@ int	main(int argc, char *argv[], char *envp[])
 	else if (executing_arg_command)
 		run_argument_command(&state, argv[2]);
 	else
-		printf("%s\n", USAGE);
+		ft_putstr(USAGE);
 	shell_exit(&state, state.last_status);
 }
