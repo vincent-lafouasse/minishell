@@ -134,10 +134,7 @@ t_command_result	do_assignments(t_env **env, t_word_list *assignments)
 		}
 		err = assign_variable(env, assignment);
 		if (err != NO_ERROR)
-		{
-			clean_up_assignment(&assignment);
-			return (command_err(err));
-		}
+			return (clean_up_assignment(&assignment), command_err(err));
 		assignments = assignments->next;
 	}
 	return (command_ok(exit_code));
