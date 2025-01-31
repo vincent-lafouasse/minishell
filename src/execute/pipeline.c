@@ -72,8 +72,10 @@ static t_error	launch_pipeline_inner(t_state *state, t_command command,
 			return (launch_cmd_in_subshell(state, command, io, fd_to_close));
 		return (launch_simple_command(state, command.simple, io, fd_to_close));
 	}
-	else // subshell
+	else if (command.type == CMD_SUBSHELL)
 		return (launch_subshell(state, command.subshell, io, fd_to_close));
+	else
+		return (E_UNREACHABLE);
 }
 
 static void	pipeline_cleanup(t_state *state, t_io pipe, int prev_pipe_read)
