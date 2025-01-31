@@ -119,16 +119,10 @@ t_error	wql_variable_expand(t_expansion_variables vars, t_word_quotes_list *wql)
 			return (E_OOM);
 		err = variable_expand_word_quote(vars, wql, &expanded);
 		if (err != NO_ERROR)
-		{
-			string_destroy(expanded);
-			return (err);
-		}
+			return (string_destroy(expanded), err);
 		err = string_make_c_string(expanded, &expanded_c_string);
 		if (err != NO_ERROR)
-		{
-			string_destroy(expanded);
-			return (err);
-		}
+			return (string_destroy(expanded), err);
 		free(wql->part);
 		wql->part = expanded_c_string;
 		string_destroy(expanded);
