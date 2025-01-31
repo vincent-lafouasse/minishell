@@ -113,8 +113,8 @@ t_error	launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 		current = current.pipeline->second;
 	}
 	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
-	if (err != NO_ERROR) return (pipeline_cleanup(state, ends,
-			CLOSE_NOTHING), err);
+	if (err != NO_ERROR)
+		return (pipeline_cleanup(state, ends, CLOSE_NOTHING), err);
 	io_close(ends);
 	return (NO_ERROR);
 }
