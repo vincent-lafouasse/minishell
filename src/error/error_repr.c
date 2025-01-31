@@ -36,6 +36,8 @@
 
 #define UNKNOWN_ERROR_REPR "Unknown error"
 
+const char	*error_repr_continued(t_error err);
+
 const char	*error_repr(t_error err)
 {
 	if (err == NO_ERROR)
@@ -62,6 +64,11 @@ const char	*error_repr(t_error err)
 		return (DUP2_REPR);
 	if (err == E_DUMMY)
 		return (DUMMY_REPR);
+	return (error_repr_continued(err));
+}
+
+const char	*error_repr_continued(t_error err)
+{
 	if (err == E_ACCESS)
 		return (ACCESS_REPR);
 	if (err == E_INTERRUPTED)
