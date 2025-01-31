@@ -22,20 +22,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#define NOT_A_VALID_ID "minishell: export: not a valid identifier\n"
-
 typedef struct s_assignment
 {
 	bool			appending;
 	char			*name;
 	char			*value;
 }					t_assignment;
-
-static void	report_invalid_identifier(char *identifier_name)
-{
-	(void)identifier_name;
-	write(STDERR_FILENO, NOT_A_VALID_ID, ft_strlen(NOT_A_VALID_ID));
-}
 
 // returns 0 if assignment is malformated in any way
 static size_t	name_len(char *assignment)
@@ -139,7 +131,7 @@ t_command_result	do_assignments(t_env **env, t_word_list *assignments)
 		if (!assignment.name)
 		{
 			any_failed = true;
-			report_invalid_identifier(assignments->contents);
+			report_error(assignments->contents, "not a valid identifier");
 			assignments = assignments->next;
 			continue ;
 		}
