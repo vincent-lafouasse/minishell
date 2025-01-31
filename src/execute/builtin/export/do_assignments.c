@@ -62,31 +62,17 @@ static t_error	parse_assignment(char *str, t_assignment *out)
 	if (!out->name)
 		return (E_OOM);
 	if (str[len] == '\0')
-	{
-		out->value = NULL;
-		out->appending = false;
-	}
-	else if (str[len] == '+')
-	{
+		return (NO_ERROR);
+	out->appending = str[len] == '+';
+	if (out->appending)
 		out->value = ft_strdup(&str[len + 2]);
-		if (!out->value)
-		{
-			free(out->name);
-			out->name = NULL;
-			return (E_OOM);
-		}
-		out->appending = true;
-	}
-	else if (str[len] == '=')
-	{
+	else
 		out->value = ft_strdup(&str[len + 1]);
-		if (!out->value)
-		{
-			free(out->name);
-			out->name = NULL;
-			return (E_OOM);
-		}
-		out->appending = false;
+	if (!out->value)
+	{
+		free(out->name);
+		out->name = NULL;
+		return (E_OOM);
 	}
 	return (NO_ERROR);
 }
