@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <word/word.h>
 
 #define SHELL_PROMPT "minishell$ "
 #define USAGE "./minishell [-c command]"

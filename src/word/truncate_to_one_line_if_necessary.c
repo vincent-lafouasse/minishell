@@ -1,21 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   word.h                                             :+:      :+:    :+:   */
+/*   truncate_to_one_line_if_necessary.c                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*   By: jamar <jamar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/30 19:32:49 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 19:32:54 by poss             ###   ########.fr       */
+/*   Created: 2025/01/31 22:54:24 by jamar             #+#    #+#             */
+/*   Updated: 2025/01/31 22:54:25 by jamar            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WORD_H
-# define WORD_H
+#include "libft/string.h"
 
-# include "error/t_error.h"
+void	truncate_to_one_line_if_necessary(char *str)
+{
+	char	*line_break;
 
-t_error	word_clone(const char *word, char **out);
-void	truncate_to_one_line_if_necessary(char *str);
-
-#endif // WORD_H
+	line_break = ft_strchr(str, '\n');
+	if (line_break)
+		*line_break = '\0';
+}
