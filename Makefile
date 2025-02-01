@@ -139,8 +139,7 @@ SRCS = $(SRCS_PATH)/main.c \
 	$(SRCS_PATH)/execute/process/wait_through_signals.c
 
 CC ?= cc
-CFLAGS += -Wall -Wextra -g3
-# CFLAGS += -Werror
+CFLAGS += -Wall -Wextra -Werror -g3
 CPPFLAGS += -Isrc -MMD -MP
 LDFLAGS += -lreadline
 
