@@ -17,7 +17,7 @@
 #define UNEXPECTED_TOKEN_REPR "Unexpected token"
 #define UNTERMINATED_QUOTE_REPR "Unterminated quote"
 #define OUT_OF_MEMORY_REPR "Out of memory"
-#define UNREACHABLE_REPR "Unreachable statement"
+#define UNREACHABLE_REPR "Programming error"
 #define NULL_PARAM_REPR "Received NULL parameter"
 #define MALFORMED_ENVP_REPR "Malformed environment"
 #define COMMAND_NOT_FOUND_REPR "Command not found"
