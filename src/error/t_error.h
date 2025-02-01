@@ -10,9 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_ERROR_H
+# define T_ERROR_H
 
-#include <stdbool.h>
+# include <stdbool.h>
 
 /* Update error_repr.c when adding a new variant */
 typedef enum e_error
@@ -50,3 +51,5 @@ void		report_error_message(const char *reason);
 void		report_error(const char *origin, const char *reason);
 void		report_syscall_error(const char *syscall);
 void		report_t_error(const char *origin, t_error err);
+
+#endif

@@ -10,14 +10,15 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef LOG_H
+# define LOG_H
 
-#include "execute/t_env/t_env.h"
-#include "parse/t_command/t_command.h"
-#include "parse/tokenize/t_token_list/t_token_list.h"
-#include "parse/t_symbol/t_symbol.h"
-#include "word/t_word_list/t_word_list.h"
-#include "redirection/t_redir_list/t_redir_list.h"
+# include "execute/t_env/t_env.h"
+# include "parse/t_command/t_command.h"
+# include "parse/tokenize/t_token_list/t_token_list.h"
+# include "parse/t_symbol/t_symbol.h"
+# include "word/t_word_list/t_word_list.h"
+# include "redirection/t_redir_list/t_redir_list.h"
 
 void	log_token(t_token token);
 void	log_token_list(const t_token_list *tkl);
@@ -26,3 +27,5 @@ void	syntax_tree_to_json(t_command tree);
 void	log_word_list(const t_word_list *words);
 void	log_redir_list(const t_redir_list *rdl);
 void	log_env(const t_env *env);
+
+#endif

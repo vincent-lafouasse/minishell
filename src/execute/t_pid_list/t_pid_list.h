@@ -10,10 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_PID_LIST_H
+# define T_PID_LIST_H
 
-#include "error/t_error.h"
-#include <unistd.h>
+# include "error/t_error.h"
+# include <unistd.h>
 
 typedef struct s_pid_list
 {
@@ -37,3 +38,5 @@ pid_t		pidl_pop_front(t_pid_list **pidl);
 
 void		pidl_delone(t_pid_list **pidl);
 void		pidl_clear(t_pid_list **pidl);
+
+#endif

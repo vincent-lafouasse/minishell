@@ -10,10 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_WORD_LIST_H
+# define T_WORD_LIST_H
 
-#include "error/t_error.h"
-#include <stddef.h>
+# include "error/t_error.h"
+# include <stddef.h>
 
 typedef void	(*t_destructor)(void *);
 
@@ -38,3 +39,5 @@ void		wl_delone(t_word_list **words, t_destructor del);
 void		wl_clear(t_word_list **words, t_destructor del);
 
 char		**wl_into_word_array(t_word_list **words);
+
+#endif

@@ -10,9 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_ENV_H
+# define T_ENV_H
 
-#include "error/t_error.h"
+# include "error/t_error.h"
 
 typedef struct s_env_entry
 {
@@ -40,3 +41,5 @@ char				**env_make_path_or_empty(const t_env *env);
 char				**env_make_envp(const t_env *env);
 
 void				env_destroy(t_env **env);
+
+#endif

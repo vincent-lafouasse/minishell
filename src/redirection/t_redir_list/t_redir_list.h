@@ -10,10 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+#ifndef T_REDIR_LIST_H
+# define T_REDIR_LIST_H
 
-#include "error/t_error.h"
-#include <stddef.h>
+# include "error/t_error.h"
+# include <stddef.h>
 
 typedef void				(*t_destructor)(void *);
 
@@ -80,3 +81,5 @@ void						rdl_delone(t_redir_list **rdl, t_destructor del);
 void						rdl_clear(t_redir_list **rdl, t_destructor del);
 
 char						**rdl_into_word_array(t_redir_list **rdl);
+
+#endif
