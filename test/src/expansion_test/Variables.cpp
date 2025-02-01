@@ -23,7 +23,7 @@ Variables::Variables(const std::map<std::string, std::string> &env) : last_statu
 
 Variables::~Variables()
 {
-	//env_destroy(&this->variables); // bad: this leaks rn
+	env_destroy(&this->variables);
 }
 
 t_expansion_variables Variables::as_c_struct() const
