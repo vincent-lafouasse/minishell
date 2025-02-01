@@ -26,13 +26,11 @@ typedef struct s_command_result
 	int							status_code;
 }								t_command_result;
 
-// function in header bad ?
 static inline t_command_result	command_ok(int status_code)
 {
 	return ((t_command_result){.error = NO_ERROR, .status_code = status_code});
 }
 
-// function in header bad ?
 static inline t_command_result	command_err(t_error err)
 {
 	return ((t_command_result){.error = err, .status_code = EXIT_FAILURE});
