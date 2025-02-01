@@ -16,7 +16,6 @@
 #include "parse/t_command/t_command.h"
 #include "redirection/t_redir_list/t_redir_list.h"
 #include "word/t_word_list/t_word_list.h"
-#include <assert.h>
 #include <stdio.h>
 
 static void	print_simple(t_simple *simple);
@@ -123,7 +122,6 @@ static void	print_conditional(t_conditional *conditional)
 
 static void	print_cmd(t_command other)
 {
-	assert(command_is_initialized(other));
 	if (other.type == CMD_SIMPLE)
 		return (print_simple(other.simple));
 	if (other.type == CMD_SUBSHELL)
