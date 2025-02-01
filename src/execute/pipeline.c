@@ -19,7 +19,7 @@
 #include "shell/shell.h"
 #include "word/expansions/expand.h"
 #include <assert.h> // bad
-#include <errno.h>  // bad
+#include <errno.h>
 
 #define PIPE_READ 0
 #define PIPE_WRITE 1
