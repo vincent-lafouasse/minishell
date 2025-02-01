@@ -44,10 +44,11 @@ TEST(EmptyWordExpansion, OneEmptyVariableExpandsToNoWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = "$EMPTY";
-	char *actual;
+	char *actual = nullptr;
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_EQ(actual, nullptr) << "expected no word and got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, ManyEmptyVariablesExpandToNoWord)
@@ -56,10 +57,11 @@ TEST(EmptyWordExpansion, ManyEmptyVariablesExpandToNoWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = "$EMPTY$EMPTY$EMPTY";
-	char *actual;
+	char *actual = nullptr;
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_EQ(actual, nullptr) << "expected no word and got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, OneNonExistentVariableExpandsToNoWord)
@@ -68,10 +70,11 @@ TEST(EmptyWordExpansion, OneNonExistentVariableExpandsToNoWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = "$DNE";
-	char *actual;
+	char *actual = nullptr;
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_EQ(actual, nullptr) << "expected no word and got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, EmptyQuotedStringExpandsToEmptyWord)
@@ -80,11 +83,12 @@ TEST(EmptyWordExpansion, EmptyQuotedStringExpandsToEmptyWord)
 		{}
 	};
 	const char *input = "\"\"";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, OneQuotedNonExistentVariableExpandsToEmptyWord)
@@ -93,11 +97,12 @@ TEST(EmptyWordExpansion, OneQuotedNonExistentVariableExpandsToEmptyWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = "\"$DNE\"";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, TwoQuotedEmptyVariablesExpandToOneEmptyWord)
@@ -106,11 +111,12 @@ TEST(EmptyWordExpansion, TwoQuotedEmptyVariablesExpandToOneEmptyWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = "\"$EMPTY\"\"$EMPTY\"";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, TwoEmptyQuotedStringsExpandToOneEmptyWord)
@@ -119,11 +125,12 @@ TEST(EmptyWordExpansion, TwoEmptyQuotedStringsExpandToOneEmptyWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = "\'\'\"\"";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, EmptyStringFollowedByNonExistentVariableExpandsToEmptyWord)
@@ -132,11 +139,12 @@ TEST(EmptyWordExpansion, EmptyStringFollowedByNonExistentVariableExpandsToEmptyW
 		{{"EMPTY", ""}}
 	};
 	const char *input = "\"\"$DNE";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, EmptyVariableSurroundedByEmptyStringsExpandsToEmptyWord)
@@ -145,11 +153,12 @@ TEST(EmptyWordExpansion, EmptyVariableSurroundedByEmptyStringsExpandsToEmptyWord
 		{{"EMPTY", ""}}
 	};
 	const char *input = "\"\"$EMPTY\"\"";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, EmptyStringExpandsToEmptyWord)
@@ -158,11 +167,12 @@ TEST(EmptyWordExpansion, EmptyStringExpandsToEmptyWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = R"("")";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, EmptyVariableFollowedByEmptyStringExpandsToEmptyWord)
@@ -171,11 +181,12 @@ TEST(EmptyWordExpansion, EmptyVariableFollowedByEmptyStringExpandsToEmptyWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = R"($EMPTY"")";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, EmptyStringFollowedByEmptyVariableExpandsToEmptyWord)
@@ -184,11 +195,12 @@ TEST(EmptyWordExpansion, EmptyStringFollowedByEmptyVariableExpandsToEmptyWord)
 		{{"EMPTY", ""}}
 	};
 	const char *input = R"(""$EMPTY)";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
 TEST(EmptyWordExpansion, EmptyStringSurroundedByEmptyVariablesExpandsToEmptyWord)
@@ -197,10 +209,11 @@ TEST(EmptyWordExpansion, EmptyStringSurroundedByEmptyVariablesExpandsToEmptyWord
 		{{"EMPTY", ""}}
 	};
 	const char *input = R"($EMPTY""$EMPTY)";
-	char *actual;
+	char *actual = nullptr;
 	const char *expected = "";
 
 	ASSERT_EQ(variable_expand_word(variables.as_c_struct(), input, &actual), NO_ERROR);
 	ASSERT_STREQ(actual, expected) << "expected: " << expected << "got: " << actual;
+	free(actual);
 }
 
