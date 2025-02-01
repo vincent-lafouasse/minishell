@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:43:26 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:43:34 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 21:58:55 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@
 #include "execute/process/process.h"
 #include "shell/shell.h"
 #include "word/expansions/expand.h"
-#include <assert.h> // bad
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -51,7 +50,6 @@ t_command_result	execute_simple(t_state *state, t_simple *simple)
 		return (report_syscall_error("fork"), command_ok(126 | 128));
 	else if (err != NO_ERROR)
 		return (command_err(err));
-	assert(state->our_children != NULL);
 	err = wait_for_process(state, state->our_children->pid, &exit_status);
 	if (err != NO_ERROR)
 	{

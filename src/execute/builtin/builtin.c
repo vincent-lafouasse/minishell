@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:23:51 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:57:18 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 21:58:46 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include "builtin.h"
 #include "error/t_error.h"
 #include "libft/string.h"
-#include <assert.h> // bad
 #include <unistd.h>
 
 static bool			str_eq(const char *a, const char *b);
@@ -23,8 +22,6 @@ t_command_result	execute_builtin(t_state *state, t_simple *simple)
 {
 	const char	*command = simple->words->contents;
 
-	assert(is_builtin_command(simple));
-	assert(simple->words != NULL);
 	if (str_eq(command, "echo"))
 		return (execute_echo(state, simple));
 	if (str_eq(command, "cd"))

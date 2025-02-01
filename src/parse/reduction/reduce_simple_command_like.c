@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:25:48 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:44:47 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 22:02:31 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #include "redirection/t_redir_list/t_redir_list.h"
 #include "parse/tokenize/t_token_list/t_token_list.h"
 #include "reduction_internals.h"
-#include <assert.h> // temporarily
 #include <stdlib.h>
 
 static t_redir_kind	redir_kind_from_angle_bracket(t_token_type bracket)
@@ -27,7 +26,6 @@ static t_redir_kind	redir_kind_from_angle_bracket(t_token_type bracket)
 		return (HERE_DOCUMENT);
 	else if (bracket == DR_ANGLE_BRACKET)
 		return (APPEND_INTO_FILE);
-	assert(false);
 	return (0);
 }
 

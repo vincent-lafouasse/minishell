@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:54:02 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:05:25 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 21:59:53 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "shell/shell.h"
 #include "t_redir_list.h"
 #include "word/expansions/expand.h"
-#include <assert.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <stdlib.h>
@@ -48,8 +47,6 @@ static t_error	redirect_regular_file(t_expansion_variables vars,
 	char	*expanded_filename;
 	t_error	err;
 
-	assert(redir.kind == FROM_FILE || redir.kind == INTO_FILE
-		|| redir.kind == APPEND_INTO_FILE);
 	err = variable_expand_word(vars, redir.filename, &expanded_filename);
 	if (err != NO_ERROR)
 		return (err);
@@ -118,7 +115,6 @@ static t_error	redirect_here_document(t_redirect redir)
 	int		errno_store;
 	int		redirectee;
 
-	assert(redir.kind == HERE_DOCUMENT);
 	err = make_tmp_file(HEREDOC_FILE_PATH, &tmpfile_writable, &tmpfile_rd_only);
 	if (err != NO_ERROR)
 		return (err);

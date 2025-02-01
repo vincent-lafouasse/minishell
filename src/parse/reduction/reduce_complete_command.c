@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:25:41 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 19:48:22 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 22:03:22 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 #include "../tokenize/t_token.h"
 #include "error/t_error.h"
 #include "reduction_internals.h"
-#include <assert.h> // temporarily
 #include <stdbool.h>
 
 static t_conditional_operator	operator_from_token_type(t_token_type type)
@@ -24,7 +23,6 @@ static t_conditional_operator	operator_from_token_type(t_token_type type)
 		return (AND_OP);
 	else if (type == OR_OR)
 		return (OR_OP);
-	assert(false);
 	return (0);
 }
 
@@ -35,7 +33,6 @@ static t_error	reduce_complete_cmd_rest(t_symbol *cmd_rest, t_command *out)
 	t_conditional_operator	op;
 	t_error					err;
 
-	assert(cmd_rest->kind == SYM_COMPLETE_CMD_REST);
 	productions = cmd_rest->production;
 	next_cmd_rest = productions->data[2];
 	if (next_cmd_rest.production->len == 0)
@@ -56,7 +53,6 @@ t_error	reduce_complete_command(t_symbol *root, t_command *out)
 {
 	t_error	err;
 
-	assert(root->kind == SYM_COMPLETE_CMD);
 	if (root->production->data[1].production->len == 0)
 		return (reduce_pipeline(&root->production->data[0], out));
 	*out = command_new_conditional(0, (t_command){0}, (t_command){0});

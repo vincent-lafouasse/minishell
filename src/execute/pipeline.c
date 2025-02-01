@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:47:07 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:53:18 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 21:59:08 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,6 @@
 #include "redirection/t_io/t_io.h"
 #include "shell/shell.h"
 #include "word/expansions/expand.h"
-#include <assert.h> // bad
 #include <errno.h>
 
 #define PIPE_READ 0
@@ -39,7 +38,6 @@ t_command_result	execute_pipeline(t_state *state, t_pipeline *pipeline)
 		return (report_syscall_error("fork"), command_ok(EX_NOEXEC | 128));
 	else if (err != NO_ERROR)
 		return (command_err(err));
-	assert(state->our_children != NULL);
 	err = wait_for_pipeline(state, state->our_children, &last_exit_status);
 	if (err != NO_ERROR)
 	{
@@ -57,7 +55,6 @@ static t_error	launch_pipeline_inner(t_state *state, t_command command,
 	t_expansion_variables	vars;
 	t_error					err;
 
-	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
 	if (command.type == CMD_SIMPLE)
 	{
 		vars = (t_expansion_variables){state->env, state->last_status};

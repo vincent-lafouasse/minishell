@@ -6,14 +6,13 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 14:25:45 by poss              #+#    #+#             */
-/*   Updated: 2024/11/12 14:25:46 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 22:03:44 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../t_command/t_command.h"
 #include "../t_symbol/t_symbol.h"
 #include "reduction_internals.h"
-#include <assert.h> // temporarily
 #include <stdbool.h>
 
 static t_error	reduce_pipeline_rest(t_symbol *pipeline_rest, t_command *out)
@@ -39,7 +38,6 @@ t_error	reduce_pipeline(t_symbol *pipeline, t_command *out)
 	t_error			err;
 	t_symbol_array	*productions;
 
-	assert(pipeline->kind == SYM_PIPELINE);
 	productions = pipeline->production;
 	if (productions->data[1].production->len == 0)
 		return (reduce_command(&productions->data[0], out));

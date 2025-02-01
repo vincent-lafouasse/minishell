@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 20:20:59 by poss              #+#    #+#             */
-/*   Updated: 2025/01/30 20:21:00 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 21:58:38 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include "libft/ctype.h"
 #include "libft/ft_string.h"
 #include "libft/string.h"
-#include <assert.h> // temporarily
 #include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -95,7 +94,6 @@ static t_error	assign_variable(t_env **env, t_assignment assignment)
 	if (!assignment.value)
 		return (NO_ERROR);
 	entry = env_get_mut(*env, assignment.name);
-	assert(entry != NULL);
 	if (assignment.appending)
 	{
 		if (entry->value)

@@ -6,14 +6,13 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/30 19:45:47 by poss              #+#    #+#             */
-/*   Updated: 2025/01/31 14:51:33 by poss             ###   ########.fr       */
+/*   Updated: 2025/02/01 22:01:54 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "expand_internals.h"
 #include "libft/ft_string.h"
 #include "libft/string.h"
-#include <assert.h> // temporarily
 #include <stdlib.h>
 
 static t_word_quote_state	current_word_part_kind(const char *start)
