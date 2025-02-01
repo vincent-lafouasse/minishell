@@ -76,7 +76,6 @@ t_error	parse(const char *input, t_command *out)
 	if (err != NO_ERROR)
 	{
 		tkl_clear(&tokens, free);
-		command_destroy_and_clear(out);
 		return (err);
 	}
 	tkl_clear(&tokens, free);
