@@ -37,7 +37,6 @@ typedef enum e_error
 	E_OPEN,
 	E_UNLINK,
 	E_PIPE,
-	E_DUMMY,
 	E_AMBIGUOUS_REDIRECT,
 	E_INTERRUPTED,
 }			t_error;
