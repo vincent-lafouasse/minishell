@@ -6,7 +6,7 @@
 /*   By: jamar <jamar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 19:24:50 by jamar             #+#    #+#             */
-/*   Updated: 2024/11/16 20:32:36 by jamar            ###   ########.fr       */
+/*   Updated: 2025/01/30 19:33:47 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,8 @@ t_oom	string_reserve(t_string **self, size_t additional)
 	current_self = *self;
 	if (additional <= current_self->cap - current_self->len)
 		return (false);
-	if (current_self->cap > (SIZE_MAX / 2) || current_self->cap > (SIZE_MAX - additional))
+	if (current_self->cap > (SIZE_MAX / 2) || \
+		current_self->cap > (SIZE_MAX - additional))
 		return (true);
 	doubled_cap = current_self->cap * 2;
 	summed_cap = current_self->cap + additional;

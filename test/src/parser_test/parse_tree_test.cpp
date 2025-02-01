@@ -11,7 +11,7 @@ extern "C"
 #include "parse/tokenize/t_token_list/t_token_list.h"
 #include "error/t_error.h"
 
-t_error parse_command(t_token_list *tokens, t_symbol *out);
+t_error	generate_parse_tree(const t_token_list *tokens, t_symbol *out);
 };
 
 #define FROM_FILE L_ANGLE_BRACKET
@@ -51,7 +51,7 @@ void assert_unexpected_token_during_parsing(const Tokens &tokens)
 {
     t_symbol sym;
     t_command parsed;
-    t_error err = parse_command(tokens.self, &sym);
+    t_error err = generate_parse_tree(tokens.self, &sym);
 
     if (err == E_UNEXPECTED_TOKEN)
     {
@@ -69,7 +69,7 @@ void assert_successful_parsing(const Tokens &tokens)
 {
     t_symbol sym;
     t_command parsed;
-    t_error err = parse_command(tokens.self, &sym);
+    t_error err = generate_parse_tree(tokens.self, &sym);
 
     if (err != NO_ERROR)
     {

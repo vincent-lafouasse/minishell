@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   noninteractive_readline.c                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:08:44 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:10:09 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "signal.h"
 #include <stdio.h>
 #include <readline/readline.h>
 
-static int unset_event_hook(void)
+static int	unset_event_hook(void)
 {
 	rl_event_hook = NULL;
 	return (0);
@@ -18,10 +30,10 @@ static int unset_event_hook(void)
 //
 // For context, we are noodling with the `rl_event_hook` in the first place to
 // ensure readline reads changes to the `rl_done` variable, which we set in the
-// event of a SIGINT to indicate that readline should return ASAP and stop reading.
-// As it turns out, readline won't read this variable (and subsequently not
-// return control when it is told to) while it is trying to read characters, and
-// the only way to make it respond is in a certain code path that is only
+// event of a SIGINT to indicate that readline should return ASAP and stop
+// reading. As it turns out, readline won't read this variable (and subsequently
+// not return control when it is told to) while it is trying to read characters,
+// and the only way to make it respond is in a certain code path that is only
 // reached when `rl_event_hook` is set.
 //
 // The aforementioned code path is sort of quirky for some reason, and for some
@@ -33,7 +45,7 @@ static int unset_event_hook(void)
 // Think of it as: when readline HAS to call the `event_hook`, i.e. when it has
 // run of characters to read, and is told to wait for input, then we make it
 // exit the reading loop. This seems to be preferred for non-terminal stdins.
-void make_rl_return_when_input_exhausted(void)
+void	make_rl_return_when_input_exhausted(void)
 {
 	rl_event_hook = unset_event_hook;
 }

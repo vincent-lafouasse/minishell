@@ -1,11 +1,22 @@
-#include "libft/string.h"
-#include "expand_internals.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   make_joined.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 19:45:45 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 19:45:46 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
+#include "expand_internals.h"
+#include "libft/string.h"
 #include <stdlib.h>
 
-static size_t wql_cumulated_length(const t_word_quotes_list *wql)
+static size_t	wql_cumulated_length(const t_word_quotes_list *wql)
 {
-	size_t len;
+	size_t	len;
 
 	len = 0;
 	while (wql)
@@ -16,7 +27,7 @@ static size_t wql_cumulated_length(const t_word_quotes_list *wql)
 	return (len);
 }
 
-static bool any_words_were_quoted(const t_word_quotes_list *wql)
+static bool	any_words_were_quoted(const t_word_quotes_list *wql)
 {
 	while (wql)
 	{
@@ -27,16 +38,16 @@ static bool any_words_were_quoted(const t_word_quotes_list *wql)
 	return (false);
 }
 
-static bool expands_to_nonempty_word_list(const t_word_quotes_list *wql)
+static bool	expands_to_nonempty_word_list(const t_word_quotes_list *wql)
 {
 	return (wql_cumulated_length(wql) != 0 || any_words_were_quoted(wql));
 }
 
-t_error wql_make_joined(const t_word_quotes_list *wql, char **out)
+t_error	wql_make_joined(const t_word_quotes_list *wql, char **out)
 {
-	char *joined;
-	size_t current_part_len;
-	size_t i;
+	char	*joined;
+	size_t	current_part_len;
+	size_t	i;
 
 	if (!expands_to_nonempty_word_list(wql))
 	{

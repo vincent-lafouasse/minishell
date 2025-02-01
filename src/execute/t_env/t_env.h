@@ -1,17 +1,31 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   t_env.h                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:27:34 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:27:35 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #pragma once
 
 #include "error/t_error.h"
 
-typedef struct s_env_entry {
-	char	*key;
-	char	*value;
-} t_env_entry;
+typedef struct s_env_entry
+{
+	char			*key;
+	char			*value;
+}					t_env_entry;
 
-typedef struct s_env {
-	t_env_entry	entry;
+typedef struct s_env
+{
+	t_env_entry		entry;
 	struct s_env	*next;
 	struct s_env	*prev;
-} t_env;
+}					t_env;
 
 t_error				from_envp(char *values[], t_env **out);
 

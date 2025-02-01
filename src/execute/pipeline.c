@@ -1,42 +1,46 @@
-#include "execute.h"
-
-#include "error/t_error.h"
-#include "shell/shell.h"
-#include "parse/t_command/t_command.h"
-#include "redirection/t_io/t_io.h"
-#include "word/expansions/expand.h"
-#include "execute/process/process.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipeline.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:47:07 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:53:18 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "./builtin/builtin.h"
-
+#include "error/t_error.h"
+#include "execute.h"
+#include "execute/process/process.h"
+#include "parse/t_command/t_command.h"
+#include "redirection/t_io/t_io.h"
+#include "shell/shell.h"
+#include "word/expansions/expand.h"
 #include <assert.h> // bad
-#include <errno.h> // bad
+#include <errno.h>  // bad
 
 #define PIPE_READ 0
 #define PIPE_WRITE 1
 
-t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
+#define EXIT_FAILURE 1
+#define EX_NOEXEC 126
+
+t_command_result	execute_pipeline(t_state *state, t_pipeline *pipeline)
 {
-	t_error err;
+	t_error	err;
+	int		last_exit_status;
 
 	err = launch_pipeline(state, pipeline, io_default());
-	// E_PIPE -> `last_status = EXIT_FAILURE | 128` (execute_cmd.c:2495 and sig.c:418)
-	// E_FORK -> `last_status = (EX_NOEXEC = 126) | 128` (jobs.c:2210 and sig.c:418)
-	// E_OOM -> propagate
 	if (err == E_PIPE)
-		return report_syscall_error("pipe"), command_ok(1 | 128);
+		return (report_syscall_error("pipe"), command_ok(EXIT_FAILURE | 128));
 	else if (err == E_FORK)
-		return report_syscall_error("fork"), command_ok(126 | 128);
+		return (report_syscall_error("fork"), command_ok(EX_NOEXEC | 128));
 	else if (err != NO_ERROR)
-		return command_err(err);
+		return (command_err(err));
 	assert(state->our_children != NULL);
-
-	int last_exit_status;
 	err = wait_for_pipeline(state, state->our_children, &last_exit_status);
-	// the only errors `waitpid` can return to us are EINVAL and ECHILD, the
-	// first being a programming error and the other one signifying that the
-	// process was somehow never launched or does not belong to us anymore.
-	// meaning they are effectively unreachable, only warn for them in this case
 	if (err != NO_ERROR)
 	{
 		last_exit_status = EXIT_FAILURE;
@@ -47,29 +51,32 @@ t_command_result execute_pipeline(t_state *state, t_pipeline *pipeline)
 }
 
 // either simple or subshell or maybe builtin
-static t_error launch_pipeline_inner(t_state* state, t_command command, t_io io, int fd_to_close) {
+static t_error	launch_pipeline_inner(t_state *state, t_command command,
+		t_io io, int fd_to_close)
+{
+	t_expansion_variables	vars;
+	t_error					err;
+
 	assert(command.type == CMD_SIMPLE || command.type == CMD_SUBSHELL);
-
-	t_expansion_variables vars;
-	t_error err;
-
-	if (command.type == CMD_SIMPLE) {
+	if (command.type == CMD_SIMPLE)
+	{
 		vars = (t_expansion_variables){state->env, state->last_status};
 		err = variable_expand_words(vars, &command.simple->words);
 		if (err != NO_ERROR)
-			return err;
-
-		if (/* command.simple->words && */ is_builtin_command(command.simple))
+			return (err);
+		if (command.simple->words && is_builtin_command(command.simple))
 			return (launch_cmd_in_subshell(state, command, io, fd_to_close));
-		return launch_simple_command(state, command.simple, io, fd_to_close);
+		return (launch_simple_command(state, command.simple, io, fd_to_close));
 	}
-	else // subshell
-		return launch_subshell(state, command.subshell, io, fd_to_close);
+	else if (command.type == CMD_SUBSHELL)
+		return (launch_subshell(state, command.subshell, io, fd_to_close));
+	else
+		return (E_UNREACHABLE);
 }
 
-static void pipeline_cleanup(t_state *state, t_io pipe, int prev_pipe_read)
+static void	pipeline_cleanup(t_state *state, t_io pipe, int prev_pipe_read)
 {
-	int error_save;
+	int	error_save;
 
 	error_save = errno;
 	if (prev_pipe_read != CLOSE_NOTHING)
@@ -80,35 +87,30 @@ static void pipeline_cleanup(t_state *state, t_io pipe, int prev_pipe_read)
 	errno = error_save;
 }
 
-t_error launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
+t_error	launch_pipeline(t_state *state, t_pipeline *pipeline, t_io ends)
 {
-	t_command current;
-	t_error err;
+	t_command	current;
+	t_error		err;
+	int			pipe_fd[2];
+	t_io		current_io;
 
 	current = command_from_pipeline(pipeline);
 	while (current.type == CMD_PIPELINE)
 	{
-		int pipe_fd[2];
-
 		if (pipe(pipe_fd) < 0)
-			return pipeline_cleanup(state, ends, CLOSE_NOTHING), E_PIPE;
-
-		t_io current_io = io_new(ends.input, pipe_fd[PIPE_WRITE]);
+			return (pipeline_cleanup(state, ends, CLOSE_NOTHING), E_PIPE);
+		current_io = io_new(ends.input, pipe_fd[PIPE_WRITE]);
 		ends.input = pipe_fd[PIPE_READ];
-
-		err = launch_pipeline_inner(state, current.pipeline->first,
-													  current_io, pipe_fd[PIPE_READ]);
+		err = launch_pipeline_inner(state, current.pipeline->first, current_io,
+				pipe_fd[PIPE_READ]);
 		if (err != NO_ERROR)
-			return pipeline_cleanup(state, current_io, ends.input), err;
-
+			return (pipeline_cleanup(state, current_io, ends.input), err);
 		io_close(current_io);
-
 		current = current.pipeline->second;
 	}
-	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING); // bad, handle error
+	err = launch_pipeline_inner(state, current, ends, CLOSE_NOTHING);
 	if (err != NO_ERROR)
-		return pipeline_cleanup(state, ends, CLOSE_NOTHING), err;
+		return (pipeline_cleanup(state, ends, CLOSE_NOTHING), err);
 	io_close(ends);
-
-	return NO_ERROR;
+	return (NO_ERROR);
 }

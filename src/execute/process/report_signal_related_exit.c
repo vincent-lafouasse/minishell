@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   report_signal_related_exit.c                       :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:35:54 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:38:37 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "process.h"
 
 #include "word/t_string/t_string.h"
@@ -13,7 +25,7 @@
 #define LARGEST_POSSIBLE_MESSAGE \
 	"minishell: process killed by signal #–2147483648 (core dumped)\n"
 
-static void default_report_signal_related_exit(int signal_id, bool core_dumped)
+static void	default_report_signal_related_exit(int signal_id, bool core_dumped)
 {
 	ft_putstr_fd("minishell: process killed by signal #", STDERR_FILENO);
 	ft_putnbr_fd(signal_id, STDERR_FILENO);
@@ -22,7 +34,7 @@ static void default_report_signal_related_exit(int signal_id, bool core_dumped)
 	ft_putchar_fd('\n', STDERR_FILENO);
 }
 
-void report_signal_related_exit(int status)
+void	report_signal_related_exit(int status)
 {
 	t_string	*msg;
 	char		*signal_str;
@@ -38,7 +50,7 @@ void report_signal_related_exit(int status)
 		free(signal_str);
 		string_destroy(msg);
 		default_report_signal_related_exit(signal_id, core_dumped);
-		return;
+		return ;
 	}
 	string_extend(&msg, "minishell: process killed by signal #");
 	string_extend(&msg, signal_str);

@@ -6,13 +6,12 @@
 /*   By: jamar <jamar@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 19:04:44 by jamar             #+#    #+#             */
-/*   Updated: 2024/01/30 20:40:04 by jamar            ###   ########.fr       */
+/*   Updated: 2025/01/30 19:33:59 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "t_string.h"
 #include "libft/string.h"
-#include <limits.h>
 #include <stddef.h>
 
 t_oom	string_push(t_string **self, char t)
@@ -29,7 +28,7 @@ t_oom	string_push(t_string **self, char t)
 
 t_oom	string_extend(t_string **self, const char *other)
 {
-	size_t string_len;
+	size_t	string_len;
 
 	string_len = ft_strlen(other);
 	return (string_extend_n(self, other, string_len));

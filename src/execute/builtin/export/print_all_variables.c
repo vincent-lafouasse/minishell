@@ -1,15 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   print_all_variables.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:21:03 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:21:06 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../builtin.h"
-
-#include "execute/execute.h"
 #include "error/t_error.h"
-#include "libft/string.h"
+#include "execute/execute.h"
 #include "word/t_string/t_string.h"
-#include "word/t_word_list/t_word_list.h"
-
 #include <stdlib.h>
 #include <unistd.h>
 
-static t_error append_entry_line(t_env_entry entry, t_string **out)
+static t_error	append_entry_line(t_env_entry entry, t_string **out)
 {
 	if (string_extend(out, "export "))
 		return (E_OOM);
@@ -29,10 +37,10 @@ static t_error append_entry_line(t_env_entry entry, t_string **out)
 	return (NO_ERROR);
 }
 
-static t_error gather_environment(t_env *env, t_string **out)
+static t_error	gather_environment(t_env *env, t_string **out)
 {
-	t_env_entry curr;
-	t_error err;
+	t_env_entry	curr;
+	t_error		err;
 
 	while (env)
 	{
@@ -45,10 +53,10 @@ static t_error gather_environment(t_env *env, t_string **out)
 	return (NO_ERROR);
 }
 
-static t_command_result write_env_to_stdout(t_string *env)
+static t_command_result	write_env_to_stdout(t_string *env)
 {
-	int status;
-	int exit_code;
+	int	status;
+	int	exit_code;
 
 	status = write(STDOUT_FILENO, &env->data, env->len);
 	string_destroy(env);
@@ -59,21 +67,20 @@ static t_command_result write_env_to_stdout(t_string *env)
 	}
 	else
 		exit_code = EXIT_SUCCESS;
-	return command_ok(exit_code);
+	return (command_ok(exit_code));
 }
 
-t_command_result print_all_variables(t_state *state)
+t_command_result	print_all_variables(t_state *state)
 {
-	t_string *env;
+	t_string	*env;
 
 	env = string_new();
 	if (!env)
-		return command_err(E_OOM);
+		return (command_err(E_OOM));
 	if (gather_environment(state->env, &env) != NO_ERROR)
 	{
 		string_destroy(env);
-		return command_err(E_OOM);
+		return (command_err(E_OOM));
 	}
-
-	return write_env_to_stdout(env);
+	return (write_env_to_stdout(env));
 }

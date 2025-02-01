@@ -1,18 +1,26 @@
-#include "execute.h"
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   execute.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 20:46:34 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 20:46:35 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "./builtin/builtin.h"
-
+#include "execute.h"
+#include <assert.h> // bad
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/stat.h>
-#include <errno.h>
-#include <assert.h> // bad
 
-
-t_command_result execute_command(t_state *state, t_command command) {
-
-	t_command_result res;
+t_command_result	execute_command(t_state *state, t_command command)
+{
+	t_command_result	res;
 
 	assert(state->our_children == NULL);
 	if (command.type == CMD_SIMPLE)
@@ -25,6 +33,5 @@ t_command_result execute_command(t_state *state, t_command command) {
 		res = execute_subshell(state, command.subshell);
 	else
 		res = command_err(E_UNREACHABLE);
-
-	return res;
+	return (res);
 }

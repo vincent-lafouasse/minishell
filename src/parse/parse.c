@@ -6,7 +6,7 @@
 /*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/12 13:43:42 by poss              #+#    #+#             */
-/*   Updated: 2024/12/23 22:04:58 by poss             ###   ########.fr       */
+/*   Updated: 2025/01/30 19:27:20 by poss             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 #include "tokenize/tokenize.h"
 #include <stdlib.h>
 
-t_error	parse_command(const t_token_list *tokens, t_symbol *out)
+t_error	generate_parse_tree(const t_token_list *tokens, t_symbol *out)
 {
 	t_parser	state;
 
@@ -39,10 +39,28 @@ t_error	parse_command(const t_token_list *tokens, t_symbol *out)
 	return (NO_ERROR);
 }
 
+t_error	parse_tokens(const t_token_list *tokens, t_command *out)
+{
+	t_symbol	parse_tree;
+	t_error		err;
+
+	err = generate_parse_tree(tokens, &parse_tree);
+	if (err != NO_ERROR)
+		return (err);
+	err = reduce_parse_tree_into_command(&parse_tree, out);
+	if (err != NO_ERROR)
+	{
+		symbol_clear(parse_tree);
+		command_destroy_and_clear(out);
+		return (err);
+	}
+	symbol_clear(parse_tree);
+	return (NO_ERROR);
+}
+
 t_error	parse(const char *input, t_command *out)
 {
 	t_token_list	*tokens;
-	t_symbol		parse_tree;
 	t_error			err;
 
 	err = tokenize(input, &tokens);
@@ -54,20 +72,13 @@ t_error	parse(const char *input, t_command *out)
 		*out = (t_command){0};
 		return (NO_ERROR);
 	}
-	err = parse_command(tokens, &parse_tree);
+	err = parse_tokens(tokens, out);
 	if (err != NO_ERROR)
 	{
 		tkl_clear(&tokens, free);
-		return (err);
-	}
-	tkl_clear(&tokens, free);
-	err = reduce_parse_tree_into_command(&parse_tree, out);
-	if (err != NO_ERROR)
-	{
-		symbol_clear(parse_tree);
 		command_destroy_and_clear(out);
 		return (err);
 	}
-	symbol_clear(parse_tree);
+	tkl_clear(&tokens, free);
 	return (NO_ERROR);
 }

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   log_error.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: poss <marvin@42.fr>                        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/01/30 19:07:37 by poss              #+#    #+#             */
+/*   Updated: 2025/01/30 19:09:44 by poss             ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft/ft_io.h"
 #include "libft/string.h"
 #include "t_error.h"
@@ -19,7 +31,7 @@ void	report_error_message(const char *reason)
 		ft_putstr_fd("minishell: ", STDERR_FILENO);
 		ft_putstr_fd(reason, STDERR_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
-		return;
+		return ;
 	}
 	string_extend(&msg, "minishell: ");
 	string_extend(&msg, reason);
@@ -43,7 +55,7 @@ void	report_error(const char *origin, const char *reason)
 		ft_putstr_fd(": ", STDERR_FILENO);
 		ft_putstr_fd(reason, STDERR_FILENO);
 		ft_putstr_fd("\n", STDERR_FILENO);
-		return;
+		return ;
 	}
 	string_extend(&msg, "minishell: ");
 	string_extend(&msg, origin);
@@ -65,7 +77,7 @@ void	report_syscall_error(const char *syscall)
 // -> prints: "minishell: $REASON:  $ERROR_REPR(err)\n"
 void	report_t_error(const char *origin, t_error err)
 {
-	const char *reason;
+	const char	*reason;
 
 	if (is_syscall_related(err))
 		reason = (const char *)strerror(errno);

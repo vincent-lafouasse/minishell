@@ -8,11 +8,11 @@ set(parser_source
 	parse/reduction/reduce_complete_command.c
 	parse/reduction/reduce_pipeline.c
 	parse/reduction/reduction.c
+	parse/reduction/conditional_command_data.c
+	parse/reduction/invert_conditional_associativity.c
 	parse/reduction/reduce_command.c
 	parse/reduction/reduce_subshell.c
-	parse/reduction/invert_conditional_associativity.c
 	parse/reduction/associativity_inversal_internals.h
-	parse/reduction/conditional_command_data.c
 	parse/reduction/reduction_internals.h
 	parse/reduction/reduction.h
 	parse/productions/produce_simple_command.c
@@ -38,15 +38,21 @@ set(parser_source
 	parse/productions/produce_filename.c
 	parse/productions/produce_io_here.c
 	parse/productions/produce_maybe_cmd_suffix.c
-	parse/t_command/destructor.c
-	parse/t_command/properties.c
-	parse/t_command/t_command.h
-	parse/t_command/empty.c
-	parse/t_command/subshell_constructor.c
-	parse/t_command/pipeline_constructor.c
-	parse/t_command/simple_command_constructor.c
 	parse/t_command/conditional_command_constructor.c
+	parse/t_command/properties.c
+	parse/t_command/subshell_constructor.c
+	parse/t_command/command_destroy.c
+	parse/t_command/simple_command_constructor.c
+	parse/t_command/t_command.h
+	parse/t_command/pipeline_constructor.c
+	parse/t_command/empty.c
+	parse/t_command/destructors.c
+	parse/parse.c
+	parse/t_parser/t_parser.c
+	parse/t_parser/parser_push.c
+	parse/t_parser/t_parser.h
 	parse/tokenize/tokenize.h
+	parse/tokenize/t_token.c
 	parse/tokenize/token_repr.c
 	parse/tokenize/t_lexer/lexer_scan_metachar_operator.c
 	parse/tokenize/t_lexer/lexer_internals.h
@@ -63,30 +69,60 @@ set(parser_source
 	parse/tokenize/t_token_list/t_token_list.h
 	parse/tokenize/t_token_list/tkl_new.c
 	parse/tokenize/t_token.h
-	parse/tokenize/t_token.c
 	parse/tokenize/tokenize.c
-	parse/parse.c
-	parse/t_parser/t_parser.c
-	parse/t_parser/parser_push.c
-	parse/t_parser/t_parser.h
 	parse/t_symbol/t_symbol.c
 	parse/t_symbol/t_symbol.h
 )
 
 set(word_source
+	word/t_string/realloc.h
+	word/t_string/t_string.h
+	word/t_string/c_string.c
+	word/t_string/insert.c
+	word/t_string/alloc.c
+	word/t_string/destructor.c
+	word/t_string/realloc.c
+	word/t_string/constructor.c
+	word/word_clone.c
+	word/expansions/remove_outer_quotes.c
+	word/expansions/expand_variable.c
+	word/expansions/quote_removed_word.c
+	word/expansions/t_word_quotes_list.c
+	word/expansions/expand.h
+	word/expansions/make_joined.c
+	word/expansions/expand_internals.h
+	word/expansions/parse.c
+	word/expansions/wql_push.c
+	word/expansions/pathname/expand_internals.c
+	word/expansions/pathname/expand.c
+	word/expansions/expand.c
+	word/t_word_list/destroy.c
+	word/t_word_list/push.c
 	word/t_word_list/t_word_list.h
 	word/t_word_list/t_word_list.c
+	word/word.h
 )
 
-set(io_source
-	io/t_redir_list/t_redir_list.h
-	io/t_redir_list/t_redir_list.c
-	io/t_redir_list/redirection_repr.c
+set(redir_source
+	redirection/t_io/t_io.h
+	redirection/t_io/operations.c
+	redirection/t_io/constructor.c
+	redirection/t_redir_list/t_redir_list.h
+	redirection/t_redir_list/push.c
+	redirection/t_redir_list/apply_redirections.c
+	redirection/t_redir_list/redir_kind.c
+	redirection/t_redir_list/t_redir_list.c
+	redirection/t_redir_list/here_document.c
+	redirection/t_redir_list/redirection_repr.c
 )
 
 set(error_module
 	error/t_error.h
+	error/parse_error_exit_code.c
+	error/is_syscall_related.c
+	error/log_error.c
 	error/error_repr.c
+	error/is_fatal_error.c
 )
 set(log_module
 	log/log_words.c
@@ -97,13 +133,74 @@ set(log_module
 	log/parse_tree_to_json.c
 )
 
+set(signal_source
+	signal/noninteractive_readline.c
+	signal/signal.h
+	signal/readline.c
+	signal/handlers.c
+)
+
+set(execute_source
+	execute/execute.c
+	execute/pipeline.c
+	execute/conditional.c
+	execute/t_pid_list/pop.c
+	execute/t_pid_list/push.c
+	execute/t_pid_list/t_pid_list.h
+	execute/t_pid_list/t_pid_list.c
+	execute/file_is_directory.c
+	execute/simple.c
+	execute/t_env/t_env.h
+	execute/t_env/t_env_internals.h
+	execute/t_env/getter.c
+	execute/t_env/push.c
+	execute/t_env/destructor.c
+	execute/t_env/t_env_internals.c
+	execute/t_env/t_env.c
+	execute/t_env/constructor.c
+	execute/execute.h
+	execute/builtin/builtin.h
+	execute/builtin/unset.c
+	execute/builtin/env.c
+	execute/builtin/pwd.c
+	execute/builtin/builtin.c
+	execute/builtin/exit/exit.c
+	execute/builtin/exit/checked_atoi.c
+	execute/builtin/exit/checked_atou.c
+	execute/builtin/cd.c
+	execute/builtin/export/do_assignments.c
+	execute/builtin/export/print_all_variables.c
+	execute/builtin/export/export.c
+	execute/builtin/echo.c
+	execute/subshell.c
+	execute/process/fork.c
+	execute/process/wait_for_process.c
+	execute/process/wait_for_pipeline.c
+	execute/process/report_signal_related_exit.c
+	execute/process/kill.c
+	execute/process/process.h
+	execute/process/reset_tty_properties.c
+	execute/process/get_exit_status.c
+	execute/process/wait_through_signals.c
+	execute/launch_simple_command.c
+	execute/launch_simple_command_utils.c
+)
+
+set(shell_source
+	shell/shell.h
+	shell/cleanup.c
+)
+
 set(tested_source
 	${token_list_source}
 	${parser_source}
 	${word_source}
-	${io_source}
+	${redir_source}
 	${error_module}
 	${log_module}
+	${signal_source}
+	${execute_source}
+	${shell_source}
 )
 list(TRANSFORM tested_source PREPEND ${tested_src_dir}/)
 
@@ -128,4 +225,5 @@ target_include_directories(parser_test PUBLIC
 target_link_libraries(parser_test
 	libgtest
 	libft
+	readline
 )
