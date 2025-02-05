@@ -9,3 +9,4 @@ minishell
 local*
 *.a
 valgrind*
+.idea
